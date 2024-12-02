@@ -71,10 +71,8 @@ export default function FinalizePage() {
                 const canvas = await html2canvas(finalRef.current, {
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: "white",
-                    scale: SCALE_FACTOR, // Must match FramePage
-                    width: SCALED_FRAME_WIDTH, //324px
-                    height: SCALED_FRAME_HEIGHT, //576px
+                    backgroundColor: "transparent",
+                    scale: 1, // Capture at actual displayed size
                 });
                 console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 324x576
                 const dataURL = canvas.toDataURL("image/png");
@@ -103,29 +101,25 @@ export default function FinalizePage() {
             {/* Frame and Photos Container */}
             <div
                 ref={finalRef}
-                className="flex flex-col relative mb-8 bg-white"
+                className="flex flex-col relative mb-8"
                 style={{
                     width: `${SCALED_FRAME_WIDTH}px`, //324px
                     height: `${SCALED_FRAME_HEIGHT}px`, //576px
-                    backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "white",
+                    backgroundColor: "transparent",
                     position: "relative",
                 }}
             >
                 {/* Top Border */}
-                {selectedFrame?.type === "color" && (
-                    <div
-                        className="w-full"
-                        style={{
-                            height: `${SCALED_TOP_HEIGHT}px`, //22px
-                            backgroundColor: selectedFrame.src,
-                        }}
-                    ></div>
-                )}
+                <div
+                    className="w-full"
+                    style={{
+                        height: `${SCALED_TOP_HEIGHT}px`, //22px
+                        backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                    }}
+                ></div>
 
                 {/* Photo Grid */}
-                <div
-                    className="flex-grow flex justify-center items-center"
-                >
+                <div className="flex-grow flex justify-center items-center">
                     <div
                         className="grid grid-cols-2 gap-[9px]"
                         style={{
@@ -151,23 +145,24 @@ export default function FinalizePage() {
                 </div>
 
                 {/* Bottom Border */}
-                {selectedFrame?.type === "color" && (
-                    <div
-                        className="w-full"
-                        style={{
-                            height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
-                            backgroundColor: selectedFrame.src,
-                        }}
-                    ></div>
-                )}
+                <div
+                    className="w-full"
+                    style={{
+                        height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
+                        backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                    }}
+                ></div>
 
-                {/* Custom Frame Overlay */}
-                {selectedFrame?.type === "custom" && (
+                {/* Frame Overlay */}
+                {selectedFrame && (
                     <img
                         src={selectedFrame.src}
                         alt={`Frame ${selectedFrame.name}`}
-                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+                        className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
                         style={{ zIndex: 2 }}
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
+                        }}
                     />
                 )}
             </div>

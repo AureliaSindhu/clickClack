@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import "../style.css";
 import Image from "next/image"; // Optional: For optimized images
@@ -8,7 +8,8 @@ import Image from "next/image"; // Optional: For optimized images
 interface Frame {
     id: string;
     type: "color" | "custom";
-    src: string; // URL of the frame image
+    src: string; 
+    thumbnailSrc: string;
     name: string;
 }
 
@@ -41,57 +42,51 @@ export default function FramePage() {
     const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     // Predefined color frames (image-based frames with solid borders)
-    const colorFrames: Frame[] = [
-        { id: "color1", type: "color", src: "/color-frames/frame1.png", name: "Snow" },
-        { id: "color2", type: "color", src: "/color-frames/frame2.png", name: "Town" },
-        { id: "color3", type: "color", src: "/color-frames/frame3.png", name: "Tree" },
-        { id: "color4", type: "color", src: "/color-frames/frame4.png", name: "Forest" },
-        { id: "color5", type: "color", src: "/color-frames/frame5.png", name: "Mountain" },
-        { id: "color6", type: "color", src: "/color-frames/frame6.png", name: "River" },
-        { id: "color7", type: "color", src: "/color-frames/frame7.png", name: "Sunset" },
-        { id: "color8", type: "color", src: "/color-frames/frame8.png", name: "Beach" },
+    const colorFrames= useMemo(() => [
+        { id: "color1", type: "color" as "color", src: "/color-frames/frame1.png", thumbnailSrc: "/color-frames/frame1-thumb.png", name: "Charcoal" },
+        { id: "color2", type: "color" as "color", src: "/color-frames/frame2.png", thumbnailSrc: "/color-frames/frame2-thumb.png", name: "Deep Purple" },
+        { id: "color3", type: "color" as "color", src: "/color-frames/frame3.png", thumbnailSrc: "/color-frames/frame3-thumb.png", name: "Stale" },
+        { id: "color4", type: "color" as "color", src: "/color-frames/frame4.png", thumbnailSrc: "/color-frames/frame4-thumb.png", name: "Purple Gray" },
+        { id: "color5", type: "color" as "color", src: "/color-frames/frame5.png", thumbnailSrc: "/color-frames/frame5-thumb.png", name: "Mountain" },
+        { id: "color6", type: "color" as "color", src: "/color-frames/frame6.png", thumbnailSrc: "/color-frames/frame6-thumb.png", name: "Beige" },
+        { id: "color7", type: "color" as "color", src: "/color-frames/frame7.png", thumbnailSrc: "/color-frames/frame7-thumb.png", name: "Alabaster" },
+        { id: "color8", type: "color" as "color", src: "/color-frames/frame8.png", thumbnailSrc: "/color-frames/frame8-thumb.png", name: "White" },
         // Add more color frames as needed
-    ];
-
+    ], []);
+    
     // Predefined custom frames (images with transparent backgrounds)
-    const customFrames: Frame[] = [
-        { id: "custom1", type: "custom", src: "/custom-frames/cframe1.png", name: "Snow" },
-        { id: "custom2", type: "custom", src: "/custom-frames/cframe2.png", name: "Town" },
-        { id: "custom3", type: "custom", src: "/custom-frames/cframe3.png", name: "Tree" },
-        { id: "custom4", type: "custom", src: "/custom-frames/cframe4.png", name: "Forest" },
-        { id: "custom5", type: "custom", src: "/custom-frames/cframe5.png", name: "Mountain" },
-        { id: "custom6", type: "custom", src: "/custom-frames/cframe6.png", name: "River" },
+    const customFrames= useMemo(() => [
+        { id: "custom1", type: "custom" as "custom", src: "/custom-frames/cframe1.png", thumbnailSrc: "/custom-frames/cframe1-thumb.png", name: "Snow" },
+        { id: "custom2", type: "custom" as "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Town" },
+        { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Tree" },
+        { id: "custom4", type: "custom" as "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Forest" },
+        { id: "custom5", type: "custom" as "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Mountain" },
+        { id: "custom6", type: "custom" as "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "River" },
         // Add more custom frames as needed
-    ];
+    ], []);
 
     useEffect(() => {
-        // Load photos from sessionStorage
         const storedPhotos = sessionStorage.getItem("photos");
         if (storedPhotos) {
-        setPhotos(JSON.parse(storedPhotos));
+            setPhotos(JSON.parse(storedPhotos));
         } else {
-        // If no photos are found, redirect back to the capture page
-        router.push("/capture");
+            router.push("/capture");
         }
 
-        // Initialize frames with color and custom frames
-        setFrames([...colorFrames, ...customFrames]);
-
-        // Load selected frame from sessionStorage or set default
         const storedSelectedFrame = sessionStorage.getItem("selectedFrame");
         if (storedSelectedFrame) {
-        setSelectedFrame(JSON.parse(storedSelectedFrame));
+            setSelectedFrame(JSON.parse(storedSelectedFrame));
         } else {
-        // Set default frame as the first color frame
-        setSelectedFrame(colorFrames[0]);
+            setSelectedFrame(colorFrames[0]);
         }
 
-        // Load frame type from sessionStorage
         const storedFrameType = sessionStorage.getItem("isColorFrame");
         if (storedFrameType !== null) {
-        setIsColorFrame(storedFrameType === "true");
+            setIsColorFrame(storedFrameType === "true");
         }
-    }, [router, colorFrames, customFrames]);
+
+        setFrames([...colorFrames, ...customFrames]);
+    }, []);
 
     // Handle frame selection
     const handleSelectFrame = (frame: Frame) => {
@@ -148,28 +143,28 @@ export default function FramePage() {
 
             {/* Photo Grid */}
             <div className="flex-grow flex justify-center items-center">
-            <div
-                className="grid grid-cols-2 gap-[9px]"
-                style={{
-                width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
-                height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
-                marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
-                marginRight: `${LEFT_RIGHT_GAP}px`, //19px
-                }}
-            >
-                {photos.map((photo, index) => (
-                <img
-                    key={index}
-                    src={photo}
-                    alt={`Photo ${index + 1}`}
-                    className="object-cover"
+                <div
+                    className="grid grid-cols-2 gap-[9px]"
                     style={{
-                    width: `${PHOTO_WIDTH}px`, //138px
-                    height: `${PHOTO_HEIGHT}px`, //209px
+                    width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
+                    height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
+                    marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
+                    marginRight: `${LEFT_RIGHT_GAP}px`, //19px
                     }}
-                />
-                ))}
-            </div>
+                >
+                    {photos.map((photo, index) => (
+                    <img
+                        key={index}
+                        src={photo}
+                        alt={`Photo ${index + 1}`}
+                        className="object-cover"
+                        style={{
+                        width: `${PHOTO_WIDTH}px`, //138px
+                        height: `${PHOTO_HEIGHT}px`, //209px
+                        }}
+                    />
+                    ))}
+                </div>
             </div>
 
             {/* Bottom Border */}
