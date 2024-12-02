@@ -14,8 +14,8 @@ export default function CapturePage() {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
-                // Resize the image to 461x698px before storing
-                resizeImage(imageSrc, 461, 698, (resizedDataUrl) => {
+                // Resize the image to 390x591px before storing
+                resizeImage(imageSrc, 390, 591, (resizedDataUrl) => {
                     const updatedPhotos = [...photos, resizedDataUrl];
                     setPhotos(updatedPhotos);
 

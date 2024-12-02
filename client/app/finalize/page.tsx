@@ -12,11 +12,6 @@ interface Frame {
     name: string;
 }
 
-// Original dimensions
-const ORIGINAL_WIDTH = 1080;
-const ORIGINAL_HEIGHT = 1920;
-const PREVIEW_SCALE = 0.7;
-
 export default function FinalizePage() {
     const router = useRouter();
     const [photos, setPhotos] = useState<string[]>([]);
@@ -24,6 +19,27 @@ export default function FinalizePage() {
     const [finalImage, setFinalImage] = useState<string>("");
 
     const finalRef = useRef<HTMLDivElement>(null);
+
+    // Scaling parameters (must match FramePage)
+    const SCALE_FACTOR = 0.3;
+
+    // Original dimensions (same as FramePage)
+    const ORIGINAL_WIDTH = 1080;
+    const ORIGINAL_HEIGHT = 1920;
+    const ORIGINAL_TOP_HEIGHT = 75; 
+    const ORIGINAL_BOTTOM_HEIGHT = 421; 
+
+    // Scaled dimensions
+    const SCALED_TOP_HEIGHT = Math.round(ORIGINAL_TOP_HEIGHT * SCALE_FACTOR); //22px
+    const SCALED_BOTTOM_HEIGHT = Math.round(ORIGINAL_BOTTOM_HEIGHT * SCALE_FACTOR); //127px
+    const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR); //324px
+    const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR); //576px
+
+    // Photo grid dimensions
+    const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); //138px
+    const PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR); //210px
+    const GAP_BETWEEN_PHOTOS = Math.round(30 * SCALE_FACTOR); //9px
+    const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     useEffect(() => {
         // Load photos from sessionStorage
@@ -52,49 +68,15 @@ export default function FinalizePage() {
     const generateFinalImage = async () => {
         if (finalRef.current) {
             try {
-                // Create a temporary div with original dimensions
-                const tempDiv = document.createElement('div');
-                tempDiv.style.width = `${ORIGINAL_WIDTH}px`;
-                tempDiv.style.height = `${ORIGINAL_HEIGHT}px`;
-                tempDiv.style.position = 'absolute';
-                tempDiv.style.left = '-9999px';
-                tempDiv.style.backgroundColor = selectedFrame?.type === "color" ? selectedFrame.src : "white";
-                
-                // Clone the content
-                const content = finalRef.current.cloneNode(true) as HTMLElement;
-                content.style.transform = 'none';
-                content.style.width = `${ORIGINAL_WIDTH}px`;
-                content.style.height = `${ORIGINAL_HEIGHT}px`;
-                
-                // Update photo grid dimensions
-                const photoGrid = content.querySelector('.grid') as HTMLElement;
-                if (photoGrid) {
-                    photoGrid.style.width = `${950}px`;
-                    photoGrid.style.height = `${1424}px`;
-                }
-                
-                // Update individual photo dimensions
-                const photos = content.querySelectorAll('.grid img');
-                photos.forEach(photo => {
-                    const img = photo as HTMLElement;
-                    img.style.width = `${461}px`;
-                    img.style.height = `${698}px`;
-                });
-                
-                tempDiv.appendChild(content);
-                document.body.appendChild(tempDiv);
-
-                const canvas = await html2canvas(tempDiv, {
+                const canvas = await html2canvas(finalRef.current, {
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: null,
-                    scale: 1,
-                    width: ORIGINAL_WIDTH,
-                    height: ORIGINAL_HEIGHT
+                    backgroundColor: "white",
+                    scale: SCALE_FACTOR, // Must match FramePage
+                    width: SCALED_FRAME_WIDTH, //324px
+                    height: SCALED_FRAME_HEIGHT, //576px
                 });
-
-                document.body.removeChild(tempDiv);
-                
+                console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 324x576
                 const dataURL = canvas.toDataURL("image/png");
                 setFinalImage(dataURL);
             } catch (error) {
@@ -115,51 +97,79 @@ export default function FinalizePage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-6 text-black">
+        <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] text-black p-6">
             <h1 className="text-2xl font-bold mb-6">Your Final Photo</h1>
 
             {/* Frame and Photos Container */}
             <div
                 ref={finalRef}
-                className="relative flex flex-col items-center justify-center mb-8 bg-white"
+                className="flex flex-col relative mb-8 bg-white"
                 style={{
-                    width: `${ORIGINAL_WIDTH * PREVIEW_SCALE}px`,
-                    height: `${ORIGINAL_HEIGHT * PREVIEW_SCALE}px`,
+                    width: `${SCALED_FRAME_WIDTH}px`, //324px
+                    height: `${SCALED_FRAME_HEIGHT}px`, //576px
                     backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "white",
                     position: "relative",
                 }}
             >
+                {/* Top Border */}
+                {selectedFrame?.type === "color" && (
+                    <div
+                        className="w-full"
+                        style={{
+                            height: `${SCALED_TOP_HEIGHT}px`, //22px
+                            backgroundColor: selectedFrame.src,
+                        }}
+                    ></div>
+                )}
+
+                {/* Photo Grid */}
+                <div
+                    className="flex-grow flex justify-center items-center"
+                >
+                    <div
+                        className="grid grid-cols-2 gap-[9px]"
+                        style={{
+                            width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
+                            height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //210*2 +9=429px
+                            marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
+                            marginRight: `${LEFT_RIGHT_GAP}px`, //19px
+                        }}
+                    >
+                        {photos.map((photo, index) => (
+                            <img
+                                key={index}
+                                src={photo}
+                                alt={`Photo ${index + 1}`}
+                                className="object-cover rounded-md"
+                                style={{
+                                    width: `${PHOTO_WIDTH}px`, //138px
+                                    height: `${PHOTO_HEIGHT}px`, //210px
+                                }}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Bottom Border */}
+                {selectedFrame?.type === "color" && (
+                    <div
+                        className="w-full"
+                        style={{
+                            height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
+                            backgroundColor: selectedFrame.src,
+                        }}
+                    ></div>
+                )}
+
+                {/* Custom Frame Overlay */}
                 {selectedFrame?.type === "custom" && (
                     <img
                         src={selectedFrame.src}
                         alt={`Frame ${selectedFrame.name}`}
-                        className="absolute top-0 left-0 w-full h-full object-contain"
+                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
                         style={{ zIndex: 2 }}
                     />
                 )}
-
-                {/* Photo grid container */}
-                <div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 grid grid-cols-2 gap-7"
-                    style={{
-                        width: `${950 * PREVIEW_SCALE}px`,
-                        height: `${1424 * PREVIEW_SCALE}px`,
-                        zIndex: 1,
-                    }}
-                >
-                    {photos.map((photo, index) => (
-                        <img
-                            key={index}
-                            src={photo}
-                            alt={`Photo ${index + 1}`}
-                            className="object-cover rounded-md"
-                            style={{
-                                width: `${461 * PREVIEW_SCALE}px`,
-                                height: `${698 * PREVIEW_SCALE}px`,
-                            }}
-                        />
-                    ))}
-                </div>
             </div>
 
             {/* Download Button */}

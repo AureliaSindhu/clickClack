@@ -20,7 +20,23 @@ export default function FramePage() {
     // Original dimensions
     const ORIGINAL_WIDTH = 1080;
     const ORIGINAL_HEIGHT = 1920;
-    const SCALE_FACTOR = 0.7; // 70% of original size
+    const SCALE_FACTOR = 0.3; // 30% of original size
+
+    // Frame dimensions (Original dimensions before scaling)
+    const ORIGINAL_TOP_HEIGHT = 75; 
+    const ORIGINAL_BOTTOM_HEIGHT = 421; 
+
+    // Scaled dimensions
+    const SCALED_TOP_HEIGHT = Math.round(ORIGINAL_TOP_HEIGHT * SCALE_FACTOR); //75 *0.3=22px
+    const SCALED_BOTTOM_HEIGHT = Math.round(ORIGINAL_BOTTOM_HEIGHT * SCALE_FACTOR); //421*0.3=127px
+    const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR); //1080*0.3=324px
+    const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR); //1920*0.3=576px
+
+    // Photo grid dimensions
+    const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); //138px
+    const PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR); //210px
+    const GAP_BETWEEN_PHOTOS = Math.round(30 * SCALE_FACTOR); //9px
+    const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     // Predefined color frames
     const colorFrames: Frame[] = [
@@ -73,41 +89,68 @@ export default function FramePage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)]">
+        <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-10 text-black">
             <h1 className="text-2xl font-bold mb-6">Select a Frame for Your Photos</h1>
             
             {/* Frame Canvas */}
             <div
-                className="relative mb-8"
+                className="flex flex-col relative mb-8"
                 style={{
-                    width: `${ORIGINAL_WIDTH * SCALE_FACTOR}px`,
-                    height: `${ORIGINAL_HEIGHT * SCALE_FACTOR}px`,
+                    width: `${SCALED_FRAME_WIDTH}px`, //324px
+                    height: `${SCALED_FRAME_HEIGHT}px`, //576px
                     backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
                     position: "relative",
                 }}
             >
+                {/* Top Border */}
+                {selectedFrame?.type === "color" && (
+                    <div
+                        className="w-full"
+                        style={{
+                            height: `${SCALED_TOP_HEIGHT}px`, //22px
+                            backgroundColor: selectedFrame.src,
+                        }}
+                    ></div>
+                )}
+
                 {/* Photo Grid */}
                 <div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 grid grid-cols-2 gap-7"
-                    style={{
-                        width: `${950 * SCALE_FACTOR}px`,
-                        height: `${1424 * SCALE_FACTOR}px`,
-                        zIndex: 1,
-                    }}
+                    className="flex-grow flex justify-center items-center"
                 >
-                    {photos.map((photo, index) => (
-                        <img
-                            key={index}
-                            src={photo}
-                            alt={`Photo ${index + 1}`}
-                            className="object-cover rounded-md"
-                            style={{
-                                width: `${461 * SCALE_FACTOR}px`,
-                                height: `${698 * SCALE_FACTOR}px`,
-                            }}
-                        />
-                    ))}
+                    <div
+                        className="grid grid-cols-2 gap-[9px]"
+                        style={{
+                            width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
+                            height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //210*2 +9=429px
+                            marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
+                            marginRight: `${LEFT_RIGHT_GAP}px`, //19px
+                        }}
+                    >
+                        {photos.map((photo, index) => (
+                            <img
+                                key={index}
+                                src={photo}
+                                alt={`Photo ${index + 1}`}
+                                className="object-cover rounded-md"
+                                style={{
+                                    width: `${PHOTO_WIDTH}px`, //138px
+                                    height: `${PHOTO_HEIGHT}px`, //210px
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
+
+                {/* Bottom Border */}
+                {selectedFrame?.type === "color" && (
+                    <div
+                        className="w-full"
+                        style={{
+                            height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
+                            backgroundColor: selectedFrame.src,
+                        }}
+                    ></div>
+                )}
 
                 {/* Custom Frame Overlay */}
                 {selectedFrame?.type === "custom" && (
@@ -117,28 +160,6 @@ export default function FramePage() {
                         className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
                         style={{ zIndex: 2 }}
                     />
-                )}
-
-                {/* Top and Bottom Borders for Color Frames */}
-                {selectedFrame?.type === "color" && (
-                    <>
-                        <div
-                            className="absolute top-0 left-0 w-full"
-                            style={{ height: `${28 * SCALE_FACTOR}px`, backgroundColor: selectedFrame.src }}
-                        ></div>
-                        <div
-                            className="absolute bottom-0 left-0 w-full"
-                            style={{ height: `${28 * SCALE_FACTOR}px`, backgroundColor: selectedFrame.src }}
-                        ></div>
-                        <div
-                            className="absolute left-0 right-0"
-                            style={{ 
-                                top: `${28 * SCALE_FACTOR}px`,
-                                bottom: `${28 * SCALE_FACTOR}px`,
-                                backgroundColor: selectedFrame.src 
-                            }}
-                        ></div>
-                    </>
                 )}
             </div>
 
