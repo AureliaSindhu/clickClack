@@ -57,11 +57,11 @@ export default function FramePage() {
     // Predefined custom frames (images with transparent backgrounds)
     const customFrames= useMemo(() => [
         { id: "custom1", type: "custom" as "custom", src: "/custom-frames/cframe1.png", thumbnailSrc: "/custom-frames/cframe1-thumb.png", name: "Snow" },
-        { id: "custom2", type: "custom" as "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Town" },
-        { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Tree" },
-        { id: "custom4", type: "custom" as "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Forest" },
-        { id: "custom5", type: "custom" as "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Mountain" },
-        { id: "custom6", type: "custom" as "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "River" },
+        { id: "custom2", type: "custom" as "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Pattern" },
+        { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Gingerman" },
+        { id: "custom4", type: "custom" as "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Town" },
+        { id: "custom5", type: "custom" as "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Table" },
+        { id: "custom6", type: "custom" as "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "Tree" },
         // Add more custom frames as needed
     ], []);
 
@@ -238,7 +238,7 @@ export default function FramePage() {
                     {/* Circular Container for Frame Thumbnail */}
                     <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
                         <img
-                        src={frame.src}
+                        src={frame.thumbnailSrc}
                         alt={frame.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -272,7 +272,7 @@ export default function FramePage() {
                         {/* Circular Container for Frame Thumbnail */}
                         <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
                         <img
-                            src={frame.src}
+                            src={frame.thumbnailSrc}
                             alt={frame.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
