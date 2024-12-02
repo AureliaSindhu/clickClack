@@ -34,7 +34,7 @@ export default function FramePage() {
 
     // Photo grid dimensions
     const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); //138px
-    const PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR); //210px
+    const PHOTO_HEIGHT = Math.floor(698 * SCALE_FACTOR); //209px
     const GAP_BETWEEN_PHOTOS = Math.round(30 * SCALE_FACTOR); //9px
     const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
@@ -103,15 +103,13 @@ export default function FramePage() {
                 }}
             >
                 {/* Top Border */}
-                {selectedFrame?.type === "color" && (
-                    <div
-                        className="w-full"
-                        style={{
-                            height: `${SCALED_TOP_HEIGHT}px`, //22px
-                            backgroundColor: selectedFrame.src,
-                        }}
-                    ></div>
-                )}
+                <div
+                    className="w-full"
+                    style={{
+                        height: `${SCALED_TOP_HEIGHT}px`, //22px
+                        backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                    }}
+                ></div>
 
                 {/* Photo Grid */}
                 <div
@@ -121,7 +119,7 @@ export default function FramePage() {
                         className="grid grid-cols-2 gap-[9px]"
                         style={{
                             width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
-                            height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //210*2 +9=429px
+                            height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
                             marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
                             marginRight: `${LEFT_RIGHT_GAP}px`, //19px
                         }}
@@ -134,7 +132,7 @@ export default function FramePage() {
                                 className="object-cover rounded-md"
                                 style={{
                                     width: `${PHOTO_WIDTH}px`, //138px
-                                    height: `${PHOTO_HEIGHT}px`, //210px
+                                    height: `${PHOTO_HEIGHT}px`, //209px
                                 }}
                             />
                         ))}
@@ -142,22 +140,20 @@ export default function FramePage() {
                 </div>
 
                 {/* Bottom Border */}
-                {selectedFrame?.type === "color" && (
-                    <div
-                        className="w-full"
-                        style={{
-                            height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
-                            backgroundColor: selectedFrame.src,
-                        }}
-                    ></div>
-                )}
+                <div
+                    className="w-full"
+                    style={{
+                        height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
+                        backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                    }}
+                ></div>
 
                 {/* Custom Frame Overlay */}
                 {selectedFrame?.type === "custom" && (
                     <img
                         src={selectedFrame.src}
                         alt={`Frame ${selectedFrame.name}`}
-                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+                        className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
                         style={{ zIndex: 2 }}
                     />
                 )}
