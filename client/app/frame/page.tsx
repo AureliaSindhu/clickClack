@@ -50,8 +50,8 @@ export default function FramePage() {
 
     // Predefined custom frames (ensure these images are in the /public/custom-frames/ directory)
     const customFrames: Frame[] = [
-        { id: "custom1", type: "custom", src: "/frames/base.png", name: "Floral Frame" },
-        { id: "custom2", type: "custom", src: "/custom-frames/custom-frame2.png", name: "Vintage Frame" },
+        { id: "custom1", type: "custom", src: "/custom-frames/base.png", name: "Floral Frame" },
+        { id: "custom2", type: "custom", src: "/custom-frames/Draft14.png", name: "Christmas Town" },
         // Add more custom frames as needed
     ];
 
