@@ -16,6 +16,7 @@ export default function FramePage() {
     const [photos, setPhotos] = useState<string[]>([]);
     const [frames, setFrames] = useState<Frame[]>([]);
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
+    const [isColorFrame, setIsColorFrame] = useState<boolean>(true);
 
     // Original dimensions
     const ORIGINAL_WIDTH = 1080;
@@ -83,6 +84,22 @@ export default function FramePage() {
         sessionStorage.setItem("selectedFrame", JSON.stringify(frame));
     };
 
+    // Handle toggle switch
+    const handleToggle = () => {
+        setIsColorFrame(prev => !prev);
+        if (!isColorFrame) {
+            // Switching to color frames
+            const defaultColorFrame = colorFrames[0];
+            setSelectedFrame(defaultColorFrame);
+            sessionStorage.setItem("selectedFrame", JSON.stringify(defaultColorFrame));
+        } else {
+            // Switching to custom frames
+            const defaultCustomFrame = customFrames[0];
+            setSelectedFrame(defaultCustomFrame);
+            sessionStorage.setItem("selectedFrame", JSON.stringify(defaultCustomFrame));
+        }
+    };
+
     const handleProceed = () => {
         // Proceed to the next step/page
         router.push("/finalize"); // Update the route as needed
@@ -112,9 +129,7 @@ export default function FramePage() {
                 ></div>
 
                 {/* Photo Grid */}
-                <div
-                    className="flex-grow flex justify-center items-center"
-                >
+                <div className="flex-grow flex justify-center items-center">
                     <div
                         className="grid grid-cols-2 gap-[9px]"
                         style={{
@@ -158,58 +173,85 @@ export default function FramePage() {
                     />
                 )}
             </div>
+            
+            {/* Toggle Switch */}
+            <div className="flex items-center mb-6">
+                <span className={`mr-2 ${isColorFrame ? 'font-semibold' : 'text-gray-500'}`}>Color Frames</span>
+                <label className="relative inline-block w-12 mr-2 align-middle select-none">
+                    <input
+                        type="checkbox"
+                        checked={!isColorFrame}
+                        onChange={handleToggle}
+                        className="hidden"
+                        aria-label="Toggle between Color Frames and Custom Frames"
+                    />
+                    <span className="block bg-gray-300 w-12 h-6 rounded-full"></span>
+                    <span
+                        className={`absolute left-0 top-0 bg-white w-6 h-6 rounded-full transition transform ${
+                            !isColorFrame ? 'translate-x-full' : ''
+                        }`}
+                    ></span>
+                </label>
+                <span className={`ml-2 ${!isColorFrame ? 'font-semibold' : 'text-gray-500'}`}>Custom Frames</span>
+            </div>
 
             {/* Frame Options */}
             <div className="w-full max-w-4xl">
                 <h2 className="text-xl font-semibold mb-4">Choose a Frame</h2>
                 
-                {/* Color Frames */}
+                {/* Frame Selection Based on Toggle */}
                 <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">Color Frames</h3>
-                    <div className="flex flex-wrap gap-4">
-                        {colorFrames.map((frame) => (
-                            <div
-                                key={frame.id}
-                                className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
-                                    selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
-                                }`}
-                                onClick={() => handleSelectFrame(frame)}
-                            >
-                                <div
-                                    className="w-16 h-16 rounded-full mb-2"
-                                    style={{ backgroundColor: frame.src }}
-                                ></div>
-                                <p className="text-center">{frame.name}</p>
+                    {isColorFrame ? (
+                        <>
+                            <h3 className="text-lg font-medium mb-2">Color Frames</h3>
+                            <div className="flex flex-wrap gap-4">
+                                {colorFrames.map((frame) => (
+                                    <div
+                                        key={frame.id}
+                                        className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
+                                            selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
+                                        }`}
+                                        onClick={() => handleSelectFrame(frame)}
+                                    >
+                                        <div
+                                            className="w-16 h-16 rounded-full mb-2"
+                                            style={{ backgroundColor: frame.src }}
+                                        ></div>
+                                        <p className="text-center">{frame.name}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Custom Frames */}
-                <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">Custom Frames</h3>
-                    <div className="flex flex-wrap gap-4">
-                        {customFrames.length > 0 ? (
-                            customFrames.map((frame) => (
-                                <div
-                                    key={frame.id}
-                                    className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
-                                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
-                                    }`}
-                                    onClick={() => handleSelectFrame(frame)}
-                                >
-                                    <img
-                                        src={frame.src}
-                                        alt={frame.name}
-                                        className="w-24 h-24 object-contain mb-2"
-                                    />
-                                    <p className="text-center">{frame.name}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-gray-500">No custom frames available.</p>
-                        )}
-                    </div>
+                        </>
+                    ) : (
+                        <>
+                            <h3 className="text-lg font-medium mb-2">Custom Frames</h3>
+                            <div className="flex flex-wrap gap-4">
+                                {customFrames.length > 0 ? (
+                                    customFrames.map((frame) => (
+                                        <div
+                                            key={frame.id}
+                                            className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
+                                                selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
+                                            }`}
+                                            onClick={() => handleSelectFrame(frame)}
+                                        >
+                                            {/* Circular Container for Custom Frame Thumbnail */}
+                                            <div className="w-16 h-16 rounded-full overflow-hidden mb-2">
+                                                <img
+                                                    src={frame.src}
+                                                    alt={frame.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            <p className="text-center">{frame.name}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500">No custom frames available.</p>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 
