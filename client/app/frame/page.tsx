@@ -85,8 +85,8 @@ export default function FramePage() {
     };
 
     // Handle toggle switch
-    const handleToggle = () => {
-        setIsColorFrame(prev => !prev);
+    const handleToggle = (frameType: "color" | "custom") => {
+        setIsColorFrame(frameType === "color");
         if (!isColorFrame) {
             // Switching to color frames
             const defaultColorFrame = colorFrames[0];
@@ -174,36 +174,41 @@ export default function FramePage() {
                 )}
             </div>
             
-            {/* Toggle Switch */}
-            <div className="flex items-center mb-6">
-                <span className={`mr-2 ${isColorFrame ? 'font-semibold' : 'text-gray-500'}`}>Color Frames</span>
-                <label className="relative inline-block w-12 mr-2 align-middle select-none">
-                    <input
-                        type="checkbox"
-                        checked={!isColorFrame}
-                        onChange={handleToggle}
-                        className="hidden"
-                        aria-label="Toggle between Color Frames and Custom Frames"
-                    />
-                    <span className="block bg-gray-300 w-12 h-6 rounded-full"></span>
-                    <span
-                        className={`absolute left-0 top-0 bg-white w-6 h-6 rounded-full transition transform ${
-                            !isColorFrame ? 'translate-x-full' : ''
-                        }`}
-                    ></span>
-                </label>
-                <span className={`ml-2 ${!isColorFrame ? 'font-semibold' : 'text-gray-500'}`}>Custom Frames</span>
-            </div>
 
             {/* Frame Options */}
             <div className="w-full max-w-4xl">
                 <h2 className="text-xl font-semibold mb-4">Choose a Frame</h2>
+
+                {/* Frame Type Selection Buttons */}
+                <div className="flex items-center mb-6 space-x-4">
+                    <button
+                        onClick={() => handleToggle("color")}
+                        className={`px-6 py-2 rounded-md font-medium transition ${
+                            isColorFrame
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                        Color Frames
+                    </button>
+                    <button
+                        onClick={() => handleToggle("custom")}
+                        className={`px-6 py-2 rounded-md font-medium transition ${
+                            !isColorFrame
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                        Custom Frames
+                    </button>
+                </div>
+
                 
                 {/* Frame Selection Based on Toggle */}
                 <div className="mb-6">
                     {isColorFrame ? (
                         <>
-                            <h3 className="text-lg font-medium mb-2">Color Frames</h3>
+                            {/* <h3 className="text-lg font-medium mb-2">Color Frames</h3> */}
                             <div className="flex flex-wrap gap-4">
                                 {colorFrames.map((frame) => (
                                     <div
@@ -224,7 +229,7 @@ export default function FramePage() {
                         </>
                     ) : (
                         <>
-                            <h3 className="text-lg font-medium mb-2">Custom Frames</h3>
+                            {/* <h3 className="text-lg font-medium mb-2">Custom Frames</h3> */}
                             <div className="flex flex-wrap gap-4">
                                 {customFrames.length > 0 ? (
                                     customFrames.map((frame) => (
