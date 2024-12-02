@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
+import '../style.css';
 
 interface Frame {
     id: string;
@@ -10,6 +11,11 @@ interface Frame {
     src: string;
     name: string;
 }
+
+// Original dimensions
+const ORIGINAL_WIDTH = 1080;
+const ORIGINAL_HEIGHT = 1920;
+const PREVIEW_SCALE = 0.7;
 
 export default function FinalizePage() {
     const router = useRouter();
@@ -46,12 +52,49 @@ export default function FinalizePage() {
     const generateFinalImage = async () => {
         if (finalRef.current) {
             try {
-                const canvas = await html2canvas(finalRef.current, {
+                // Create a temporary div with original dimensions
+                const tempDiv = document.createElement('div');
+                tempDiv.style.width = `${ORIGINAL_WIDTH}px`;
+                tempDiv.style.height = `${ORIGINAL_HEIGHT}px`;
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.left = '-9999px';
+                tempDiv.style.backgroundColor = selectedFrame?.type === "color" ? selectedFrame.src : "white";
+                
+                // Clone the content
+                const content = finalRef.current.cloneNode(true) as HTMLElement;
+                content.style.transform = 'none';
+                content.style.width = `${ORIGINAL_WIDTH}px`;
+                content.style.height = `${ORIGINAL_HEIGHT}px`;
+                
+                // Update photo grid dimensions
+                const photoGrid = content.querySelector('.grid') as HTMLElement;
+                if (photoGrid) {
+                    photoGrid.style.width = `${950}px`;
+                    photoGrid.style.height = `${1424}px`;
+                }
+                
+                // Update individual photo dimensions
+                const photos = content.querySelectorAll('.grid img');
+                photos.forEach(photo => {
+                    const img = photo as HTMLElement;
+                    img.style.width = `${461}px`;
+                    img.style.height = `${698}px`;
+                });
+                
+                tempDiv.appendChild(content);
+                document.body.appendChild(tempDiv);
+
+                const canvas = await html2canvas(tempDiv, {
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: "white",
-                    scale: 2 // Increase quality
+                    backgroundColor: null,
+                    scale: 1,
+                    width: ORIGINAL_WIDTH,
+                    height: ORIGINAL_HEIGHT
                 });
+
+                document.body.removeChild(tempDiv);
+                
                 const dataURL = canvas.toDataURL("image/png");
                 setFinalImage(dataURL);
             } catch (error) {
@@ -64,7 +107,7 @@ export default function FinalizePage() {
         if (finalImage) {
             const link = document.createElement("a");
             link.href = finalImage;
-            link.download = "photo_booth.png";
+            link.download = "clickclack.png";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -72,7 +115,7 @@ export default function FinalizePage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 p-6">
+        <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-6 text-black">
             <h1 className="text-2xl font-bold mb-6">Your Final Photo</h1>
 
             {/* Frame and Photos Container */}
@@ -80,9 +123,10 @@ export default function FinalizePage() {
                 ref={finalRef}
                 className="relative flex flex-col items-center justify-center mb-8 bg-white"
                 style={{
-                    width: "400px",
-                    height: "400px",
-                    backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "white"
+                    width: `${ORIGINAL_WIDTH * PREVIEW_SCALE}px`,
+                    height: `${ORIGINAL_HEIGHT * PREVIEW_SCALE}px`,
+                    backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "white",
+                    position: "relative",
                 }}
             >
                 {selectedFrame?.type === "custom" && (
@@ -90,15 +134,17 @@ export default function FinalizePage() {
                         src={selectedFrame.src}
                         alt={`Frame ${selectedFrame.name}`}
                         className="absolute top-0 left-0 w-full h-full object-contain"
+                        style={{ zIndex: 2 }}
                     />
                 )}
 
+                {/* Photo grid container */}
                 <div
-                    className="grid grid-cols-2 gap-4"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 grid grid-cols-2 gap-7"
                     style={{
-                        width: "320px",
-                        height: "320px",
-                        zIndex: 1
+                        width: `${950 * PREVIEW_SCALE}px`,
+                        height: `${1424 * PREVIEW_SCALE}px`,
+                        zIndex: 1,
                     }}
                 >
                     {photos.map((photo, index) => (
@@ -106,7 +152,11 @@ export default function FinalizePage() {
                             key={index}
                             src={photo}
                             alt={`Photo ${index + 1}`}
-                            className="w-40 h-40 object-cover rounded-md"
+                            className="object-cover rounded-md"
+                            style={{
+                                width: `${461 * PREVIEW_SCALE}px`,
+                                height: `${698 * PREVIEW_SCALE}px`,
+                            }}
                         />
                     ))}
                 </div>

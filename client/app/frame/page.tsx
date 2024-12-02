@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import '../style.css';
 
 interface Frame {
     id: string;
@@ -16,18 +17,23 @@ export default function FramePage() {
     const [frames, setFrames] = useState<Frame[]>([]);
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
 
+    // Original dimensions
+    const ORIGINAL_WIDTH = 1080;
+    const ORIGINAL_HEIGHT = 1920;
+    const SCALE_FACTOR = 0.7; // 70% of original size
+
     // Predefined color frames
     const colorFrames: Frame[] = [
         { id: "color-white", type: "color", src: "#FFFFFF", name: "White Border" },
-        { id: "color-red", type: "color", src: "#FF0000", name: "Red Border" },
-        { id: "color-blue", type: "color", src: "#0000FF", name: "Blue Border" },
-        { id: "color-green", type: "color", src: "#00FF00", name: "Green Border" },
+        { id: "color-black", type: "color", src: "#000000", name: "Black Border" },
+        { id: "color-gray", type: "color", src: "#808080", name: "Gray Border" },
+        { id: "color-beige", type: "color", src: "#F5F5DC", name: "Beige Border" },
         // Add more color frames as needed
     ];
 
     // Predefined custom frames (ensure these images are in the /public/custom-frames/ directory)
     const customFrames: Frame[] = [
-        { id: "custom1", type: "custom", src: "/custom-frames/custom-frame1.png", name: "Floral Frame" },
+        { id: "custom1", type: "custom", src: "/frames/base.png", name: "Floral Frame" },
         { id: "custom2", type: "custom", src: "/custom-frames/custom-frame2.png", name: "Vintage Frame" },
         // Add more custom frames as needed
     ];
@@ -53,7 +59,7 @@ export default function FramePage() {
             // Set default frame as white border
             setSelectedFrame(colorFrames[0]);
         }
-    }, []);
+    }, [router]);
 
     // Handle frame selection
     const handleSelectFrame = (frame: Frame) => {
@@ -67,51 +73,26 @@ export default function FramePage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 p-6">
+        <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)]">
             <h1 className="text-2xl font-bold mb-6">Select a Frame for Your Photos</h1>
             
             {/* Frame Canvas */}
             <div
-                className="relative flex flex-col items-center justify-center mb-8"
+                className="relative mb-8"
                 style={{
-                    width: "400px",
-                    height: "400px",
+                    width: `${ORIGINAL_WIDTH * SCALE_FACTOR}px`,
+                    height: `${ORIGINAL_HEIGHT * SCALE_FACTOR}px`,
                     backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                    position: "relative",
                 }}
             >
-                {/* Top Border */}
-                {selectedFrame?.type === "color" && (
-                    <div
-                        className="absolute top-0 left-0 w-full"
-                        style={{ height: "10px", backgroundColor: selectedFrame.src }}
-                    ></div>
-                )}
-
-                {/* Bottom Border */}
-                {selectedFrame?.type === "color" && (
-                    <div
-                        className="absolute bottom-0 left-0 w-full"
-                        style={{ height: "10px", backgroundColor: selectedFrame.src }}
-                    ></div>
-                )}
-
-                {/* Custom Frame Overlay */}
-                {selectedFrame?.type === "custom" && (
-                    <img
-                        src={selectedFrame.src}
-                        alt={`Frame ${selectedFrame.name}`}
-                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
-                    />
-                )}
-
                 {/* Photo Grid */}
                 <div
-                    className="grid grid-cols-2 gap-4 z-10"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 grid grid-cols-2 gap-7"
                     style={{
-                        paddingTop: selectedFrame?.type === "color" ? "10px" : "0",
-                        paddingBottom: selectedFrame?.type === "color" ? "10px" : "0",
-                        width: "320px", // 160px * 2
-                        height: "320px", // 160px * 2
+                        width: `${950 * SCALE_FACTOR}px`,
+                        height: `${1424 * SCALE_FACTOR}px`,
+                        zIndex: 1,
                     }}
                 >
                     {photos.map((photo, index) => (
@@ -119,11 +100,46 @@ export default function FramePage() {
                             key={index}
                             src={photo}
                             alt={`Photo ${index + 1}`}
-                            className="w-40 h-40 object-cover rounded-md"
-                            style={{ width: "160px", height: "160px" }}
+                            className="object-cover rounded-md"
+                            style={{
+                                width: `${461 * SCALE_FACTOR}px`,
+                                height: `${698 * SCALE_FACTOR}px`,
+                            }}
                         />
                     ))}
                 </div>
+
+                {/* Custom Frame Overlay */}
+                {selectedFrame?.type === "custom" && (
+                    <img
+                        src={selectedFrame.src}
+                        alt={`Frame ${selectedFrame.name}`}
+                        className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none"
+                        style={{ zIndex: 2 }}
+                    />
+                )}
+
+                {/* Top and Bottom Borders for Color Frames */}
+                {selectedFrame?.type === "color" && (
+                    <>
+                        <div
+                            className="absolute top-0 left-0 w-full"
+                            style={{ height: `${28 * SCALE_FACTOR}px`, backgroundColor: selectedFrame.src }}
+                        ></div>
+                        <div
+                            className="absolute bottom-0 left-0 w-full"
+                            style={{ height: `${28 * SCALE_FACTOR}px`, backgroundColor: selectedFrame.src }}
+                        ></div>
+                        <div
+                            className="absolute left-0 right-0"
+                            style={{ 
+                                top: `${28 * SCALE_FACTOR}px`,
+                                bottom: `${28 * SCALE_FACTOR}px`,
+                                backgroundColor: selectedFrame.src 
+                            }}
+                        ></div>
+                    </>
+                )}
             </div>
 
             {/* Frame Options */}
