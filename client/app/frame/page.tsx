@@ -210,8 +210,8 @@ export default function FramePage() {
                         onClick={() => handleToggle("color")}
                         className={`text-lg font-medium pb-2 ${
                             isColorFrame
-                                ? "border-b-2 border-blue-500 text-blue-500"
-                                : "text-gray-700 hover:text-blue-500"
+                                ? "border-b-2 border-[var(--canvas-darker)] text-[var(--canvas-darker)]"
+                                : "text-gray-700 hover:text-[var(--canvas-darker)]"
                         } focus:outline-none`}
                         aria-pressed={isColorFrame}
                     >
@@ -221,8 +221,8 @@ export default function FramePage() {
                         onClick={() => handleToggle("custom")}
                         className={`text-lg font-medium pb-2 ${
                             !isColorFrame
-                                ? "border-b-2 border-blue-500 text-blue-500"
-                                : "text-gray-700 hover:text-blue-500"
+                                ? "border-b-2 border-[var(--canvas-darker)] text-[var(--canvas-darker)]"
+                                : "text-gray-700 hover:text-[var(--canvas-darker)]"
                         } focus:outline-none`}
                         aria-pressed={!isColorFrame}
                     >
@@ -233,12 +233,12 @@ export default function FramePage() {
                 {/* Frame Selection Based on Toggle */}
                 <div className="mb-6">
                     {isColorFrame ? (
-                        <div className="flex flex-wrap gap-4">
-                            {colorFrames.map((frame) => (
+                        <div className="flex gap-4 overflow-x-auto flex-nowrap h-40 custom-scrollbar">
+                        {colorFrames.map((frame) => (
                                 <div
                                     key={frame.id}
                                     className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
-                                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
+                                        selectedFrame?.id === frame.id ? "border-[var(--canvas-darker)]" : "border-transparent"
                                     }`}
                                     onClick={() => handleSelectFrame(frame)}
                                     role="button"
@@ -257,22 +257,22 @@ export default function FramePage() {
                                         alt={frame.name}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
-                                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
+                                            // (e.target as HTMLImageElement).src = "/fallback-frame.png"; 
                                         }}
                                         />
                                     </div>
-                                    <p className="text-center">{frame.name}</p>
+                                    <p className={`text-center font-medium ${selectedFrame?.id === frame.id ? "text-[var(--canvas-darker)]" : "text-gray-700"}`}>{frame.name}</p>
                                     </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="flex flex-wrap gap-4">
+                        <div className="flex gap-4 overflow-x-auto flex-nowrap h-40 custom-scrollbar">
                             {customFrames.length > 0 ? (
                                 customFrames.map((frame) => (
                                     <div
                                         key={frame.id}
                                         className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
-                                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
+                                        selectedFrame?.id === frame.id ? "border-[var(--canvas-darker)]" : "border-transparent"
                                         }`}                                        
                                         onClick={() => handleSelectFrame(frame)}
                                         role="button"
@@ -295,7 +295,7 @@ export default function FramePage() {
                                                 }}
                                             />
                                         </div>
-                                        <p className={`text-center font-medium ${selectedFrame?.id === frame.id ? "text-blue-500" : "text-gray-700"}`}>{frame.name}</p>
+                                        <p className={`text-center font-medium ${selectedFrame?.id === frame.id ? "text-[var(--canvas-darker)]" : "text-gray-700"}`}>{frame.name}</p>
                                     </div>
                                 ))
                             ) : (

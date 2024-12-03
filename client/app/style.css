@@ -1,5 +1,18 @@
 :root{
     --charcoal: #1C1C1C;
     --canvas: #EAE6E0;
+    --canvas-dark: #D1CFC9;
+    --canvas-darker: #7e7a6d;
     --slate: #535366;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    margin-top: 2px;
+    height: 8px; /* Height for horizontal scrollbar */
+}
+
+/* Firefox scrollbar styling */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--canvas-dark) var(--canvas);
 }
