@@ -130,6 +130,7 @@ export default function FramePage() {
             height: `${SCALED_FRAME_HEIGHT}px`, //576px
             backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
             position: "relative",
+            // overflow: "hidden", // Hide the overflow
             }}
         >
             {/* Top Border */}
@@ -159,8 +160,8 @@ export default function FramePage() {
                         alt={`Photo ${index + 1}`}
                         className="object-cover"
                         style={{
-                        width: `${PHOTO_WIDTH}px`, //138px
-                        height: `${PHOTO_HEIGHT}px`, //209px
+                            width: `${PHOTO_WIDTH}px`, //138px
+                            height: `${PHOTO_HEIGHT}px`, //209px
                         }}
                     />
                     ))}

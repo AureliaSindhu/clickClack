@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import '../style.css';
+import Image from 'next/image';
+import logo from '../../public/img/clickclackLogo.png';
 
 export default function HomePage() {
     const router = useRouter(); 
@@ -12,8 +14,9 @@ export default function HomePage() {
 
     return (
         <div className="flex flex-col align-center items-center justify-center min-h-screen bg-[var(--canvas)]">
+            <Image src={logo} alt="ClickClack Logo" width={150} height={150} className="m-4"/>
             <h1 className="text-4xl font-bold mb-4 text-[var(--charcoal)]">ClickClack</h1>
-            <p className="text-lg text-[var(--slate)] mb-4">
+            <p className="text-md text-[var(--slate)] mb-4">
                 Capture fun and creative photos just like in a real photobooth!
             </p>
             <button
