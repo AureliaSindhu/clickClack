@@ -96,6 +96,37 @@ export default function FinalizePage() {
         });
     };
 
+    // Helper function to draw images with "object-cover" behavior
+    const drawImageCover = (
+        ctx: CanvasRenderingContext2D,
+        img: HTMLImageElement,
+        dx: number,
+        dy: number,
+        dWidth: number,
+        dHeight: number
+    ) => {
+        const imgAspect = img.width / img.height;
+        const targetAspect = dWidth / dHeight;
+
+        let sx: number, sy: number, sWidth: number, sHeight: number;
+
+        if (imgAspect > targetAspect) {
+            // Image is wider than target aspect ratio
+            sHeight = img.height;
+            sWidth = sHeight * targetAspect;
+            sx = (img.width - sWidth) / 2;
+            sy = 0;
+        } else {
+            // Image is taller than target aspect ratio
+            sWidth = img.width;
+            sHeight = sWidth / targetAspect;
+            sx = 0;
+            sy = (img.height - sHeight) / 2;
+        }
+
+        ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    };
+
     // Function to handle download of the full-size image
     const handleDownload = async () => {
         if (!selectedFrame || photos.length === 0) {
@@ -121,25 +152,23 @@ export default function FinalizePage() {
             // Load frame image
             const frameImg = await loadImage(selectedFrame.src);
 
-            // Draw the top border (if frame has a specific top border image)
-            // Assuming the frame image includes top and bottom borders,
-            // so no need to draw them separately.
-            // If you have separate images for borders, load and draw them here.
-
             // Load and draw photos
-            const loadedPhotos = await Promise.all(photos.slice(0, 4).map(photo => loadImage(photo)));
+            const loadedPhotos = await Promise.all(
+                photos.slice(0, 4).map((photo) => loadImage(photo))
+            );
+
             // Define positions based on original spacing
             const photoPositions = [
-                { x: 65, y: 75 },           // Top-left photo
+                { x: 65, y: 75 }, // Top-left photo
                 { x: 65 + 461 + 30, y: 75 }, // Top-right photo
                 { x: 65, y: 75 + 698 + 30 }, // Bottom-left photo
                 { x: 65 + 461 + 30, y: 75 + 698 + 30 }, // Bottom-right photo
             ];
 
-            // Draw each photo at its position
+            // Draw each photo with aspect ratio preserved
             loadedPhotos.forEach((img, index) => {
                 const pos = photoPositions[index];
-                ctx.drawImage(img, pos.x, pos.y, 461, 698);
+                drawImageCover(ctx, img, pos.x, pos.y, 461, 698);
             });
 
             // Draw the frame on top
@@ -181,7 +210,6 @@ export default function FinalizePage() {
                     className="w-full"
                     style={{
                         height: `${SCALED_TOP_HEIGHT}px`, //22px
-                        // Removed backgroundColor as frame image covers it
                         backgroundColor: "transparent",
                     }}
                 ></div>
