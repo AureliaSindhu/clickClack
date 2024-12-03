@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import "../style.css";
-import Image from "next/image"; // Optional: For optimized images
+import Image from "next/image"; 
 
 interface Frame {
     id: string;
@@ -45,7 +45,7 @@ export default function FramePage() {
     const colorFrames= useMemo(() => [
         { id: "color1", type: "color" as "color", src: "/color-frames/frame1.png", thumbnailSrc: "/color-frames/frame1-thumb.png", name: "Charcoal" },
         { id: "color2", type: "color" as "color", src: "/color-frames/frame2.png", thumbnailSrc: "/color-frames/frame2-thumb.png", name: "Deep Purple" },
-        { id: "color3", type: "color" as "color", src: "/color-frames/frame3.png", thumbnailSrc: "/color-frames/frame3-thumb.png", name: "Stale" },
+        { id: "color3", type: "color" as "color", src: "/color-frames/frame3.png", thumbnailSrc: "/color-frames/frame3-thumb.png", name: "Slate" },
         { id: "color4", type: "color" as "color", src: "/color-frames/frame4.png", thumbnailSrc: "/color-frames/frame4-thumb.png", name: "Purple Gray" },
         { id: "color5", type: "color" as "color", src: "/color-frames/frame5.png", thumbnailSrc: "/color-frames/frame5-thumb.png", name: "Mountain" },
         { id: "color6", type: "color" as "color", src: "/color-frames/frame6.png", thumbnailSrc: "/color-frames/frame6-thumb.png", name: "Beige" },
@@ -58,7 +58,7 @@ export default function FramePage() {
     const customFrames= useMemo(() => [
         { id: "custom1", type: "custom" as "custom", src: "/custom-frames/cframe1.png", thumbnailSrc: "/custom-frames/cframe1-thumb.png", name: "Snow" },
         { id: "custom2", type: "custom" as "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Pattern" },
-        { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Gingerman" },
+        { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Ginger Man" },
         { id: "custom4", type: "custom" as "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Town" },
         { id: "custom5", type: "custom" as "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Table" },
         { id: "custom6", type: "custom" as "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "Tree" },
@@ -86,7 +86,7 @@ export default function FramePage() {
         }
 
         setFrames([...colorFrames, ...customFrames]);
-    }, []);
+    }, [colorFrames, customFrames, router]);
 
     // Handle frame selection
     const handleSelectFrame = (frame: Frame) => {
@@ -101,15 +101,15 @@ export default function FramePage() {
         sessionStorage.setItem("isColorFrame", isColor.toString());
 
         if (isColor) {
-        // Switching to color frames
-        const defaultColorFrame = colorFrames[0];
-        setSelectedFrame(defaultColorFrame);
-        sessionStorage.setItem("selectedFrame", JSON.stringify(defaultColorFrame));
+            // Switching to color frames
+            const defaultColorFrame = colorFrames[0];
+            setSelectedFrame(defaultColorFrame);
+            sessionStorage.setItem("selectedFrame", JSON.stringify(defaultColorFrame));
         } else {
-        // Switching to custom frames
-        const defaultCustomFrame = customFrames[0];
-        setSelectedFrame(defaultCustomFrame);
-        sessionStorage.setItem("selectedFrame", JSON.stringify(defaultCustomFrame));
+            // Switching to custom frames
+            const defaultCustomFrame = customFrames[0];
+            setSelectedFrame(defaultCustomFrame);
+            sessionStorage.setItem("selectedFrame", JSON.stringify(defaultCustomFrame));
         }
     };
 
@@ -120,196 +120,200 @@ export default function FramePage() {
 
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-10 text-black">
-        <h1 className="text-2xl font-bold mb-6">Select a Frame for Your Photos</h1>
+            <h1 className="text-2xl font-bold mb-6">Select a Frame for Your Photos</h1>
 
-        {/* Frame Canvas */}
-        <div
-            className="flex flex-col relative mb-8"
-            style={{
-            width: `${SCALED_FRAME_WIDTH}px`, //324px
-            height: `${SCALED_FRAME_HEIGHT}px`, //576px
-            backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
-            position: "relative",
-            // overflow: "hidden", // Hide the overflow
-            }}
-        >
-            {/* Top Border */}
+            {/* Frame Canvas */}
             <div
-            className="w-full"
-            style={{
-                height: `${SCALED_TOP_HEIGHT}px`, //22px
-                backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
-            }}
-            ></div>
-
-            {/* Photo Grid */}
-            <div className="flex-grow flex justify-center items-center">
+                className="flex flex-col relative mb-8"
+                style={{
+                    width: `${SCALED_FRAME_WIDTH}px`, //324px
+                    height: `${SCALED_FRAME_HEIGHT}px`, //576px
+                    backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
+                    position: "relative",
+                }}
+            >
+                {/* Top Border */}
                 <div
-                    // className="grid grid-cols-2 gap-[9px]"
-                    // style={{
-                    //     width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
-                    //     height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
-                    //     marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
-                    //     marginRight: `${LEFT_RIGHT_GAP}px`, //19px
-                    // }}
-                    className="grid"
+                    className="w-full"
                     style={{
-                        width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 + 9 = 285px
-                        height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 + 9 = 427px
-                        marginLeft: `${LEFT_RIGHT_GAP}px`, // 19px
-                        marginRight: `${LEFT_RIGHT_GAP}px`, // 19px
-                        gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
-                        gridTemplateRows: 'repeat(2, 1fr)', // 2 rows
-                        gap: `${GAP_BETWEEN_PHOTOS}px` // 9px between items
+                        height: `${SCALED_TOP_HEIGHT}px`, //22px
+                        backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent",
                     }}
-                >
-                    {photos.map((photo, index) => (
-                    <img
-                        key={index}
-                        src={photo}
-                        alt={`Photo ${index + 1}`}
-                        className="object-cover"
+                ></div>
+
+                {/* Photo Grid */}
+                <div className="flex-grow flex justify-center items-center">
+                    <div
+                        // className="grid grid-cols-2 gap-[9px]"
+                        // style={{
+                        //     width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
+                        //     height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
+                        //     marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
+                        //     marginRight: `${LEFT_RIGHT_GAP}px`, //19px
+                        // }}
+                        className="grid"
                         style={{
-                            width: `${PHOTO_WIDTH}px`, //138px
-                            height: `${PHOTO_HEIGHT}px`, //209px
+                            width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 + 9 = 285px
+                            height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 + 9 = 427px
+                            marginLeft: `${LEFT_RIGHT_GAP}px`, // 19px
+                            marginRight: `${LEFT_RIGHT_GAP}px`, // 19px
+                            gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
+                            gridTemplateRows: 'repeat(2, 1fr)', // 2 rows
+                            gap: `${GAP_BETWEEN_PHOTOS}px` // 9px between items
                         }}
-                    />
-                    ))}
+                    >
+                        {photos.slice(0, 4).map((photo, index) => (
+                            <img
+                                key={index}
+                                src={photo}
+                                alt={`Photo ${index + 1}`}
+                                className="object-cover"
+                                style={{
+                                    width: `${PHOTO_WIDTH}px`, //138px
+                                    height: `${PHOTO_HEIGHT}px`, //209px
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            {/* Bottom Border */}
-            <div
-            className="w-full"
-            style={{
-                height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
-                // backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
-            }}
-            ></div>
-
-            {/* Frame Overlay */}
-            {selectedFrame && (
-            <img
-                src={selectedFrame.src}
-                alt={`Frame ${selectedFrame.name}`}
-                className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
-                style={{ zIndex: 2 }}
-            />
-            )}
-        </div>
-
-        {/* Frame Options */}
-        <div className="w-full max-w-4xl">
-            <h2 className="text-xl font-semibold mb-4">Choose a Frame</h2>
-
-            {/* Frame Type Selection Buttons */}
-            <div className="flex items-center mb-6 space-x-4">
-                <button
-                onClick={() => handleToggle("color")}
-                className={`px-6 py-2 rounded-md font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    isColorFrame
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-                >
-                Color Frames
-                </button>
-                <button
-                onClick={() => handleToggle("custom")}
-                className={`px-6 py-2 rounded-md font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    !isColorFrame
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-                >
-                Custom Frames
-                </button>
-            </div>
-
-            {/* Frame Selection Based on Toggle */}
-            <div className="mb-6">
-            {isColorFrame ? (
-                <div className="flex flex-wrap gap-4">
-                {colorFrames.map((frame) => (
-                    <div
-                    key={frame.id}
-                    className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
-                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
-                    }`}
-                    onClick={() => handleSelectFrame(frame)}
-                    role="button"
-                    aria-pressed={selectedFrame?.id === frame.id}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                        handleSelectFrame(frame);
-                        }
+                {/* Bottom Border */}
+                <div
+                    className="w-full"
+                    style={{
+                        height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
+                         // backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
                     }}
-                    >
-                    {/* Circular Container for Frame Thumbnail */}
-                    <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
-                        <img
-                        src={frame.thumbnailSrc}
-                        alt={frame.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
-                        }}
-                        />
-                    </div>
-                    <p className="text-center">{frame.name}</p>
-                    </div>
-                ))}
-                </div>
-            ) : (
-                <div className="flex flex-wrap gap-4">
-                {customFrames.length > 0 ? (
-                    customFrames.map((frame) => (
-                    <div
-                        key={frame.id}
-                        className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
-                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
-                        }`}
-                        onClick={() => handleSelectFrame(frame)}
-                        role="button"
-                        aria-pressed={selectedFrame?.id === frame.id}
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            handleSelectFrame(frame);
-                        }
-                        }}
-                    >
-                        {/* Circular Container for Frame Thumbnail */}
-                        <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
-                        <img
-                            src={frame.thumbnailSrc}
-                            alt={frame.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
-                            }}
-                        />
-                        </div>
-                        <p className="text-center">{frame.name}</p>
-                    </div>
-                    ))
-                ) : (
-                    <p className="text-gray-500">No custom frames available.</p>
-                )}
-                </div>
-            )}
-            </div>
-        </div>
+                ></div>
 
-        {/* Proceed Button */}
-        <button
-            onClick={handleProceed}
-            className="mt-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-            disabled={!selectedFrame}
-        >
-            Proceed to Finalize
-        </button>
+                {/* Frame Overlay */}
+                {selectedFrame && (
+                    <img
+                        src={selectedFrame.src}
+                        alt={`Frame ${selectedFrame.name}`}
+                        className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+                        style={{ zIndex: 2 }}
+                        // onError={(e) => {
+                        //     (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
+                        // }}
+                    />
+                )}
+            </div>
+
+            {/* Frame Options */}
+            <div className="w-full max-w-4xl">
+                <h2 className="text-xl font-semibold mb-4">Choose a Frame</h2>
+
+                {/* Frame Type Selection List */}
+                <div className="flex space-x-8 mb-6 border-b-2 border-gray-200">
+                    <button
+                        onClick={() => handleToggle("color")}
+                        className={`text-lg font-medium pb-2 ${
+                            isColorFrame
+                                ? "border-b-2 border-blue-500 text-blue-500"
+                                : "text-gray-700 hover:text-blue-500"
+                        } focus:outline-none`}
+                        aria-pressed={isColorFrame}
+                    >
+                        Color Frames
+                    </button>
+                    <button
+                        onClick={() => handleToggle("custom")}
+                        className={`text-lg font-medium pb-2 ${
+                            !isColorFrame
+                                ? "border-b-2 border-blue-500 text-blue-500"
+                                : "text-gray-700 hover:text-blue-500"
+                        } focus:outline-none`}
+                        aria-pressed={!isColorFrame}
+                    >
+                        Custom Frames
+                    </button>
+                </div>
+
+                {/* Frame Selection Based on Toggle */}
+                <div className="mb-6">
+                    {isColorFrame ? (
+                        <div className="flex flex-wrap gap-4">
+                            {colorFrames.map((frame) => (
+                                <div
+                                    key={frame.id}
+                                    className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
+                                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
+                                    }`}
+                                    onClick={() => handleSelectFrame(frame)}
+                                    role="button"
+                                    aria-pressed={selectedFrame?.id === frame.id}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            handleSelectFrame(frame);
+                                        }
+                                    }}
+                                >
+                                    {/* Frame Thumbnail */}
+                                    <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
+                                        <img
+                                        src={frame.thumbnailSrc}
+                                        alt={frame.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
+                                        }}
+                                        />
+                                    </div>
+                                    <p className="text-center">{frame.name}</p>
+                                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-wrap gap-4">
+                            {customFrames.length > 0 ? (
+                                customFrames.map((frame) => (
+                                    <div
+                                        key={frame.id}
+                                        className={`flex flex-col items-center cursor-pointer p-2 rounded-md border-2 ${
+                                        selectedFrame?.id === frame.id ? "border-blue-500" : "border-transparent"
+                                        }`}                                        
+                                        onClick={() => handleSelectFrame(frame)}
+                                        role="button"
+                                        aria-pressed={selectedFrame?.id === frame.id}
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                handleSelectFrame(frame);
+                                            }
+                                        }}
+                                    >
+                                        {/* Frame Thumbnail */}
+                                        <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
+                                        <img
+                                                src={frame.thumbnailSrc}
+                                                alt={frame.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
+                                                }}
+                                            />
+                                        </div>
+                                        <p className={`text-center font-medium ${selectedFrame?.id === frame.id ? "text-blue-500" : "text-gray-700"}`}>{frame.name}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-500">No custom frames available.</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Proceed Button */}
+            <button
+                onClick={handleProceed}
+                className="mt-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={!selectedFrame}
+            >
+                Proceed to Finalize
+            </button>
         </div>
     );
 }
