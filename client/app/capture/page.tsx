@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { useRouter } from "next/navigation";
 import '../style.css';
+import Footer from "../../components/footer";
 
 export default function CapturePage() {
     const webcamRef = useRef<Webcam>(null);
@@ -20,7 +21,7 @@ export default function CapturePage() {
 
                 if (updatedPhotos.length === 4) {
                     sessionStorage.setItem("photos", JSON.stringify(updatedPhotos));
-                    router.push("/frame");
+                    router.push("/review");
                 }
             } else {
                 console.error("Failed to capture screenshot");
@@ -56,6 +57,7 @@ export default function CapturePage() {
             <p className="text-gray-500 mt-4">
                 {photos.length}/4 photos captured
             </p>
+            <Footer />
         </div>
     );
 }

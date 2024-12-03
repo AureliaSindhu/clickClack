@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import "../style.css";
+import Footer from "../../components/footer";
 import Image from "next/image"; 
 
 interface Frame {
@@ -314,6 +315,8 @@ export default function FramePage() {
             >
                 Proceed to Finalize
             </button>
+
+            <Footer/>
         </div>
     );
 }

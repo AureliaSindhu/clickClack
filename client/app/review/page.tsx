@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Footer from "../../components/footer";
 
 export default function ReviewPage() {
     const router = useRouter();
@@ -68,6 +69,7 @@ export default function ReviewPage() {
             >
                 Proceed to Frame Selection
             </button>
+            <Footer />
         </div>
     );
 }

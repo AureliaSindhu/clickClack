@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 import '../style.css';
+import Footer from "../../components/footer";
 
 interface Frame {
     id: string;
@@ -270,6 +271,7 @@ export default function FinalizePage() {
             >
                 Download Image
             </button>
+            <Footer />
         </div>
     );
 }

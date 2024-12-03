@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import '../style.css';
 import Image from 'next/image';
 import logo from '../../public/img/clickclackLogo.png';
+import Footer from '../../components/footer';
 
 export default function HomePage() {
     const router = useRouter(); 
@@ -25,6 +26,8 @@ export default function HomePage() {
             >
                 Get Started
             </button>
+
+            <Footer/>
         </div>
     );
 }

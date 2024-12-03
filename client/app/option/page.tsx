@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "../style.css";
+import Footer from "../../components/footer";
 import twoByTwo from "../../public/img/2by2(illust).png"
 import oneByFour from "../../public/img/1by4(illust).png"
 
@@ -58,8 +59,7 @@ export default function Option() {
                     </div>
                 </div>
             </div>
-
-
+            <Footer/>
         </div>
     );
 }
