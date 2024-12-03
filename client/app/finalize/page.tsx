@@ -20,7 +20,7 @@ export default function FinalizePage() {
 
     const finalRef = useRef<HTMLDivElement>(null);
 
-    // Scaling parameters (must match FramePage)
+    // Scaling parameters (for preview)
     const SCALE_FACTOR = 0.3;
 
     // Original dimensions (same as FramePage)
@@ -29,13 +29,13 @@ export default function FinalizePage() {
     const ORIGINAL_TOP_HEIGHT = 75; 
     const ORIGINAL_BOTTOM_HEIGHT = 421; 
 
-    // Scaled dimensions
+    // Scaled dimensions (for preview)
     const SCALED_TOP_HEIGHT = Math.round(ORIGINAL_TOP_HEIGHT * SCALE_FACTOR); //22px
     const SCALED_BOTTOM_HEIGHT = Math.round(ORIGINAL_BOTTOM_HEIGHT * SCALE_FACTOR); //127px
     const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR); //324px
     const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR); //576px
 
-    // Photo grid dimensions
+    // Photo grid dimensions (for preview)
     const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); //138px
     const PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR); //210px
     const GAP_BETWEEN_PHOTOS = Math.round(30 * SCALE_FACTOR); //9px
@@ -65,35 +65,15 @@ export default function FinalizePage() {
         }
     }, [photos, selectedFrame]);
 
-    // const generateFinalImage = async () => {
-    //     if (finalRef.current) {
-    //         try {
-    //             const canvas = await html2canvas(finalRef.current, {
-    //                 useCORS: true,
-    //                 allowTaint: true,
-    //                 backgroundColor: "transparent",
-    //                 scale: 2, 
-    //                 width: ORIGINAL_WIDTH, // Use original width
-    //                 height: ORIGINAL_HEIGHT, // Use original height
-    //             });
-    //             console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 324x576
-    //             const dataURL = canvas.toDataURL("image/png");
-    //             setFinalImage(dataURL);
-    //         } catch (error) {
-    //             console.error("Error generating final image:", error);
-    //         }
-    //     }
-    // };
-
     const generateFinalImage = async () => {
         if (finalRef.current) {
-            // Temporarily set photos back to their original sizes
+            // Temporarily reset photo sizes to their original scale
             const originalPhotoSizes = photos.map(() => ({
                 width: PHOTO_WIDTH / SCALE_FACTOR,
-                height: PHOTO_HEIGHT / SCALE_FACTOR
+                height: PHOTO_HEIGHT / SCALE_FACTOR,
             }));
-    
-            // Temporarily modify photo sizes before capturing the canvas
+
+            // Temporarily set photos back to their original sizes (without scaling) before capturing the canvas
             const updatedPhotos = photos.map((photo, index) => (
                 <img
                     key={index}
@@ -108,12 +88,12 @@ export default function FinalizePage() {
             ));
     
             try {
-                // Generate canvas at the original resolution
+                // Generate canvas at the original resolution (1080x1920) without scaling
                 const canvas = await html2canvas(finalRef.current, {
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: "transparent",
-                    scale: 2, // Ensure higher resolution
+                    scale: 1, // Set to 1 for actual size (no scaling)
                     width: ORIGINAL_WIDTH,
                     height: ORIGINAL_HEIGHT,
                 });
@@ -126,16 +106,54 @@ export default function FinalizePage() {
             }
         }
     };
-    
 
+    // New method to generate the full-size image with frame for download
     const handleDownload = () => {
-        if (finalImage) {
-            const link = document.createElement("a");
-            link.href = finalImage;
-            link.download = "clickclack.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (finalRef.current && selectedFrame) {
+            const hiddenCanvas = document.createElement("canvas");
+            const ctx = hiddenCanvas.getContext("2d");
+
+            // Set the hidden canvas size to the original size (1080x1920)
+            hiddenCanvas.width = ORIGINAL_WIDTH;
+            hiddenCanvas.height = ORIGINAL_HEIGHT;
+
+            if (ctx) {
+                // Clear any previous content
+                ctx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+
+                // Draw the selected frame and photos at the full resolution
+                ctx.fillStyle = selectedFrame.type === "color" ? selectedFrame.src : "transparent";
+                ctx.fillRect(0, 0, hiddenCanvas.width, ORIGINAL_TOP_HEIGHT); // Top border
+                ctx.fillRect(0, ORIGINAL_HEIGHT - ORIGINAL_BOTTOM_HEIGHT, hiddenCanvas.width, ORIGINAL_BOTTOM_HEIGHT); // Bottom border
+
+                // Draw the photos on the canvas (adjust as necessary for positions)
+                photos.forEach((photo, index) => {
+                    const x = (index % 2) * (461); // Set positions of photos horizontally (split in two columns)
+                    const y = Math.floor(index / 2) * (698); // Set positions vertically
+
+                    const img = new Image();
+                    img.src = photo;
+                    img.onload = () => {
+                        ctx.drawImage(img, x, y, 461, 698); // Draw photo at original size
+                    };
+                });
+
+                // Draw the frame
+                const frameImg = new Image();
+                frameImg.src = selectedFrame.src;
+                frameImg.onload = () => {
+                    ctx.drawImage(frameImg, 0, 0, hiddenCanvas.width, hiddenCanvas.height); // Draw frame over the image
+
+                    // After everything is drawn, create the download link
+                    const imageUrl = hiddenCanvas.toDataURL("image/png");
+                    const link = document.createElement("a");
+                    link.href = imageUrl;
+                    link.download = "final-image.png";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+            }
         }
     };
 
@@ -206,7 +224,7 @@ export default function FinalizePage() {
                         className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
                         style={{ zIndex: 2 }}
                         onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
+                            (e.target as HTMLImageElement).style.visibility = "hidden";
                         }}
                     />
                 )}
@@ -215,9 +233,9 @@ export default function FinalizePage() {
             {/* Download Button */}
             <button
                 onClick={handleDownload}
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition"
+                className="bg-blue-500 text-white py-2 px-4 rounded"
             >
-                Download Photo
+                Download Full-size Image
             </button>
         </div>
     );
