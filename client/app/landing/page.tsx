@@ -8,8 +8,8 @@ import logo from '../../public/img/clickclackLogo.png';
 export default function HomePage() {
     const router = useRouter(); 
 
-    const startPhotoSession = () => {
-        router.push("/capture");
+    const getStarted = () => {
+        router.push("/getStarted");
     };
 
     return (
@@ -20,10 +20,10 @@ export default function HomePage() {
                 Capture fun and creative photos just like in a real photobooth!
             </p>
             <button
-                onClick={startPhotoSession}
+                onClick={getStarted}
                 className="px-6 py-3 bg-[var(--charcoal)] text-white rounded-lg shadow-lg hover:bg-[var(--slate)] transition"
             >
-                Start Photo Session
+                Get Started
             </button>
         </div>
     );
