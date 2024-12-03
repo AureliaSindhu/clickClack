@@ -65,16 +65,60 @@ export default function FinalizePage() {
         }
     }, [photos, selectedFrame]);
 
+    // const generateFinalImage = async () => {
+    //     if (finalRef.current) {
+    //         try {
+    //             const canvas = await html2canvas(finalRef.current, {
+    //                 useCORS: true,
+    //                 allowTaint: true,
+    //                 backgroundColor: "transparent",
+    //                 scale: 2, 
+    //                 width: ORIGINAL_WIDTH, // Use original width
+    //                 height: ORIGINAL_HEIGHT, // Use original height
+    //             });
+    //             console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 324x576
+    //             const dataURL = canvas.toDataURL("image/png");
+    //             setFinalImage(dataURL);
+    //         } catch (error) {
+    //             console.error("Error generating final image:", error);
+    //         }
+    //     }
+    // };
+
     const generateFinalImage = async () => {
         if (finalRef.current) {
+            // Temporarily set photos back to their original sizes
+            const originalPhotoSizes = photos.map(() => ({
+                width: PHOTO_WIDTH / SCALE_FACTOR,
+                height: PHOTO_HEIGHT / SCALE_FACTOR
+            }));
+    
+            // Temporarily modify photo sizes before capturing the canvas
+            const updatedPhotos = photos.map((photo, index) => (
+                <img
+                    key={index}
+                    src={photo}
+                    alt={`Photo ${index + 1}`}
+                    className="object-cover"
+                    style={{
+                        width: `${originalPhotoSizes[index].width}px`, // Set back to original size
+                        height: `${originalPhotoSizes[index].height}px`, // Set back to original size
+                    }}
+                />
+            ));
+    
             try {
+                // Generate canvas at the original resolution
                 const canvas = await html2canvas(finalRef.current, {
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: "transparent",
-                    scale: 1, // Capture at actual displayed size
+                    scale: 2, // Ensure higher resolution
+                    width: ORIGINAL_WIDTH,
+                    height: ORIGINAL_HEIGHT,
                 });
-                console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 324x576
+    
+                console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 1080x1920
                 const dataURL = canvas.toDataURL("image/png");
                 setFinalImage(dataURL);
             } catch (error) {
@@ -82,6 +126,7 @@ export default function FinalizePage() {
             }
         }
     };
+    
 
     const handleDownload = () => {
         if (finalImage) {
@@ -134,7 +179,7 @@ export default function FinalizePage() {
                                 key={index}
                                 src={photo}
                                 alt={`Photo ${index + 1}`}
-                                className="object-cover rounded-md"
+                                className="object-cover"
                                 style={{
                                     width: `${PHOTO_WIDTH}px`, //138px
                                     height: `${PHOTO_HEIGHT}px`, //210px

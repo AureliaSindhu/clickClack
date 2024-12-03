@@ -38,7 +38,7 @@ export default function FramePage() {
     // Photo grid dimensions
     const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); //138px
     const PHOTO_HEIGHT = Math.floor(698 * SCALE_FACTOR); //209px
-    const GAP_BETWEEN_PHOTOS = Math.round(30 * SCALE_FACTOR); //9px
+    const GAP_BETWEEN_PHOTOS = Math.round(28 * SCALE_FACTOR); //9px
     const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     // Predefined color frames (image-based frames with solid borders)
@@ -145,12 +145,22 @@ export default function FramePage() {
             {/* Photo Grid */}
             <div className="flex-grow flex justify-center items-center">
                 <div
-                    className="grid grid-cols-2 gap-[9px]"
+                    // className="grid grid-cols-2 gap-[9px]"
+                    // style={{
+                    //     width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
+                    //     height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
+                    //     marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
+                    //     marginRight: `${LEFT_RIGHT_GAP}px`, //19px
+                    // }}
+                    className="grid"
                     style={{
-                    width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
-                    height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
-                    marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
-                    marginRight: `${LEFT_RIGHT_GAP}px`, //19px
+                        width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 + 9 = 285px
+                        height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 + 9 = 427px
+                        marginLeft: `${LEFT_RIGHT_GAP}px`, // 19px
+                        marginRight: `${LEFT_RIGHT_GAP}px`, // 19px
+                        gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
+                        gridTemplateRows: 'repeat(2, 1fr)', // 2 rows
+                        gap: `${GAP_BETWEEN_PHOTOS}px` // 9px between items
                     }}
                 >
                     {photos.map((photo, index) => (
@@ -173,7 +183,7 @@ export default function FramePage() {
             className="w-full"
             style={{
                 height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
-                backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
+                // backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
             }}
             ></div>
 
