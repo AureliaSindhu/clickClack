@@ -266,9 +266,9 @@ export default function FinalizePage() {
             {/* Download Button */}
             <button
                 onClick={handleDownload}
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-blue-600 transition"
+                className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition"
             >
-                Download Full-size Image
+                Download Image
             </button>
         </div>
     );

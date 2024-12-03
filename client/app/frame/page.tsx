@@ -233,7 +233,7 @@ export default function FramePage() {
                 {/* Frame Selection Based on Toggle */}
                 <div className="mb-6">
                     {isColorFrame ? (
-                        <div className="flex gap-4 overflow-x-auto flex-nowrap h-40 custom-scrollbar">
+                        <div className="flex gap-4 overflow-x-auto flex-nowrap custom-scrollbar">
                         {colorFrames.map((frame) => (
                                 <div
                                     key={frame.id}
@@ -266,7 +266,7 @@ export default function FramePage() {
                             ))}
                         </div>
                     ) : (
-                        <div className="flex gap-4 overflow-x-auto flex-nowrap h-40 custom-scrollbar">
+                        <div className="flex gap-4 overflow-x-auto flex-nowrap custom-scrollbar">
                             {customFrames.length > 0 ? (
                                 customFrames.map((frame) => (
                                     <div
@@ -309,7 +309,7 @@ export default function FramePage() {
             {/* Proceed Button */}
             <button
                 onClick={handleProceed}
-                className="mt-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="mt-4 px-6 py-3 bg-[#536659] text-white rounded-lg shadow-lg hover:bg-[#356c47] transition disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={!selectedFrame}
             >
                 Proceed to Finalize
