@@ -40,8 +40,8 @@ export default function CapturePage() {
                     screenshotFormat="image/jpeg"
                     className="w-full h-full object-cover"  // Ensure the webcam feed is responsive and fills the container while maintaining the aspect ratio
                     videoConstraints={{
-                        width: 1080*.4,
-                        height: 1920*.4,
+                        width: 1080,
+                        height: 1920,
                         facingMode: "user",
                     }}
                 />
