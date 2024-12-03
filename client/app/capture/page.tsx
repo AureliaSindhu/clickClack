@@ -40,15 +40,15 @@ export default function CapturePage() {
                     screenshotFormat="image/jpeg"
                     className="w-full h-full object-cover"  // Ensure the webcam feed is responsive and fills the container while maintaining the aspect ratio
                     videoConstraints={{
-                        width: 1080,
-                        height: 1920,
+                        width: 1080*.4,
+                        height: 1920*.4,
                         facingMode: "user",
                     }}
                 />
             </div>
             <button
                 onClick={capturePhoto}
-                className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 transition"
+                className="px-6 py-3 bg-[#536659] text-white rounded-lg shadow-lg hover:bg-[#356c47] transition"
                 disabled={photos.length === 4}
             >
                 {photos.length < 4 ? `Capture Photo ${photos.length + 1}` : "Completed"}
