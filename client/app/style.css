@@ -4,6 +4,47 @@
     --canvas-dark: #D1CFC9;
     --canvas-darker: #7e7a6d;
     --slate: #535366;
+    /* --brandFont: 'Chillax', sans-serif; */
+}
+
+@font-face {
+    font-family: 'Chillax';
+    font-weight: normal;
+    font-style: normal;
+    src: url('/fonts/Chillax-Regular.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Chillax';
+    font-weight: 300; /* Light weight */
+    font-style: normal;
+    src: url('/fonts/Chillax-Light.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Chillax';
+    font-weight: bold;
+    font-style: normal;
+    src: url('/fonts/Chillax-Bold.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Chillax';
+    font-weight: normal;
+    font-style: italic;
+    src: url('/fonts/Chillax-Italic.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Chillax';
+    font-weight: bold;
+    font-style: italic;
+    src: url('/fonts/Chillax-BoldItalic.otf') format('opentype');
+    font-display: swap;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -16,3 +57,4 @@
     scrollbar-width: thin;
     scrollbar-color: var(--canvas-dark) var(--canvas);
 }
+

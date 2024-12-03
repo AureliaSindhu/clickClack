@@ -14,8 +14,8 @@ export default function HomePage() {
 
     return (
         <div className="flex flex-col align-center items-center justify-center min-h-screen bg-[var(--canvas)]">
-            <Image src={logo} alt="ClickClack Logo" width={150} height={150} className="m-4"/>
-            <h1 className="text-4xl font-bold mb-4 text-[var(--charcoal)]">ClickClack</h1>
+            <Image src={logo} alt="ClickClack Logo" width={150} height={150} className="mb-5"/>
+            <h1 className="text-4xl font-bold mb-2 text-[var(--charcoal)] font-chillax">ClickClack</h1>
             <p className="text-md text-[var(--slate)] mb-4">
                 Capture fun and creative photos just like in a real photobooth!
             </p>

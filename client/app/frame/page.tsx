@@ -120,7 +120,7 @@ export default function FramePage() {
 
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-10 text-black">
-            <h1 className="text-2xl font-bold mb-6">Select a Frame for Your Photos</h1>
+            <h1 className="text-3xl mb-6 font-chillax">Select a Frame for Your Photos</h1>
 
             {/* Frame Canvas */}
             <div
@@ -202,7 +202,7 @@ export default function FramePage() {
 
             {/* Frame Options */}
             <div className="w-full max-w-4xl">
-                <h2 className="text-xl font-semibold mb-4">Choose a Frame</h2>
+                <h2 className="text-xl font-semibold font-chillax mb-4">Choose a Frame</h2>
 
                 {/* Frame Type Selection List */}
                 <div className="flex space-x-8 mb-6 border-b-2 border-gray-200">

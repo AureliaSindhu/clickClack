@@ -16,6 +16,9 @@ export default {
         slate: "var(--slate)",
       },
     },
+    fontFamily: {
+      chillax: ['Chillax', 'sans-serif'],
+    },
   },
   plugins: [],
 } satisfies Config;

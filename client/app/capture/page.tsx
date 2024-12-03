@@ -32,7 +32,7 @@ export default function CapturePage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)]">
-            <h1 className="text-2xl font-bold mb-4 text-[var(--charcoal)]">Capture Your Photos</h1>
+            <h1 className="text-3xl mb-4 text-[var(--charcoal)] font-chillax">Capture Your Photos</h1>
             <div className="w-80 h-80 bg-[var(--charcoal)] rounded-lg overflow-hidden mb-4">
                 <Webcam
                     audio={false}
