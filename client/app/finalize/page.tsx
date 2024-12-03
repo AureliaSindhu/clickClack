@@ -23,7 +23,7 @@ export default function FinalizePage() {
     // Scaling parameters (for preview)
     const SCALE_FACTOR = 0.3;
 
-    // Original dimensions (same as FramePage)
+    // Original dimensions
     const ORIGINAL_WIDTH = 1080;
     const ORIGINAL_HEIGHT = 1920;
     const ORIGINAL_TOP_HEIGHT = 75; 
@@ -59,6 +59,7 @@ export default function FinalizePage() {
         }
     }, [router]);
 
+    // Optional: You can keep this for generating a preview image if needed
     useEffect(() => {
         if (photos.length > 0 && selectedFrame) {
             generateFinalImage();
@@ -67,38 +68,15 @@ export default function FinalizePage() {
 
     const generateFinalImage = async () => {
         if (finalRef.current) {
-            // Temporarily reset photo sizes to their original scale
-            const originalPhotoSizes = photos.map(() => ({
-                width: PHOTO_WIDTH / SCALE_FACTOR,
-                height: PHOTO_HEIGHT / SCALE_FACTOR,
-            }));
-
-            // Temporarily set photos back to their original sizes (without scaling) before capturing the canvas
-            const updatedPhotos = photos.map((photo, index) => (
-                <img
-                    key={index}
-                    src={photo}
-                    alt={`Photo ${index + 1}`}
-                    className="object-cover"
-                    style={{
-                        width: `${originalPhotoSizes[index].width}px`, // Set back to original size
-                        height: `${originalPhotoSizes[index].height}px`, // Set back to original size
-                    }}
-                />
-            ));
-    
             try {
-                // Generate canvas at the original resolution (1080x1920) without scaling
+                // Generate canvas at the scaled resolution for preview
                 const canvas = await html2canvas(finalRef.current, {
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: "transparent",
-                    scale: 1, // Set to 1 for actual size (no scaling)
-                    width: ORIGINAL_WIDTH,
-                    height: ORIGINAL_HEIGHT,
+                    scale: 1, // Set to 1 for actual size in preview
                 });
-    
-                console.log(`Canvas dimensions: ${canvas.width}x${canvas.height}`); // Should log: 1080x1920
+
                 const dataURL = canvas.toDataURL("image/png");
                 setFinalImage(dataURL);
             } catch (error) {
@@ -107,53 +85,79 @@ export default function FinalizePage() {
         }
     };
 
-    // New method to generate the full-size image with frame for download
-    const handleDownload = () => {
-        if (finalRef.current && selectedFrame) {
-            const hiddenCanvas = document.createElement("canvas");
-            const ctx = hiddenCanvas.getContext("2d");
+    // Helper function to load images
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous"; // To avoid CORS issues
+            img.src = src;
+            img.onload = () => resolve(img);
+            img.onerror = (err) => reject(err);
+        });
+    };
 
-            // Set the hidden canvas size to the original size (1080x1920)
-            hiddenCanvas.width = ORIGINAL_WIDTH;
-            hiddenCanvas.height = ORIGINAL_HEIGHT;
+    // Function to handle download of the full-size image
+    const handleDownload = async () => {
+        if (!selectedFrame || photos.length === 0) {
+            alert("No frame or photos selected.");
+            return;
+        }
 
-            if (ctx) {
-                // Clear any previous content
-                ctx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+        try {
+            // Create a canvas with original dimensions
+            const canvas = document.createElement("canvas");
+            canvas.width = ORIGINAL_WIDTH;
+            canvas.height = ORIGINAL_HEIGHT;
+            const ctx = canvas.getContext("2d");
 
-                // Draw the selected frame and photos at the full resolution
-                ctx.fillStyle = selectedFrame.type === "color" ? selectedFrame.src : "transparent";
-                ctx.fillRect(0, 0, hiddenCanvas.width, ORIGINAL_TOP_HEIGHT); // Top border
-                ctx.fillRect(0, ORIGINAL_HEIGHT - ORIGINAL_BOTTOM_HEIGHT, hiddenCanvas.width, ORIGINAL_BOTTOM_HEIGHT); // Bottom border
-
-                // Draw the photos on the canvas (adjust as necessary for positions)
-                photos.forEach((photo, index) => {
-                    const x = (index % 2) * (461); // Set positions of photos horizontally (split in two columns)
-                    const y = Math.floor(index / 2) * (698); // Set positions vertically
-
-                    const img = new Image();
-                    img.src = photo;
-                    img.onload = () => {
-                        ctx.drawImage(img, x, y, 461, 698); // Draw photo at original size
-                    };
-                });
-
-                // Draw the frame
-                const frameImg = new Image();
-                frameImg.src = selectedFrame.src;
-                frameImg.onload = () => {
-                    ctx.drawImage(frameImg, 0, 0, hiddenCanvas.width, hiddenCanvas.height); // Draw frame over the image
-
-                    // After everything is drawn, create the download link
-                    const imageUrl = hiddenCanvas.toDataURL("image/png");
-                    const link = document.createElement("a");
-                    link.href = imageUrl;
-                    link.download = "final-image.png";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                };
+            if (!ctx) {
+                throw new Error("Canvas is not supported.");
             }
+
+            // Fill the background with transparent (optional)
+            ctx.fillStyle = "rgba(0,0,0,0)";
+            ctx.fillRect(0, 0, ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+
+            // Load frame image
+            const frameImg = await loadImage(selectedFrame.src);
+
+            // Draw the top border (if frame has a specific top border image)
+            // Assuming the frame image includes top and bottom borders,
+            // so no need to draw them separately.
+            // If you have separate images for borders, load and draw them here.
+
+            // Load and draw photos
+            const loadedPhotos = await Promise.all(photos.slice(0, 4).map(photo => loadImage(photo)));
+            // Define positions based on original spacing
+            const photoPositions = [
+                { x: 65, y: 75 },           // Top-left photo
+                { x: 65 + 461 + 30, y: 75 }, // Top-right photo
+                { x: 65, y: 75 + 698 + 30 }, // Bottom-left photo
+                { x: 65 + 461 + 30, y: 75 + 698 + 30 }, // Bottom-right photo
+            ];
+
+            // Draw each photo at its position
+            loadedPhotos.forEach((img, index) => {
+                const pos = photoPositions[index];
+                ctx.drawImage(img, pos.x, pos.y, 461, 698);
+            });
+
+            // Draw the frame on top
+            ctx.drawImage(frameImg, 0, 0, ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+
+            // Generate the data URL
+            const dataURL = canvas.toDataURL("image/png");
+
+            // Trigger the download
+            const link = document.createElement("a");
+            link.href = dataURL;
+            link.download = "final-image.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error generating full-size image:", error);
+            alert("Failed to generate the image. Please try again.");
         }
     };
 
@@ -161,7 +165,7 @@ export default function FinalizePage() {
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] text-black p-6">
             <h1 className="text-2xl font-bold mb-6">Your Final Photo</h1>
 
-            {/* Frame and Photos Container */}
+            {/* Frame and Photos Container (Scaled Preview) */}
             <div
                 ref={finalRef}
                 className="flex flex-col relative mb-8"
@@ -172,12 +176,13 @@ export default function FinalizePage() {
                     position: "relative",
                 }}
             >
-                {/* Top Border */}
+                {/* Top Gap */}
                 <div
                     className="w-full"
                     style={{
                         height: `${SCALED_TOP_HEIGHT}px`, //22px
-                        backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                        // Removed backgroundColor as frame image covers it
+                        backgroundColor: "transparent",
                     }}
                 ></div>
 
@@ -192,7 +197,7 @@ export default function FinalizePage() {
                             marginRight: `${LEFT_RIGHT_GAP}px`, //19px
                         }}
                     >
-                        {photos.map((photo, index) => (
+                        {photos.slice(0, 4).map((photo, index) => (
                             <img
                                 key={index}
                                 src={photo}
@@ -207,12 +212,12 @@ export default function FinalizePage() {
                     </div>
                 </div>
 
-                {/* Bottom Border */}
+                {/* Bottom Gap */}
                 <div
                     className="w-full"
                     style={{
                         height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
-                        backgroundColor: selectedFrame?.type === "color" ? selectedFrame.src : "transparent",
+                        backgroundColor: "transparent",
                     }}
                 ></div>
 
@@ -224,7 +229,7 @@ export default function FinalizePage() {
                         className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
                         style={{ zIndex: 2 }}
                         onError={(e) => {
-                            (e.target as HTMLImageElement).style.visibility = "hidden";
+                            (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
                         }}
                     />
                 )}
@@ -233,7 +238,7 @@ export default function FinalizePage() {
             {/* Download Button */}
             <button
                 onClick={handleDownload}
-                className="bg-blue-500 text-white py-2 px-4 rounded"
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-blue-600 transition"
             >
                 Download Full-size Image
             </button>
