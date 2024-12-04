@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "../../components/footer";
+import "../style.css";
+import { RefreshCcw, ChevronRight } from "lucide-react"; 
 
 export default function ReviewPage() {
     const router = useRouter();
@@ -34,41 +36,42 @@ export default function ReviewPage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <h1 className="text-2xl font-bold mb-6">Review Your Photos</h1>
-            <div className="grid grid-cols-2 gap-4">
-                {photos.map((photo, index) => (
-                    <div key={index} className="flex flex-col items-center">
-                        {photo ? (
-                            <img
-                                src={photo}
-                                alt={`Photo ${index + 1}`}
-                                className="w-40 h-40 object-cover rounded-md mb-2"
-                            />
-                        ) : (
-                            <div className="w-40 h-40 bg-gray-200 rounded-md flex items-center justify-center mb-2">
-                                <p className="text-gray-500">Empty</p>
-                            </div>
-                        )}
-                        {/* Optionally, you can remove individual Retake buttons
-                            if you only want a single Retake All button below */}
-                    </div>
-                ))}
+        <div className="min-h-screen flex flex-col bg-[var(--canvas)]">
+            <div className="flex-grow flex flex-col items-center justify-center p-10">
+                <h1 className="text-2xl mb-6 text-black font-chillax">Review Your Photos</h1>
+                <div className="grid grid-cols-2 gap-4">
+                    {photos.map((photo, index) => (
+                        <div key={index} className="flex flex-col items-center">
+                            {photo ? (
+                                <img
+                                    src={photo}
+                                    alt={`Photo ${index + 1}`}
+                                    className="w-40 h-40 object-cover rounded-md mb-2"
+                                />
+                            ) : (
+                                <div className="w-40 h-40 bg-gray-200 rounded-md flex items-center justify-center mb-2">
+                                    <p className="text-gray-500">Empty</p>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+                <div className="flex space-x-4 mt-6">
+                    <button
+                        onClick={handleRetakeAll}
+                        className="p-3 bg-yellow-600 text-white rounded-lg shadow-lg hover:bg-[#7f743e] transition flex items-center justify-center"
+                    >
+                        Retake <RefreshCcw className="ml-2" />
+                    </button>
+                    <button
+                        onClick={handleProceed}
+                        className="p-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-[#536659] transition flex items-center justify-center"
+                        disabled={photos.some((photo) => !photo)}
+                    >
+                        Continue <ChevronRight className="ml-2" />
+                    </button>
+                </div>
             </div>
-            {/* Single Retake All Button */}
-            <button
-                onClick={handleRetakeAll}
-                className="mt-6 px-6 py-3 bg-yellow-500 text-white rounded-lg shadow-lg hover:bg-yellow-600 transition"
-            >
-                Retake All Photos
-            </button>
-            <button
-                onClick={handleProceed}
-                className="mt-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 transition"
-                disabled={photos.some((photo) => !photo)} // Disable if any photo is missing
-            >
-                Proceed to Frame Selection
-            </button>
             <Footer />
         </div>
     );

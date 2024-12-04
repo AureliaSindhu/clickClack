@@ -257,9 +257,9 @@ export default function FramePage() {
                                         src={frame.thumbnailSrc}
                                         alt={frame.name}
                                         className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            // (e.target as HTMLImageElement).src = "/fallback-frame.png"; 
-                                        }}
+                                        // onError={(e) => {
+                                        //     // (e.target as HTMLImageElement).src = "/fallback-frame.png"; 
+                                        // }}
                                         />
                                     </div>
                                     <p className={`text-center font-medium ${selectedFrame?.id === frame.id ? "text-[var(--canvas-darker)]" : "text-gray-700"}`}>{frame.name}</p>
