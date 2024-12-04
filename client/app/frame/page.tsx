@@ -121,7 +121,7 @@ export default function FramePage() {
 
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-10 text-black">
-            <h1 className="text-3xl mb-6 font-chillax">Select a Frame for Your Photos</h1>
+            <h1 className="text-2xl mb-6 font-chillax">Select a Frame for Your Photos</h1>
 
             {/* Frame Canvas */}
             <div

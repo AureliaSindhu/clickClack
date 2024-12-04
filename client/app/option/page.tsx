@@ -16,7 +16,7 @@ export default function Option() {
 
     return(
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)]">
-            <h1 className="text-3xl font-chillax text-black mb-6">Choose Your Frame</h1>
+            <h1 className="text-2xl font-chillax text-black mb-6">Choose Your Frame</h1>
 
             <div className="flex space-x-8">
                 {/* 2x2 Frame */}

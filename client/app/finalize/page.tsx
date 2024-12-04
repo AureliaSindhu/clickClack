@@ -193,7 +193,7 @@ export default function FinalizePage() {
 
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] text-black p-6">
-            <h1 className="text-3xl mb-6 font-chillax">Your Final Photo</h1>
+            <h1 className="text-2xl mb-6 font-chillax">Your Final Photo</h1>
 
             {/* Frame and Photos Container (Scaled Preview) */}
             <div
