@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import html2canvas from "html2canvas";
 import '../style.css';
 import Footer from "../../components/footer";
@@ -89,7 +90,7 @@ export default function FinalizePage() {
     // Helper function to load images
     const loadImage = (src: string): Promise<HTMLImageElement> => {
         return new Promise((resolve, reject) => {
-            const img = new Image();
+            const img = document.createElement("img");
             img.crossOrigin = "anonymous"; // To avoid CORS issues
             img.src = src;
             img.onload = () => resolve(img);
@@ -227,7 +228,7 @@ export default function FinalizePage() {
                         }}
                     >
                         {photos.slice(0, 4).map((photo, index) => (
-                            <img
+                            <Image
                                 key={index}
                                 src={photo}
                                 alt={`Photo ${index + 1}`}
@@ -252,7 +253,7 @@ export default function FinalizePage() {
 
                 {/* Frame Overlay */}
                 {selectedFrame && (
-                    <img
+                    <Image
                         src={selectedFrame.src}
                         alt={`Frame ${selectedFrame.name}`}
                         className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
