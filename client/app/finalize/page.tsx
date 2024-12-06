@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import html2canvas from "html2canvas";
 import '../style.css';
 import Footer from "../../components/footer";
@@ -19,6 +18,7 @@ export default function FinalizePage() {
     const [photos, setPhotos] = useState<string[]>([]);
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
     const [finalImage, setFinalImage] = useState<string>("");
+    const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false); 
 
     const finalRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +61,6 @@ export default function FinalizePage() {
         }
     }, [router]);
 
-    // Optional: You can keep this for generating a preview image if needed
     useEffect(() => {
         if (photos.length > 0 && selectedFrame) {
             generateFinalImage();
@@ -90,7 +89,7 @@ export default function FinalizePage() {
     // Helper function to load images
     const loadImage = (src: string): Promise<HTMLImageElement> => {
         return new Promise((resolve, reject) => {
-            const img = document.createElement("img");
+            const img = new Image();
             img.crossOrigin = "anonymous"; // To avoid CORS issues
             img.src = src;
             img.onload = () => resolve(img);
@@ -186,15 +185,24 @@ export default function FinalizePage() {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            // Show the success popup
+            setDownloadSuccess(true);
+
         } catch (error) {
             console.error("Error generating full-size image:", error);
             alert("Failed to generate the image. Please try again.");
         }
     };
 
+    // Function to close the popup
+    const closePopup = () => {
+        setDownloadSuccess(false);
+    };
+
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] text-black p-6">
-            <h1 className="text-2xl mb-6 font-chillax">Your Final Photo</h1>
+            <h1 className="text-3xl mb-6 font-chillax">Your Final Photo</h1>
 
             {/* Frame and Photos Container (Scaled Preview) */}
             <div
@@ -228,7 +236,7 @@ export default function FinalizePage() {
                         }}
                     >
                         {photos.slice(0, 4).map((photo, index) => (
-                            <Image
+                            <img
                                 key={index}
                                 src={photo}
                                 alt={`Photo ${index + 1}`}
@@ -253,7 +261,7 @@ export default function FinalizePage() {
 
                 {/* Frame Overlay */}
                 {selectedFrame && (
-                    <Image
+                    <img
                         src={selectedFrame.src}
                         alt={`Frame ${selectedFrame.name}`}
                         className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
@@ -264,7 +272,6 @@ export default function FinalizePage() {
                     />
                 )}
             </div>
-
             {/* Download Button */}
             <button
                 onClick={handleDownload}
@@ -272,6 +279,30 @@ export default function FinalizePage() {
             >
                 Download Image
             </button>
+
+            {/* <p className="mt-3 text-gray-700"> Share and tag
+                <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
+                    <strong> aacode</strong> 
+                </a> on instagram!</p> */}
+
+            {downloadSuccess && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-[var(--canvas)] rounded-lg p-6 max-w-sm w-full text-center">
+                        <h2 className="text-xl font-semibold font-chillax">Download Successful!</h2>
+                        <p className="mb-2">Don't forget to share and tag 
+                            <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
+                                <strong> aacode </strong> 
+                            </a>
+                        on Instagram.</p>
+                        <button
+                            onClick={closePopup}
+                            className="bg-[#536659] text-white py-2 px-4 rounded-lg hover:bg-[#356c47] transition"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
             <Footer />
         </div>
     );
