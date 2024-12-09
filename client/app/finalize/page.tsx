@@ -200,6 +200,10 @@ export default function FinalizePage() {
         setDownloadSuccess(false);
     };
 
+    const handleDoAnother = () => {
+        router.push("/option");
+    };
+
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] text-black p-6">
             <h1 className="text-3xl mb-6 font-chillax">Your Final Photo</h1>
@@ -272,14 +276,26 @@ export default function FinalizePage() {
                     />
                 )}
             </div>
-            {/* Download Button */}
-            <button
-                onClick={handleDownload}
-                className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition"
-            >
-                Download Image
-            </button>
 
+            <div className="flex space-x-4 mb-8">
+                {/* Download Button */}
+                <button
+                    onClick={handleDownload}
+                    className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition"
+                >
+                    Download Image
+                </button>
+
+                {/* Again Button */}
+                <button
+                    onClick={handleDoAnother}
+                    className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition"
+                >
+                    Again!
+                </button>
+            </div>
+
+            {/* Optional Share Prompt */}
             {/* <p className="mt-3 text-gray-700"> Share and tag
                 <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
                     <strong> aacode</strong> 
