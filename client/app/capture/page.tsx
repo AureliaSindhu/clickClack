@@ -97,7 +97,7 @@ export default function CapturePage() {
     }, [isCapturing, countdown]);
 
     /**
-     * Effect to handle post-capture actions.
+     * Effect to handle post-capture actions for timed capture.
      */
     useEffect(() => {
         if (isCapturing && countdown === 0) {
@@ -114,6 +114,16 @@ export default function CapturePage() {
             }
         }
     }, [photos.length, isCapturing, countdown, router]);
+
+    /**
+     * New Effect to handle navigation after manual capture.
+     */
+    useEffect(() => {
+        if (!isCapturing && photos.length === CAPTURE_COUNT) {
+            sessionStorage.setItem("photos", JSON.stringify(photos));
+            router.push("/review");
+        }
+    }, [photos.length, isCapturing, photos, router]);
 
     /**
      * Cleanup effect to ensure all timers are cleared when the component unmounts.
