@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import '../style.css';
 import { useState } from 'react';
 import { Camera, ImageIcon, Palette, Share2, X } from 'lucide-react'
-import Image from 'next/image';
 import Footer from "../../components/footer";
 
 export default function getStarted(){
@@ -59,7 +58,7 @@ export default function getStarted(){
                             START CREATING
                         </button>
                     <p className="text-center text-sm text-gray-600">
-                        Don't forget to tag 
+                        Don&apos;t forget to tag 
                         <span className="font-semibold">
                             <a href="https://instagram.com/aacode" target="_blank"> @aacode</a>
                         </span> on Instagram when sharing!
