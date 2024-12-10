@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "../../components/footer";
 import "../style.css";
+import Image from "next/image";
 import { RefreshCcw, ChevronRight } from "lucide-react"; 
 
 export default function ReviewPage() {
@@ -43,10 +44,12 @@ export default function ReviewPage() {
                     {photos.map((photo, index) => (
                         <div key={index} className="flex flex-col items-center">
                             {photo ? (
-                                <img
+                                <Image
                                     src={photo}
                                     alt={`Photo ${index + 1}`}
-                                    className="w-40 h-40 object-cover rounded-md mb-2"
+                                    width={160}
+                                    height={160}
+                                    className="object-cover rounded-md mb-2"
                                 />
                             ) : (
                                 <div className="w-40 h-40 bg-gray-200 rounded-md flex items-center justify-center mb-2">
