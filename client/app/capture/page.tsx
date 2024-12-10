@@ -32,31 +32,19 @@ export default function CapturePage() {
     const [isCapturing, setIsCapturing] = useState<boolean>(false);
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const nextCaptureTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const captureCountRef = useRef<number>(0); // Tracks the number of captures
 
     const CAPTURE_COUNT = 4; // Total number of photos to capture
     const INTERVAL_SECONDS = 5; // Interval between captures in seconds
 
     /**
      * Function to capture a photo and update state.
-     * Increments the capture count reference once per capture.
      */
     const capturePhoto = () => {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
-                setPhotos((prevPhotos) => {
-                    const updatedPhotos = [...prevPhotos, imageSrc];
-                    if (updatedPhotos.length === CAPTURE_COUNT) {
-                        sessionStorage.setItem("photos", JSON.stringify(updatedPhotos));
-                        router.push("/review");
-                    }
-                    return updatedPhotos;
-                });
-                // Increment capture count ref once per capture
-                captureCountRef.current += 1;
-                console.log(`Captured photo ${captureCountRef.current}`);
+                setPhotos((prevPhotos) => [...prevPhotos, imageSrc]);
+                console.log(`Captured photo ${photos.length + 1}`);
             } else {
                 console.error("Failed to capture screenshot");
             }
@@ -67,60 +55,12 @@ export default function CapturePage() {
 
     /**
      * Function to initiate the timed capture sequence.
-     * Captures photos at defined intervals until the desired count is reached.
      */
     const startTimedCapture = () => {
-        if (isCapturing || captureCountRef.current >= CAPTURE_COUNT) return; // Prevent multiple timers or over-capturing
+        if (isCapturing || photos.length >= CAPTURE_COUNT) return; // Prevent multiple timers or over-capturing
         setIsTimedCapture(true);
         setIsCapturing(true);
-        handleTimedCapture();
-    };
-
-    /**
-     * Recursive function to handle each step of the timed capture.
-     * Sets a countdown, captures a photo when the countdown reaches zero,
-     * and schedules the next capture.
-     */
-    const handleTimedCapture = () => {
-        if (captureCountRef.current >= CAPTURE_COUNT) {
-            setIsCapturing(false);
-            setIsTimedCapture(false);
-            console.log("All photos captured. Redirecting to review page.");
-            return;
-        }
-
         setCountdown(INTERVAL_SECONDS);
-        console.log(`Starting countdown for photo ${captureCountRef.current + 1}`);
-
-        // Start countdown
-        countdownTimerRef.current = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev > 1) {
-                    return prev - 1;
-                } else {
-                    // Time to capture the photo
-                    clearInterval(countdownTimerRef.current as NodeJS.Timeout);
-                    countdownTimerRef.current = null;
-
-                    capturePhoto();
-
-                    if (captureCountRef.current < CAPTURE_COUNT) {
-                        // Schedule next capture after a short delay to allow webcam to update
-                        nextCaptureTimeoutRef.current = setTimeout(() => {
-                            handleTimedCapture();
-                        }, 1000); // 1 second delay
-                        console.log("Scheduled next capture after 1 second.");
-                    } else {
-                        // Completed capturing all photos
-                        setIsCapturing(false);
-                        setIsTimedCapture(false);
-                        console.log("Completed all captures. Redirecting to review page.");
-                    }
-
-                    return 0;
-                }
-            });
-        }, 1000);
     };
 
     /**
@@ -129,12 +69,8 @@ export default function CapturePage() {
      */
     const cancelTimedCapture = () => {
         if (countdownTimerRef.current) {
-            clearInterval(countdownTimerRef.current);
+            clearTimeout(countdownTimerRef.current);
             countdownTimerRef.current = null;
-        }
-        if (nextCaptureTimeoutRef.current) {
-            clearTimeout(nextCaptureTimeoutRef.current);
-            nextCaptureTimeoutRef.current = null;
         }
         setIsCapturing(false);
         setIsTimedCapture(false);
@@ -143,15 +79,49 @@ export default function CapturePage() {
     };
 
     /**
+     * Effect to handle the countdown and capturing process.
+     */
+    useEffect(() => {
+        if (isCapturing && countdown > 0) {
+            countdownTimerRef.current = setTimeout(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+            return () => {
+                if (countdownTimerRef.current) {
+                    clearTimeout(countdownTimerRef.current);
+                }
+            };
+        } else if (isCapturing && countdown === 0) {
+            capturePhoto();
+        }
+    }, [isCapturing, countdown]);
+
+    /**
+     * Effect to handle post-capture actions.
+     */
+    useEffect(() => {
+        if (isCapturing && countdown === 0) {
+            if (photos.length < CAPTURE_COUNT) {
+                // Schedule next capture after a short delay
+                countdownTimerRef.current = setTimeout(() => {
+                    setCountdown(INTERVAL_SECONDS);
+                }, 1000); // 1 second delay before next countdown
+                console.log("Scheduled next capture after 1 second.");
+            } else if (photos.length === CAPTURE_COUNT) {
+                // All captures done, navigate to review page
+                sessionStorage.setItem("photos", JSON.stringify(photos));
+                router.push("/review");
+            }
+        }
+    }, [photos.length, isCapturing, countdown, router]);
+
+    /**
      * Cleanup effect to ensure all timers are cleared when the component unmounts.
      */
     useEffect(() => {
         return () => {
             if (countdownTimerRef.current) {
-                clearInterval(countdownTimerRef.current);
-            }
-            if (nextCaptureTimeoutRef.current) {
-                clearTimeout(nextCaptureTimeoutRef.current);
+                clearTimeout(countdownTimerRef.current);
             }
         };
     }, []);
@@ -186,7 +156,7 @@ export default function CapturePage() {
                         <span className="text-white text-6xl font-bold mb-4">{countdown}</span>
                         {/* Capture Count */}
                         <span className="text-white text-xl">
-                            Photo {captureCountRef.current + 1} of {CAPTURE_COUNT}
+                            Photo {photos.length + 1} of {CAPTURE_COUNT}
                         </span>
                     </div>
                 )}
@@ -218,7 +188,7 @@ export default function CapturePage() {
                             ? "bg-gray-300 text-gray-700 cursor-not-allowed"
                             : "bg-[#536659] text-white hover:bg-[#356c47]"
                     } transition`}
-                    disabled={isTimedCapture || isCapturing || captureCountRef.current >= CAPTURE_COUNT}
+                    disabled={isTimedCapture || isCapturing || photos.length >= CAPTURE_COUNT}
                 >
                     Timed Capture
                 </button>
