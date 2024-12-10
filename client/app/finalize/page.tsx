@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 import '../style.css';
 import Footer from "../../components/footer";
+import Image from "next/image";
 
 interface Frame {
     id: string;
@@ -17,7 +18,7 @@ export default function FinalizePage() {
     const router = useRouter();
     const [photos, setPhotos] = useState<string[]>([]);
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
-    const [finalImage, setFinalImage] = useState<string>("");
+    const [setFinalImage] = useState<string>("");
     const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false); 
 
     const finalRef = useRef<HTMLDivElement>(null);
@@ -79,7 +80,7 @@ export default function FinalizePage() {
                 });
 
                 const dataURL = canvas.toDataURL("image/png");
-                setFinalImage(dataURL);
+                // setFinalImage(dataURL);
             } catch (error) {
                 console.error("Error generating final image:", error);
             }
@@ -89,7 +90,7 @@ export default function FinalizePage() {
     // Helper function to load images
     const loadImage = (src: string): Promise<HTMLImageElement> => {
         return new Promise((resolve, reject) => {
-            const img = new Image();
+            const img = document.createElement("img");
             img.crossOrigin = "anonymous"; // To avoid CORS issues
             img.src = src;
             img.onload = () => resolve(img);
@@ -241,6 +242,7 @@ export default function FinalizePage() {
                     >
                         {photos.slice(0, 4).map((photo, index) => (
                             <img
+                                width ="auto"
                                 key={index}
                                 src={photo}
                                 alt={`Photo ${index + 1}`}
@@ -305,7 +307,7 @@ export default function FinalizePage() {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-[var(--canvas)] rounded-lg p-6 max-w-sm w-full text-center">
                         <h2 className="text-xl font-semibold font-chillax">Download Successful!</h2>
-                        <p className="mb-2">Don't forget to share and tag 
+                        <p className="mb-2">Don&apos;t forget to share and tag 
                             <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
                                 <strong> aacode </strong> 
                             </a>
