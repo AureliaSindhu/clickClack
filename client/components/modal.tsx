@@ -1,5 +1,3 @@
-// import { useState } from "react";
-
 const Modal = ({ message, onClose }: { message: string; onClose: () => void }) => {
     return (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
