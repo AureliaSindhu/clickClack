@@ -129,28 +129,28 @@ export default function CapturePage() {
             )}
             </div>
             <Tabs defaultValue="manual" onValueChange={(value) => setCaptureMode(value as 'manual' | 'timed')}>
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="manual">Manual</TabsTrigger>
-                <TabsTrigger value="timed">Timed</TabsTrigger>
-            </TabsList>
-            <TabsContent value="manual">
-                <Button onClick={startCapture} className="w-full" disabled={isCapturing || photos.length === CAPTURE_COUNT}>
-                <Camera className="mr-2 h-4 w-4" />
-                Capture Photo {photos.length + 1}
-                </Button>
-            </TabsContent>
-            <TabsContent value="timed">
-                {!isCapturing ? (
-                <Button onClick={startCapture} className="w-full" disabled={photos.length === CAPTURE_COUNT}>
-                    <Clock className="mr-2 h-4 w-4" />
-                    Start Timed Capture
-                </Button>
-                ) : (
-                <Button onClick={cancelCapture} variant="destructive" className="w-full">
-                    Cancel Capture
-                </Button>
-                )}
-            </TabsContent>
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="manual">Manual</TabsTrigger>
+                    <TabsTrigger value="timed">Timed</TabsTrigger>
+                </TabsList>
+                <TabsContent value="manual">
+                    <Button onClick={startCapture} className="w-full" disabled={isCapturing || photos.length === CAPTURE_COUNT}>
+                    <Camera className="mr-2 h-4 w-4" />
+                    Capture Photo {photos.length + 1}
+                    </Button>
+                </TabsContent>
+                <TabsContent value="timed">
+                    {!isCapturing ? (
+                    <Button onClick={startCapture} className="w-full" disabled={photos.length === CAPTURE_COUNT}>
+                        <Clock className="mr-2 h-4 w-4" />
+                        Start Timed Capture
+                    </Button>
+                    ) : (
+                    <Button onClick={cancelCapture} variant="destructive" className="w-full">
+                        Cancel Capture
+                    </Button>
+                    )}
+                </TabsContent>
             </Tabs>
             <p className="text-center text-muted-foreground">
             {photos.length}/{CAPTURE_COUNT} photos captured
