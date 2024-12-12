@@ -41,27 +41,25 @@ export default function FramePage() {
     const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     // Predefined color frames (image-based frames with solid borders)
-    const colorFrames = useMemo(() => [
-        { id: "color1", type: "color" as "color", src: "/color-frames/frame1.png", thumbnailSrc: "/color-frames/frame1-thumb.png", name: "Charcoal" },
-        { id: "color2", type: "color" as "color", src: "/color-frames/frame2.png", thumbnailSrc: "/color-frames/frame2-thumb.png", name: "Deep Purple" },
-        { id: "color3", type: "color" as "color", src: "/color-frames/frame3.png", thumbnailSrc: "/color-frames/frame3-thumb.png", name: "Slate" },
-        { id: "color4", type: "color" as "color", src: "/color-frames/frame4.png", thumbnailSrc: "/color-frames/frame4-thumb.png", name: "Purple Gray" },
-        { id: "color5", type: "color" as "color", src: "/color-frames/frame5.png", thumbnailSrc: "/color-frames/frame5-thumb.png", name: "Mountain" },
-        { id: "color6", type: "color" as "color", src: "/color-frames/frame6.png", thumbnailSrc: "/color-frames/frame6-thumb.png", name: "Beige" },
-        { id: "color7", type: "color" as "color", src: "/color-frames/frame7.png", thumbnailSrc: "/color-frames/frame7-thumb.png", name: "Alabaster" },
-        { id: "color8", type: "color" as "color", src: "/color-frames/frame8.png", thumbnailSrc: "/color-frames/frame8-thumb.png", name: "White" },
-        // Add more color frames as needed
+    const colorFrames: readonly Frame[] = useMemo(() => [
+        { id: "color1", type: "color", src: "/color-frames/frame1.png", thumbnailSrc: "/color-frames/frame1-thumb.png", name: "Charcoal" },
+        { id: "color2", type: "color", src: "/color-frames/frame2.png", thumbnailSrc: "/color-frames/frame2-thumb.png", name: "Deep Purple" },
+        { id: "color3", type: "color", src: "/color-frames/frame3.png", thumbnailSrc: "/color-frames/frame3-thumb.png", name: "Slate" },
+        { id: "color4", type: "color", src: "/color-frames/frame4.png", thumbnailSrc: "/color-frames/frame4-thumb.png", name: "Purple Gray" },
+        { id: "color5", type: "color", src: "/color-frames/frame5.png", thumbnailSrc: "/color-frames/frame5-thumb.png", name: "Mountain" },
+        { id: "color6", type: "color", src: "/color-frames/frame6.png", thumbnailSrc: "/color-frames/frame6-thumb.png", name: "Beige" },
+        { id: "color7", type: "color", src: "/color-frames/frame7.png", thumbnailSrc: "/color-frames/frame7-thumb.png", name: "Alabaster" },
+        { id: "color8", type: "color", src: "/color-frames/frame8.png", thumbnailSrc: "/color-frames/frame8-thumb.png", name: "White" },
     ], []);
-    
+
     // Predefined custom frames (images with transparent backgrounds)
-    const customFrames = useMemo(() => [
-        { id: "custom1", type: "custom" as "custom", src: "/custom-frames/cframe1.png", thumbnailSrc: "/custom-frames/cframe1-thumb.png", name: "Snow" },
-        { id: "custom2", type: "custom" as "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Pattern" },
-        { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Ginger Man" },
-        { id: "custom4", type: "custom" as "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Town" },
-        { id: "custom5", type: "custom" as "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Table" },
-        { id: "custom6", type: "custom" as "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "Tree" },
-        // Add more custom frames as needed
+    const customFrames: readonly Frame[] = useMemo(() => [
+        { id: "custom1", type: "custom", src: "/custom-frames/cframe1.png", thumbnailSrc: "/custom-frames/cframe1-thumb.png", name: "Snow" },
+        { id: "custom2", type: "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Pattern" },
+        { id: "custom3", type: "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Cookies" },
+        { id: "custom4", type: "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Town" },
+        { id: "custom5", type: "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Table" },
+        { id: "custom6", type: "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "Tree" },
     ], []);
 
     useEffect(() => {
