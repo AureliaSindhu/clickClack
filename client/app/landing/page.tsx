@@ -5,6 +5,7 @@ import '../style.css';
 import Image from 'next/image';
 import logo from '../../public/img/clickclackLogo.png';
 import Footer from '../../components/footer';
+import { Button } from '@/components/ui/button';
 
 export default function HomePage() {
     const router = useRouter(); 
@@ -23,7 +24,7 @@ export default function HomePage() {
                 </p>
                 <button
                     onClick={getStarted}
-                    className="px-6 py-3 bg-[var(--charcoal)] text-white rounded-lg shadow-lg hover:bg-[var(--slate)] transition"
+                    className="px-6 py-3 bg-charcoal text-white rounded-lg shadow-lg hover:bg-slate transition"
                 >
                     Get Started
                 </button>
