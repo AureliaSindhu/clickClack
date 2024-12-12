@@ -16,7 +16,6 @@ interface Frame {
 export default function FramePage() {
     const router = useRouter();
     const [photos, setPhotos] = useState<string[]>([]);
-    const [frames, setFrames] = useState<Frame[]>([]);
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
     const [isColorFrame, setIsColorFrame] = useState<boolean>(true);
 
@@ -42,7 +41,7 @@ export default function FramePage() {
     const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     // Predefined color frames (image-based frames with solid borders)
-    const colorFrames= useMemo(() => [
+    const colorFrames = useMemo(() => [
         { id: "color1", type: "color" as "color", src: "/color-frames/frame1.png", thumbnailSrc: "/color-frames/frame1-thumb.png", name: "Charcoal" },
         { id: "color2", type: "color" as "color", src: "/color-frames/frame2.png", thumbnailSrc: "/color-frames/frame2-thumb.png", name: "Deep Purple" },
         { id: "color3", type: "color" as "color", src: "/color-frames/frame3.png", thumbnailSrc: "/color-frames/frame3-thumb.png", name: "Slate" },
@@ -55,7 +54,7 @@ export default function FramePage() {
     ], []);
     
     // Predefined custom frames (images with transparent backgrounds)
-    const customFrames= useMemo(() => [
+    const customFrames = useMemo(() => [
         { id: "custom1", type: "custom" as "custom", src: "/custom-frames/cframe1.png", thumbnailSrc: "/custom-frames/cframe1-thumb.png", name: "Snow" },
         { id: "custom2", type: "custom" as "custom", src: "/custom-frames/cframe2.png", thumbnailSrc: "/custom-frames/cframe2-thumb.png", name: "Pattern" },
         { id: "custom3", type: "custom" as "custom", src: "/custom-frames/cframe3.png", thumbnailSrc: "/custom-frames/cframe3-thumb.png", name: "Ginger Man" },
@@ -85,7 +84,6 @@ export default function FramePage() {
             setIsColorFrame(storedFrameType === "true");
         }
 
-        setFrames([...colorFrames, ...customFrames]);
     }, [colorFrames, customFrames, router]);
 
     // Handle frame selection
