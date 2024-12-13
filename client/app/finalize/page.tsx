@@ -205,6 +205,10 @@ export default function FinalizePage() {
         router.push("/option");
     };
 
+    const handleFeedback = () => {
+        router.push("/feedback");
+    };
+
     return (
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] text-black p-6">
             <h1 className="text-3xl mb-6 font-chillax">Your Final Photo</h1>
@@ -295,6 +299,14 @@ export default function FinalizePage() {
                 >
                     <RefreshCcw className="mr-2"/>
                     Again!
+                </button>
+
+                {/* Feedback Button */}
+                <button
+                    onClick={handleFeedback}
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition"
+                >
+                    Feedback
                 </button>
             </div>
 
