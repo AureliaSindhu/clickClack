@@ -6,6 +6,7 @@ import html2canvas from "html2canvas";
 import '../style.css';
 import Footer from "../../components/footer";
 import { PartyPopper, RefreshCcw } from "lucide-react";
+import FeedbackForm from "../../components/FeedbackForm";
 
 interface Frame {
     id: string;
@@ -18,8 +19,9 @@ export default function FinalizePage() {
     const router = useRouter();
     const [photos, setPhotos] = useState<string[]>([]);
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
-    const [setFinalImage] = useState<string>("");
     const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false); 
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState<boolean>(false);
+    const [feedbackMessage, setFeedbackMessage] = useState<string>(""); 
 
     const finalRef = useRef<HTMLDivElement>(null);
 
@@ -206,7 +208,19 @@ export default function FinalizePage() {
     };
 
     const handleFeedback = () => {
-        router.push("/feedback");
+        setIsFeedbackOpen(true); // Open the feedback modal
+    };
+
+    // Function to handle successful feedback submission
+    const handleFeedbackSuccess = () => {
+        setFeedbackMessage("Thank you for your feedback!");
+        setIsFeedbackOpen(false);
+    };
+
+    // Function to handle feedback submission errors
+    const handleFeedbackError = (message: string) => {
+        setFeedbackMessage(message);
+        setIsFeedbackOpen(false);
     };
 
     return (
@@ -246,14 +260,17 @@ export default function FinalizePage() {
                     >
                         {photos.slice(0, 4).map((photo, index) => (
                             <img
-                                width ="auto"
                                 key={index}
                                 src={photo}
                                 alt={`Photo ${index + 1}`}
-                                className="object-cover"
+                                className="object-cover rounded-md"
                                 style={{
                                     width: `${PHOTO_WIDTH}px`, //138px
                                     height: `${PHOTO_HEIGHT}px`, //210px
+                                }}
+                                loading="lazy"
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = "/fallback-image.png"; // Provide a fallback image
                                 }}
                             />
                         ))}
@@ -292,6 +309,15 @@ export default function FinalizePage() {
                     Download Image
                 </button>
 
+                {/* Feedback Button */}
+                <button
+                    onClick={handleFeedback}
+                    className="bg-yellow-600 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-700 transition flex items-center"
+                >
+                    <RefreshCcw className="mr-2"/>
+                    Feedback
+                </button>
+
                 {/* Again Button */}
                 <button
                     onClick={handleDoAnother}
@@ -299,14 +325,6 @@ export default function FinalizePage() {
                 >
                     <RefreshCcw className="mr-2"/>
                     Again!
-                </button>
-
-                {/* Feedback Button */}
-                <button
-                    onClick={handleFeedback}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition"
-                >
-                    Feedback
                 </button>
             </div>
 
@@ -316,6 +334,7 @@ export default function FinalizePage() {
                     <strong> aacode</strong> 
                 </a> on instagram!</p> */}
 
+            {/* Success Popup */}
             {downloadSuccess && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-[var(--canvas)] rounded-lg p-6 max-w-sm w-full text-center">
@@ -335,6 +354,33 @@ export default function FinalizePage() {
                     </div>
                 </div>
             )}
+
+            {/* Feedback Modal */}
+            {isFeedbackOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full relative">
+                        <button
+                            onClick={() => setIsFeedbackOpen(false)}
+                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                            aria-label="Close Feedback Form"
+                        >
+                            &times;
+                        </button>
+                        <FeedbackForm 
+                            onSuccess={handleFeedbackSuccess}
+                            onError={handleFeedbackError}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Feedback Message */}
+            {feedbackMessage && (
+                <div className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded shadow-lg">
+                    {feedbackMessage}
+                </div>
+            )}
+
             <Footer />
         </div>
     );
