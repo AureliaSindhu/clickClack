@@ -104,7 +104,7 @@ export default function CapturePage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
-            <Card className="w-full max-w-md space-y-6">
+            <Card className="w-full max-w-md space-y-4">
                 <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
@@ -131,25 +131,51 @@ export default function CapturePage() {
                         </div>
                     )}
                 </div>
-                <Tabs defaultValue="manual" onValueChange={(value) => setCaptureMode(value as 'manual' | 'timed')}>
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="manual">Manual</TabsTrigger>
-                        <TabsTrigger value="timed">Timed</TabsTrigger>
+                <Tabs 
+                    defaultValue="manual" 
+                    onValueChange={(value) => setCaptureMode(value as 'manual' | 'timed')}
+                    className="w-3/4 mx-auto"
+                >
+                    <TabsList className="grid w-full grid-cols-2 mb-4">
+                        <TabsTrigger 
+                            value="manual"
+                            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground pt-1 pb-1"
+                        >
+                            Manual
+                        </TabsTrigger>
+                        <TabsTrigger 
+                            value="timed"
+                            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground pt-1 pb-1"
+                        >
+                            Timed
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value="manual">
-                        <Button onClick={startCapture} className="w-3/4" disabled={isCapturing || photos.length === CAPTURE_COUNT}>
+                        <Button 
+                        onClick={startCapture} 
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
+                        disabled={isCapturing || photos.length === CAPTURE_COUNT}
+                        >
                         <Camera className="mr-2 h-4 w-4" />
                         Capture Photo {photos.length + 1}
                         </Button>
                     </TabsContent>
                     <TabsContent value="timed">
                         {!isCapturing ? (
-                        <Button onClick={startCapture} className="w-full" disabled={photos.length === CAPTURE_COUNT}>
+                        <Button 
+                            onClick={startCapture} 
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
+                            disabled={photos.length === CAPTURE_COUNT}
+                        >
                             <Clock className="mr-2 h-4 w-4" />
                             Start Timed Capture
                         </Button>
                         ) : (
-                        <Button onClick={cancelCapture} variant="destructive" className="w-full bg-red-500">
+                        <Button 
+                            onClick={cancelCapture} 
+                            variant="destructive" 
+                            className="w-full"
+                        >
                             Cancel Capture
                         </Button>
                         )}
