@@ -104,58 +104,58 @@ export default function CapturePage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
-        <Card className="w-full max-w-md p-6 space-y-6">
-            <h1 className="text-2xl font-bold text-center">Capture Your Photos</h1>
-            <ProgressIndicator current={photos.length} total={CAPTURE_COUNT} />
-            <div className="relative aspect-[9/16] w-full bg-black rounded-lg overflow-hidden">
-            <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                className="absolute inset-0 w-full h-full object-cover"
-                videoConstraints={{
-                width: 1080,
-                height: 1920,
-                facingMode: 'user',
-                }}
-            />
-            {captureMode === 'timed' && isCapturing && countdown > 0 && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
-                <span className="text-6xl font-bold mb-4">{countdown}</span>
-                <span className="text-xl">
-                    Photo {photos.length + 1} of {CAPTURE_COUNT}
-                </span>
-                </div>
-            )}
-            </div>
-            <Tabs defaultValue="manual" onValueChange={(value) => setCaptureMode(value as 'manual' | 'timed')}>
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="manual">Manual</TabsTrigger>
-                    <TabsTrigger value="timed">Timed</TabsTrigger>
-                </TabsList>
-                <TabsContent value="manual">
-                    <Button onClick={startCapture} className="w-full" disabled={isCapturing || photos.length === CAPTURE_COUNT}>
-                    <Camera className="mr-2 h-4 w-4" />
-                    Capture Photo {photos.length + 1}
-                    </Button>
-                </TabsContent>
-                <TabsContent value="timed">
-                    {!isCapturing ? (
-                    <Button onClick={startCapture} className="w-full" disabled={photos.length === CAPTURE_COUNT}>
-                        <Clock className="mr-2 h-4 w-4" />
-                        Start Timed Capture
-                    </Button>
-                    ) : (
-                    <Button onClick={cancelCapture} variant="destructive" className="w-full">
-                        Cancel Capture
-                    </Button>
+            <Card className="w-full max-w-md space-y-6">
+                <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
+                <p className="text-center text-muted-foreground">
+                    {photos.length}/{CAPTURE_COUNT} photos captured
+                </p>
+                {/* <ProgressIndicator current={photos.length} total={CAPTURE_COUNT} /> */}
+                <div className="relative aspect-[9/16] h-[60vh] w-auto bg-black rounded-lg overflow-hidden mx-auto">
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        videoConstraints={{
+                        width: 1080,
+                        height: 1920,
+                        facingMode: 'user',
+                        }}
+                    />
+                    {captureMode === 'timed' && isCapturing && countdown > 0 && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
+                        <span className="text-6xl font-bold mb-4">{countdown}</span>
+                        <span className="text-xl">
+                            Photo {photos.length + 1} of {CAPTURE_COUNT}
+                        </span>
+                        </div>
                     )}
-                </TabsContent>
-            </Tabs>
-            <p className="text-center text-muted-foreground">
-            {photos.length}/{CAPTURE_COUNT} photos captured
-            </p>
-        </Card>
+                </div>
+                <Tabs defaultValue="manual" onValueChange={(value) => setCaptureMode(value as 'manual' | 'timed')}>
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="manual">Manual</TabsTrigger>
+                        <TabsTrigger value="timed">Timed</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="manual">
+                        <Button onClick={startCapture} className="w-3/4" disabled={isCapturing || photos.length === CAPTURE_COUNT}>
+                        <Camera className="mr-2 h-4 w-4" />
+                        Capture Photo {photos.length + 1}
+                        </Button>
+                    </TabsContent>
+                    <TabsContent value="timed">
+                        {!isCapturing ? (
+                        <Button onClick={startCapture} className="w-full" disabled={photos.length === CAPTURE_COUNT}>
+                            <Clock className="mr-2 h-4 w-4" />
+                            Start Timed Capture
+                        </Button>
+                        ) : (
+                        <Button onClick={cancelCapture} variant="destructive" className="w-full bg-red-500">
+                            Cancel Capture
+                        </Button>
+                        )}
+                    </TabsContent>
+                </Tabs>
+            </Card>
         <Footer />
         </div>
     );
