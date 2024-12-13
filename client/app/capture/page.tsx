@@ -131,26 +131,26 @@ export default function CapturePage() {
                         </div>
                     )}
                 </div>
-                <div className="flex justify-center space-x-4 w-3/4 mx-auto">
+                <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
                         onClick={() => {
                             setCaptureMode('manual');
                             startCapture();
                         }}
-                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" 
+                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
-                        <Camera className="h-6 w-6" />
+                        <Camera className="h-6 w-6 mx-auto" />
                     </Button>
                     <Button 
                         onClick={() => {
                             setCaptureMode('timed');
                             startCapture();
                         }}
-                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" 
+                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
-                        <Clock className="h-6 w-6" />
+                        <Clock className="h-6 w-6 mx-auto" />
                     </Button>
                 </div>
                 {isCapturing && captureMode === 'timed' && (
