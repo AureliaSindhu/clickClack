@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Star, Printer } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface FeedbackData {
     name: string;
@@ -14,7 +18,7 @@ interface FeedbackFormProps {
     onError: (message: string) => void;
 }
 
-export default function FeedbackForm({ onSuccess, onError }: FeedbackFormProps) {
+export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackFormProps) {
     const [formData, setFormData] = useState<FeedbackData>({
         name: "",
         email: "",
@@ -38,9 +42,7 @@ export default function FeedbackForm({ onSuccess, onError }: FeedbackFormProps) 
         if (!formData.name.trim()) newErrors.name = "Name is required.";
         if (!formData.email.trim()) {
         newErrors.email = "Email is required.";
-        } else if (
-        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
-        ) {
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
         newErrors.email = "Invalid email address.";
         }
         if (!formData.comments.trim()) newErrors.comments = "Comments are required.";
@@ -52,152 +54,124 @@ export default function FeedbackForm({ onSuccess, onError }: FeedbackFormProps) 
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
+        setErrors(validationErrors);
+        return;
         }
-    
+
         setErrors({});
         setIsSubmitting(true);
-    
+
         try {
-            const response = await fetch("/api/feedback", {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
+        const response = await fetch("/api/feedback", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
             },
             body: JSON.stringify(formData),
         });
-    
-          // Check if the response is JSON
-        const contentType = response.headers.get("Content-Type");
-        if (contentType && contentType.includes("application/json")) {
-            const result = await response.json();
 
-            if (response.ok && result.status === "success") {
-                onSuccess();
-                setFormData({
-                    name: "",
-                    email: "",
-                    rating: "5",
-                    comments: "",
-                });
-                } else {
-                    onError(result.message || "Failed to submit feedback.");
-                }
-        }  else {
-            // Handle non-JSON responses
-            const text = await response.text();
-            console.error("Non-JSON response:", text);
-            onError("An unexpected error occurred. Please try again.");
+        const result = await response.json();
+
+        if (response.ok && result.status === "success") {
+            onSuccess();
+            setFormData({
+            name: "",
+            email: "",
+            rating: "5",
+            comments: "",
+            });
+        } else {
+            onError(result.message || "Failed to submit feedback.");
         }
-    } catch (error: any) {
+        } catch (error: any) {
         console.error("Error submitting feedback:", error);
         onError("An unexpected error occurred. Please try again.");
-    } finally {
+        } finally {
         setIsSubmitting(false);
-    }
-    };      
+        }
+    };
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">We Value Your Feedback</h2>
-        <form onSubmit={handleSubmit} noValidate>
-            {/* Name Field */}
-            <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700">
-                Name<span className="text-red-500">*</span>
-            </label>
-            <input
+        <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden">
+        <div className="p-6 bg-[#FFFDF7] border-t-8 border-dashed border-gray-300">
+            <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold mb-2 font-mono">FEEDBACK RECEIPT</h2>
+            <p className="text-sm text-gray-500 font-mono">
+                {new Date().toLocaleString()}
+            </p>
+            </div>
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <div>
+                <Input
                 type="text"
                 name="name"
-                id="name"
+                placeholder="Name*"
                 value={formData.name}
                 onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                errors.name ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300`}
-            />
-            {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
+                className={`font-mono ${errors.name ? "border-red-500" : ""}`}
+                />
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
             </div>
 
-            {/* Email Field */}
-            <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">
-                Email<span className="text-red-500">*</span>
-            </label>
-            <input
+            <div>
+                <Input
                 type="email"
                 name="email"
-                id="email"
+                placeholder="Email*"
                 value={formData.email}
                 onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                errors.email ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300`}
-            />
-            {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
+                className={`font-mono ${errors.email ? "border-red-500" : ""}`}
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
-            {/* Rating Field */}
-            <div className="mb-4">
-            <label htmlFor="rating" className="block text-gray-700">
-                Rating<span className="text-red-500">*</span>
-            </label>
-            <select
-                name="rating"
-                id="rating"
-                value={formData.rating}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                errors.rating ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300`}
-            >
-                <option value="5">5 - Excellent</option>
-                <option value="4">4 - Very Good</option>
-                <option value="3">3 - Good</option>
-                <option value="2">2 - Fair</option>
-                <option value="1">1 - Poor</option>
-            </select>
-            {errors.rating && (
-                <p className="text-red-500 text-sm mt-1">{errors.rating}</p>
-            )}
+            <div>
+                <div className="flex justify-center space-x-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                    key={star}
+                    className={`w-6 h-6 cursor-pointer ${
+                        parseInt(formData.rating) >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                    }`}
+                    onClick={() => setFormData({ ...formData, rating: star.toString() })}
+                    />
+                ))}
+                </div>
             </div>
 
-            {/* Comments Field */}
-            <div className="mb-4">
-            <label htmlFor="comments" className="block text-gray-700">
-                Comments/ Request<span className="text-red-500">*</span>
-            </label>
-            <textarea
+            <div>
+                <Textarea
                 name="comments"
-                id="comments"
+                placeholder="Comments / Request*"
                 value={formData.comments}
                 onChange={handleChange}
-                rows={4}
-                className={`mt-1 block w-full p-2 border ${
-                errors.comments ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300`}
-            ></textarea>
-            {errors.comments && (
-                <p className="text-red-500 text-sm mt-1">{errors.comments}</p>
-            )}
+                rows={3}
+                className={`font-mono ${errors.comments ? "border-red-500" : ""}`}
+                />
+                {errors.comments && <p className="text-red-500 text-xs mt-1">{errors.comments}</p>}
             </div>
 
-            {/* Submit Button */}
-            <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition ${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-black text-white hover:bg-gray-800 flex items-center justify-center"
             >
-            {isSubmitting ? "Submitting..." : "Submit Feedback"}
-            </button>
-        </form>
+                {isSubmitting ? (
+                "Printing..."
+                ) : (
+                <>
+                    Print Feedback <Printer className="ml-2 h-4 w-4" />
+                </>
+                )}
+            </Button>
+            </form>
+        </div>
+        <div className="bg-[#FFFDF7] p-4 border-t border-dashed border-gray-300">
+            <p className="text-center text-xs font-mono text-gray-500">
+            Thank you for your feedback!
+            </p>
+        </div>
         </div>
     );
 }
+
