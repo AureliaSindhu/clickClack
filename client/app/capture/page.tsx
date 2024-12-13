@@ -46,7 +46,7 @@ export default function CapturePage() {
      */
     const startCapture = () => {
         if (isCapturing || photos.length >= CAPTURE_COUNT) return;
-        setIsCapturing(true);
+        setIsCapturing(false);
         if (captureMode === 'timed') {
         setCountdown(INTERVAL_SECONDS);
         } else {
