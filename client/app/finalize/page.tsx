@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 import '../style.css';
 import Footer from "../../components/footer";
-import Image from "next/image";
+import { PartyPopper, RefreshCcw } from "lucide-react";
 
 interface Frame {
     id: string;
@@ -291,8 +291,9 @@ export default function FinalizePage() {
                 {/* Again Button */}
                 <button
                     onClick={handleDoAnother}
-                    className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition"
+                    className="bg-gray-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-gray-700 transition flex items-center"
                 >
+                    <RefreshCcw className="mr-2"/>
                     Again!
                 </button>
             </div>
@@ -306,6 +307,7 @@ export default function FinalizePage() {
             {downloadSuccess && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-[var(--canvas)] rounded-lg p-6 max-w-sm w-full text-center">
+                        <PartyPopper className="mx-auto mb-2"/>
                         <h2 className="text-xl font-semibold font-chillax">Download Successful!</h2>
                         <p className="mb-2">Don&apos;t forget to share and tag 
                             <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
