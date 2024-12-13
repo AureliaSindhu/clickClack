@@ -42,15 +42,20 @@ export default function CapturePage() {
     };
 
     /**
-     * Function to initiate the timed capture sequence.
+     * Function to initiate the capture sequence based on the mode.
+     * @param mode - The capture mode: 'manual' or 'timed'
      */
-    const startCapture = () => {
+    const startCapture = (mode: 'manual' | 'timed') => {
+        console.log(`Starting capture in ${mode} mode.`);
         if (isCapturing || photos.length >= CAPTURE_COUNT) return;
-        setIsCapturing(false);
-        if (captureMode === 'timed') {
-        setCountdown(INTERVAL_SECONDS);
+        setCaptureMode(mode);
+
+        if (mode === 'timed') {
+            setIsCapturing(true); // Correctly set to true
+            setCountdown(INTERVAL_SECONDS);
+            console.log(`Timed capture initiated with countdown ${INTERVAL_SECONDS} seconds.`);
         } else {
-        capturePhoto();
+            capturePhoto();
         }
     };
 
@@ -58,11 +63,10 @@ export default function CapturePage() {
      * Function to cancel the timed capture process.
      * Clears all active timers and resets relevant states.
      */
-
     const cancelCapture = () => {
         if (countdownTimerRef.current) {
-        clearTimeout(countdownTimerRef.current);
-        countdownTimerRef.current = null;
+            clearTimeout(countdownTimerRef.current);
+            countdownTimerRef.current = null;
         }
         setIsCapturing(false);
         setCountdown(0);
@@ -74,31 +78,35 @@ export default function CapturePage() {
      */
     useEffect(() => {
         if (captureMode === 'timed' && isCapturing) {
-        if (countdown > 0) {
-            countdownTimerRef.current = setTimeout(() => {
-            setCountdown((prev) => prev - 1);
-            }, 1000);
-        } else {
-            capturePhoto();
-            if (photos.length + 1 < CAPTURE_COUNT) {
-            setCountdown(INTERVAL_SECONDS);
+            if (countdown > 0) {
+                countdownTimerRef.current = setTimeout(() => {
+                    setCountdown((prev) => prev - 1);
+                }, 1000);
             } else {
-            setIsCapturing(false);
+                capturePhoto();
+                if (photos.length + 1 < CAPTURE_COUNT) {
+                    setCountdown(INTERVAL_SECONDS);
+                } else {
+                    setIsCapturing(false);
+                }
             }
-        }
         }
 
         return () => {
-        if (countdownTimerRef.current) {
-            clearTimeout(countdownTimerRef.current);
-        }
+            if (countdownTimerRef.current) {
+                clearTimeout(countdownTimerRef.current);
+                countdownTimerRef.current = null;
+            }
         };
     }, [isCapturing, countdown, photos.length, captureMode]);
 
+    /**
+     * Effect to navigate to the review page once all photos are captured.
+     */
     useEffect(() => {
         if (photos.length === CAPTURE_COUNT) {
-        sessionStorage.setItem('photos', JSON.stringify(photos));
-        router.push('/review');
+            sessionStorage.setItem('photos', JSON.stringify(photos));
+            router.push('/review');
         }
     }, [photos.length, router, photos]);
 
@@ -109,6 +117,7 @@ export default function CapturePage() {
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
+                {/* Uncomment to show progress */}
                 {/* <ProgressIndicator current={photos.length} total={CAPTURE_COUNT} /> */}
                 <div className="relative aspect-[9/16] h-[60vh] w-auto bg-black rounded-lg overflow-hidden mx-auto">
                     <Webcam
@@ -117,36 +126,30 @@ export default function CapturePage() {
                         screenshotFormat="image/jpeg"
                         className="absolute inset-0 w-full h-full object-cover"
                         videoConstraints={{
-                        width: 1080,
-                        height: 1920,
-                        facingMode: 'user',
+                            width: 1080,
+                            height: 1920,
+                            facingMode: 'user',
                         }}
                     />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
-                        <span className="text-6xl font-bold mb-4">{countdown}</span>
-                        <span className="text-xl">
-                            Photo {photos.length + 1} of {CAPTURE_COUNT}
-                        </span>
+                            <span className="text-6xl font-bold mb-4">{countdown}</span>
+                            <span className="text-xl">
+                                Photo {photos.length + 1} of {CAPTURE_COUNT}
+                            </span>
                         </div>
                     )}
                 </div>
                 <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
-                        onClick={() => {
-                            setCaptureMode('manual');
-                            startCapture();
-                        }}
+                        onClick={() => startCapture('manual')} // Pass mode as parameter
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
                         <Camera className="h-6 w-6 mx-auto" />
                     </Button>
                     <Button 
-                        onClick={() => {
-                            setCaptureMode('timed');
-                            startCapture();
-                        }}
+                        onClick={() => startCapture('timed')} // Pass mode as parameter
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
@@ -163,7 +166,7 @@ export default function CapturePage() {
                     </Button>
                 )}
             </Card>
-        <Footer />
+            <Footer />
         </div>
     );
 }
