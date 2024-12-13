@@ -52,39 +52,39 @@ export default function FeedbackForm({ onSuccess, onError }: FeedbackFormProps) 
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
-          return;
+            setErrors(validationErrors);
+            return;
         }
-      
+    
         setErrors({});
         setIsSubmitting(true);
-      
+    
         try {
-          const response = await fetch("/api/feedback", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+            const response = await fetch("/api/feedback", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(formData),
-          });
-      
+        });
+    
           // Check if the response is JSON
-          const contentType = response.headers.get("Content-Type");
-          if (contentType && contentType.includes("application/json")) {
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
             const result = await response.json();
-      
+
             if (response.ok && result.status === "success") {
-              onSuccess();
-              setFormData({
-                name: "",
-                email: "",
-                rating: "5",
-                comments: "",
-              });
-            } else {
-              onError(result.message || "Failed to submit feedback.");
-            }
-          } else {
+                onSuccess();
+                setFormData({
+                    name: "",
+                    email: "",
+                    rating: "5",
+                    comments: "",
+                });
+                } else {
+                    onError(result.message || "Failed to submit feedback.");
+                }
+        }  else {
             // Handle non-JSON responses
             const text = await response.text();
             console.error("Non-JSON response:", text);
