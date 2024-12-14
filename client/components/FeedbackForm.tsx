@@ -1,6 +1,7 @@
+// ReceiptFeedbackForm.tsx
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Star, Printer } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +14,7 @@ interface FeedbackData {
     comments: string;
 }
 
-export default function ReceiptFeedbackForm() {
+const ReceiptFeedbackForm: React.FC = () => {
     const [formData, setFormData] = useState<FeedbackData>({
         name: "",
         email: "",
@@ -23,6 +24,7 @@ export default function ReceiptFeedbackForm() {
 
     const [errors, setErrors] = useState<Partial<FeedbackData>>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // New state
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -83,6 +85,7 @@ export default function ReceiptFeedbackForm() {
                     rating: "5",
                     comments: "",
                 });
+                setIsSubmitted(true); // Update the state to indicate submission
             } else {
                 throw new Error("Failed to submit feedback.");
             }
@@ -93,7 +96,24 @@ export default function ReceiptFeedbackForm() {
             setIsSubmitting(false);
         }
     };
-    
+
+    // If submitted, show a thank you message instead of the form
+    if (isSubmitted) {
+        return (
+            <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden p-6 text-center">
+                <h2 className="text-2xl font-bold mb-2 font-mono">Thank You!</h2>
+                <p className="text-sm text-gray-500 font-mono">
+                    Your feedback has been submitted successfully.
+                </p>
+                <Button
+                    onClick={() => setIsSubmitted(false)} // Optionally allow users to submit another feedback
+                    className="mt-4 bg-black text-white hover:bg-gray-800"
+                >
+                    Submit Another Feedback
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden">
@@ -189,4 +209,6 @@ export default function ReceiptFeedbackForm() {
             </div>
         </div>
     );
-}
+};
+
+export default ReceiptFeedbackForm;
