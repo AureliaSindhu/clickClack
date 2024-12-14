@@ -14,7 +14,12 @@ interface FeedbackData {
     comments: string;
 }
 
-const ReceiptFeedbackForm: React.FC = () => {
+interface FeedbackFormProps {
+    onSuccess: () => void;
+    onError: (message: string) => void;
+}
+
+const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }) => {
     const [formData, setFormData] = useState<FeedbackData>({
         name: "",
         email: "",
@@ -78,7 +83,7 @@ const ReceiptFeedbackForm: React.FC = () => {
             });
     
             if (response.ok || response.status === 0) {  // Google Forms returns no response
-                alert("Feedback submitted successfully!");
+                onSuccess();
                 setFormData({
                     name: "",
                     email: "",
@@ -91,7 +96,7 @@ const ReceiptFeedbackForm: React.FC = () => {
             }
         } catch (error: any) {
             console.error("Error submitting feedback:", error);
-            alert("An unexpected error occurred. Please try again.");
+            onError(error.message || "An unexpected error occurred. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -100,7 +105,7 @@ const ReceiptFeedbackForm: React.FC = () => {
     // If submitted, show a thank you message instead of the form
     if (isSubmitted) {
         return (
-            <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden p-6 text-center">
+            <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lshadow-lg overflow-hidden p-6 text-center">
                 <h2 className="text-2xl font-bold mb-2 font-mono">Thank You!</h2>
                 <p className="text-sm text-gray-500 font-mono">
                     Your feedback has been submitted successfully.
@@ -116,10 +121,10 @@ const ReceiptFeedbackForm: React.FC = () => {
     }
 
     return (
-        <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden">
-            <div className="p-6 bg-[#FFFDF7] border-t-8 border-dashed border-gray-300">
+        <div className="max-w-md mx-auto shadow-lg overflow-hidden">
+            <div className="p-6 bg-[#EAE6E0] border-t-8 border-dashed border-gray-800">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold mb-2 font-mono">FEEDBACK RECEIPT</h2>
+                    <h2 className="text-2xl font-bold mb-2 font-chillax">FEEDBACK RECEIPT</h2>
                     <p className="text-sm text-gray-500 font-mono">
                         {new Date().toLocaleString()}
                     </p>
@@ -133,7 +138,7 @@ const ReceiptFeedbackForm: React.FC = () => {
                             placeholder="Name*"
                             value={formData.name}
                             onChange={handleChange}
-                            className={`font-mono ${errors.name ? "border-red-500" : ""}`}
+                            className={`font-mono p-2 ${errors.name ? "border-red-500" : ""}`}
                         />
                         {errors.name && (
                             <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -147,7 +152,7 @@ const ReceiptFeedbackForm: React.FC = () => {
                             placeholder="Email*"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`font-mono ${errors.email ? "border-red-500" : ""}`}
+                            className={`font-mono p-2 ${errors.email ? "border-red-500" : ""}`}
                         />
                         {errors.email && (
                             <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -161,8 +166,8 @@ const ReceiptFeedbackForm: React.FC = () => {
                                     key={star}
                                     className={`w-6 h-6 cursor-pointer ${
                                         parseInt(formData.rating) >= star
-                                            ? "text-yellow-400 fill-yellow-400"
-                                            : "text-gray-300"
+                                            ? "text-yellow-500 fill-yellow-500"
+                                            : "text-gray-400"
                                     }`}
                                     onClick={() =>
                                         setFormData({ ...formData, rating: star.toString() })
@@ -175,11 +180,11 @@ const ReceiptFeedbackForm: React.FC = () => {
                     <div>
                         <Textarea
                             name="comments"
-                            placeholder="Comments / Request*"
+                            placeholder="Comments or Request*"
                             value={formData.comments}
                             onChange={handleChange}
                             rows={3}
-                            className={`font-mono ${errors.comments ? "border-red-500" : ""}`}
+                            className={`font-mono p-2 ${errors.comments ? "border-red-500" : ""}`}
                         />
                         {errors.comments && (
                             <p className="text-red-500 text-xs mt-1">{errors.comments}</p>

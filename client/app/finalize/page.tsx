@@ -358,7 +358,7 @@ export default function FinalizePage() {
             {/* Feedback Modal */}
             {isFeedbackOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full relative">
+                    <div className="rounded-lg p-6 max-w-md w-full relative">
                         <button
                             onClick={() => setIsFeedbackOpen(false)}
                             className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
