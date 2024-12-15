@@ -75,11 +75,15 @@ export default function FramePage() {
             setSelectedFrame(JSON.parse(storedSelectedFrame));
         } else {
             setSelectedFrame(colorFrames[0]);
+            sessionStorage.setItem("selectedFrame", JSON.stringify(colorFrames[0]));
         }
 
         const storedFrameType = sessionStorage.getItem("isColorFrame");
         if (storedFrameType !== null) {
             setIsColorFrame(storedFrameType === "true");
+        } else {
+            setIsColorFrame(true);
+            sessionStorage.setItem("isColorFrame", "true");
         }
 
     }, [colorFrames, customFrames, router]);
@@ -122,11 +126,12 @@ export default function FramePage() {
             <div
                 className="flex flex-col relative mb-8"
                 style={{
-                    width: `${SCALED_FRAME_WIDTH}px`, //324px
-                    height: `${SCALED_FRAME_HEIGHT}px`, //576px
-                    backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
+                    width: `${SCALED_FRAME_WIDTH}px`, // 324px
+                    height: `${SCALED_FRAME_HEIGHT}px`, // 576px
+                    backgroundColor: "transparent", // Always transparent
                     position: "relative",
                 }}
+                
             >
                 {/* Top Border */}
                 <div
