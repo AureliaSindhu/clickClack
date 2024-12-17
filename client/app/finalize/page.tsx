@@ -328,12 +328,6 @@ export default function FinalizePage() {
                 </button>
             </div>
 
-            {/* Optional Share Prompt */}
-            {/* <p className="mt-3 text-gray-700"> Share and tag
-                <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
-                    <strong> aacode</strong> 
-                </a> on instagram!</p> */}
-
             {/* Success Popup */}
             {downloadSuccess && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
