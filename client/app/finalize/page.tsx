@@ -263,7 +263,7 @@ export default function FinalizePage() {
                                 key={index}
                                 src={photo}
                                 alt={`Photo ${index + 1}`}
-                                className="object-cover rounded-md"
+                                className="object-cover"
                                 style={{
                                     width: `${PHOTO_WIDTH}px`, //138px
                                     height: `${PHOTO_HEIGHT}px`, //210px
