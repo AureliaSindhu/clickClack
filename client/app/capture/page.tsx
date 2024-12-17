@@ -6,10 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Footer from '../../components/footer';
 import { Camera, Clock } from 'lucide-react';
-import "../style.css"
+import "../style.css";
+import { isMobile } from 'react-device-detect'; // Import device detection
 
 const CAPTURE_COUNT = 4;
 const INTERVAL_SECONDS = 5;
@@ -26,6 +26,26 @@ export default function CapturePage() {
     const [captureMode, setCaptureMode] = useState<'manual' | 'timed'>('manual');
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Determine device type (optional for future use)
+    const [deviceType, setDeviceType] = useState<'desktop' | 'mobile'>('desktop');
+
+    useEffect(() => {
+        if (isMobile) {
+            setDeviceType('mobile');
+        } else {
+            setDeviceType('desktop');
+        }
+    }, []);
+
+    // Set video constraints to maintain a 9:16 aspect ratio
+    const videoConstraints = {
+        facingMode: 'user',
+        aspectRatio: 9 / 16,
+        // Optionally, set width and height if desired
+        // width: 720,
+        // height: 1280,
+    };
 
     const capturePhoto = () => {
         if (webcamRef.current) {
@@ -119,18 +139,21 @@ export default function CapturePage() {
                 </p>
                 {/* Uncomment to show progress */}
                 {/* <ProgressIndicator current={photos.length} total={CAPTURE_COUNT} /> */}
-                <div className="relative aspect-[9/16] h-[60vh] w-auto bg-black rounded-lg overflow-hidden mx-auto">
-                    <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        videoConstraints={{
-                            width: 1080,
-                            height: 1920,
-                            facingMode: 'user',
-                        }}
-                    />
+                <div
+                    className={`relative aspect-[9/16] h-[65vh] bg-black rounded-lg overflow-hidden mx-auto`}
+                >
+                    {/* Flex container to center the webcam feed */}
+                    <div className="flex items-center justify-center w-full h-full">
+                        <Webcam
+                            audio={false}
+                            ref={webcamRef}
+                            screenshotFormat="image/jpeg"
+                            className="w-full h-full object-contain"
+                            videoConstraints={videoConstraints}
+                            mirrored={false} // Set to true if you want a mirrored image
+                        />
+                    </div>
+                    {/* Countdown Overlay */}
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
                             <span className="text-6xl font-bold mb-4">{countdown}</span>
