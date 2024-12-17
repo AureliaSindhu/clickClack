@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 import '../style.css';
 import Footer from "../../components/footer";
-import { PartyPopper, RefreshCcw } from "lucide-react";
+import { PartyPopper, ImageDown, RefreshCcw, Sticker } from "lucide-react";
 import FeedbackForm from "../../components/FeedbackForm";
 
 interface Frame {
@@ -304,9 +304,10 @@ export default function FinalizePage() {
                 {/* Download Button */}
                 <button
                     onClick={handleDownload}
-                    className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition"
+                    className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition flex items-center"
                 >
-                    Download Image
+                    <ImageDown className="mr-2"/>
+                    Download 
                 </button>
 
                 {/* Feedback Button */}
@@ -314,7 +315,7 @@ export default function FinalizePage() {
                     onClick={handleFeedback}
                     className="bg-yellow-600 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-700 transition flex items-center"
                 >
-                    <RefreshCcw className="mr-2"/>
+                    <Sticker className="mr-2"/>
                     Feedback
                 </button>
 
