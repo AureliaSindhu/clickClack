@@ -9,7 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import Footer from '../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../style.css";
-import { isMobile } from 'react-device-detect'; // Import device detection
+import { isMobile } from 'react-device-detect'; 
 
 const CAPTURE_COUNT = 4;
 const INTERVAL_SECONDS = 5;
@@ -27,7 +27,6 @@ export default function CapturePage() {
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Determine device type (optional for future use)
     const [deviceType, setDeviceType] = useState<'desktop' | 'mobile'>('desktop');
 
     useEffect(() => {
@@ -71,7 +70,7 @@ export default function CapturePage() {
         setCaptureMode(mode);
 
         if (mode === 'timed') {
-            setIsCapturing(true); // Correctly set to true
+            setIsCapturing(true); 
             setCountdown(INTERVAL_SECONDS);
             console.log(`Timed capture initiated with countdown ${INTERVAL_SECONDS} seconds.`);
         } else {
@@ -79,10 +78,6 @@ export default function CapturePage() {
         }
     };
 
-    /**
-     * Function to cancel the timed capture process.
-     * Clears all active timers and resets relevant states.
-     */
     const cancelCapture = () => {
         if (countdownTimerRef.current) {
             clearTimeout(countdownTimerRef.current);
@@ -93,9 +88,6 @@ export default function CapturePage() {
         console.log("Timed capture canceled by the user.");
     };
 
-    /**
-     * Effect to handle the countdown and capturing process.
-     */
     useEffect(() => {
         if (captureMode === 'timed' && isCapturing) {
             if (countdown > 0) {
@@ -120,9 +112,6 @@ export default function CapturePage() {
         };
     }, [isCapturing, countdown, photos.length, captureMode]);
 
-    /**
-     * Effect to navigate to the review page once all photos are captured.
-     */
     useEffect(() => {
         if (photos.length === CAPTURE_COUNT) {
             sessionStorage.setItem('photos', JSON.stringify(photos));
@@ -137,7 +126,6 @@ export default function CapturePage() {
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
-                {/* Uncomment to show progress */}
                 {/* <ProgressIndicator current={photos.length} total={CAPTURE_COUNT} /> */}
                 <div
                     className={`relative aspect-[9/16] h-[65vh] bg-black rounded-lg overflow-hidden mx-auto`}
@@ -150,10 +138,10 @@ export default function CapturePage() {
                             screenshotFormat="image/jpeg"
                             className="w-full h-full object-contain"
                             videoConstraints={videoConstraints}
-                            mirrored={false} // Set to true if you want a mirrored image
+                            mirrored={false} 
                         />
                     </div>
-                    {/* Countdown Overlay */}
+
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
                             <span className="text-6xl font-bold mb-4">{countdown}</span>
@@ -165,14 +153,14 @@ export default function CapturePage() {
                 </div>
                 <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
-                        onClick={() => startCapture('manual')} // Pass mode as parameter
+                        onClick={() => startCapture('manual')} 
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
                         <Camera className="h-6 w-6 mx-auto" />
                     </Button>
                     <Button 
-                        onClick={() => startCapture('timed')} // Pass mode as parameter
+                        onClick={() => startCapture('timed')} 
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >

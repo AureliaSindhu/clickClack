@@ -88,25 +88,21 @@ export default function FramePage() {
 
     }, [colorFrames, customFrames, router]);
 
-    // Handle frame selection
     const handleSelectFrame = (frame: Frame) => {
         setSelectedFrame(frame);
         sessionStorage.setItem("selectedFrame", JSON.stringify(frame));
     };
 
-    // Handle frame type selection
     const handleToggle = (frameType: "color" | "custom") => {
         const isColor = frameType === "color";
         setIsColorFrame(isColor);
         sessionStorage.setItem("isColorFrame", isColor.toString());
 
         if (isColor) {
-            // Switching to color frames
             const defaultColorFrame = colorFrames[0];
             setSelectedFrame(defaultColorFrame);
             sessionStorage.setItem("selectedFrame", JSON.stringify(defaultColorFrame));
         } else {
-            // Switching to custom frames
             const defaultCustomFrame = customFrames[0];
             setSelectedFrame(defaultCustomFrame);
             sessionStorage.setItem("selectedFrame", JSON.stringify(defaultCustomFrame));
@@ -114,8 +110,7 @@ export default function FramePage() {
     };
 
     const handleProceed = () => {
-        // Proceed to the next step/page
-        router.push("/finalize"); // Update the route as needed
+        router.push("/finalize"); 
     };
 
     return (
@@ -128,7 +123,7 @@ export default function FramePage() {
                 style={{
                     width: `${SCALED_FRAME_WIDTH}px`, // 324px
                     height: `${SCALED_FRAME_HEIGHT}px`, // 576px
-                    backgroundColor: "transparent", // Always transparent
+                    backgroundColor: "transparent", 
                     position: "relative",
                 }}
                 
@@ -145,13 +140,6 @@ export default function FramePage() {
                 {/* Photo Grid */}
                 <div className="flex-grow flex justify-center items-center">
                     <div
-                        // className="grid grid-cols-2 gap-[9px]"
-                        // style={{
-                        //     width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 +9=285px
-                        //     height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, //209*2 +9=427px
-                        //     marginLeft: `${LEFT_RIGHT_GAP}px`, //19px
-                        //     marginRight: `${LEFT_RIGHT_GAP}px`, //19px
-                        // }}
                         className="grid"
                         style={{
                             width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, //138*2 + 9 = 285px
@@ -183,7 +171,6 @@ export default function FramePage() {
                     className="w-full"
                     style={{
                         height: `${SCALED_BOTTOM_HEIGHT}px`, //127px
-                         // backgroundColor: selectedFrame?.type === "color" ? "transparent" : "transparent", // Always transparent
                     }}
                 ></div>
 
@@ -194,9 +181,6 @@ export default function FramePage() {
                         alt={`Frame ${selectedFrame.name}`}
                         className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
                         style={{ zIndex: 2 }}
-                        // onError={(e) => {
-                        //     (e.target as HTMLImageElement).src = "/fallback-frame.png"; // Provide a fallback image
-                        // }}
                     />
                 )}
             </div>

@@ -47,7 +47,6 @@ export default function FinalizePage() {
     const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); //19px
 
     useEffect(() => {
-        // Load photos from sessionStorage
         const storedPhotos = sessionStorage.getItem("photos");
         if (storedPhotos) {
             setPhotos(JSON.parse(storedPhotos));
@@ -55,7 +54,6 @@ export default function FinalizePage() {
             router.push("/capture");
         }
 
-        // Load selected frame from sessionStorage
         const storedSelectedFrame = sessionStorage.getItem("selectedFrame");
         if (storedSelectedFrame) {
             setSelectedFrame(JSON.parse(storedSelectedFrame));
@@ -73,16 +71,14 @@ export default function FinalizePage() {
     const generateFinalImage = async () => {
         if (finalRef.current) {
             try {
-                // Generate canvas at the scaled resolution for preview
                 const canvas = await html2canvas(finalRef.current, {
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: "transparent",
-                    scale: 1, // Set to 1 for actual size in preview
+                    scale: 1,
                 });
 
                 const dataURL = canvas.toDataURL("image/png");
-                // setFinalImage(dataURL);
             } catch (error) {
                 console.error("Error generating final image:", error);
             }
@@ -93,14 +89,13 @@ export default function FinalizePage() {
     const loadImage = (src: string): Promise<HTMLImageElement> => {
         return new Promise((resolve, reject) => {
             const img = document.createElement("img");
-            img.crossOrigin = "anonymous"; // To avoid CORS issues
+            img.crossOrigin = "anonymous"; 
             img.src = src;
             img.onload = () => resolve(img);
             img.onerror = (err) => reject(err);
         });
     };
 
-    // Helper function to draw images with "object-cover" behavior
     const drawImageCover = (
         ctx: CanvasRenderingContext2D,
         img: HTMLImageElement,
@@ -115,13 +110,11 @@ export default function FinalizePage() {
         let sx: number, sy: number, sWidth: number, sHeight: number;
 
         if (imgAspect > targetAspect) {
-            // Image is wider than target aspect ratio
             sHeight = img.height;
             sWidth = sHeight * targetAspect;
             sx = (img.width - sWidth) / 2;
             sy = 0;
         } else {
-            // Image is taller than target aspect ratio
             sWidth = img.width;
             sHeight = sWidth / targetAspect;
             sx = 0;
@@ -139,7 +132,6 @@ export default function FinalizePage() {
         }
 
         try {
-            // Create a canvas with original dimensions
             const canvas = document.createElement("canvas");
             canvas.width = ORIGINAL_WIDTH;
             canvas.height = ORIGINAL_HEIGHT;
@@ -149,7 +141,7 @@ export default function FinalizePage() {
                 throw new Error("Canvas is not supported.");
             }
 
-            // Fill the background with transparent (optional)
+            // Fill the background with transparent 
             ctx.fillStyle = "rgba(0,0,0,0)";
             ctx.fillRect(0, 0, ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
 
@@ -169,19 +161,15 @@ export default function FinalizePage() {
                 { x: 65 + 461 + 30, y: 75 + 698 + 30 }, // Bottom-right photo
             ];
 
-            // Draw each photo with aspect ratio preserved
             loadedPhotos.forEach((img, index) => {
                 const pos = photoPositions[index];
                 drawImageCover(ctx, img, pos.x, pos.y, 461, 698);
             });
 
-            // Draw the frame on top
             ctx.drawImage(frameImg, 0, 0, ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
 
-            // Generate the data URL
             const dataURL = canvas.toDataURL("image/png");
 
-            // Trigger the download
             const link = document.createElement("a");
             link.href = dataURL;
             link.download = "final-image.png";
@@ -189,7 +177,6 @@ export default function FinalizePage() {
             link.click();
             document.body.removeChild(link);
 
-            // Show the success popup
             setDownloadSuccess(true);
 
         } catch (error) {
@@ -198,7 +185,6 @@ export default function FinalizePage() {
         }
     };
 
-    // Function to close the popup
     const closePopup = () => {
         setDownloadSuccess(false);
     };
@@ -208,16 +194,14 @@ export default function FinalizePage() {
     };
 
     const handleFeedback = () => {
-        setIsFeedbackOpen(true); // Open the feedback modal
+        setIsFeedbackOpen(true); 
     };
 
-    // Function to handle successful feedback submission
     const handleFeedbackSuccess = () => {
         setFeedbackMessage("Thank you for your feedback!");
         setIsFeedbackOpen(false);
     };
 
-    // Function to handle feedback submission errors
     const handleFeedbackError = (message: string) => {
         setFeedbackMessage(message);
         setIsFeedbackOpen(false);
