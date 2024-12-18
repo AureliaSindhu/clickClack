@@ -66,7 +66,6 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
             "entry.1628403147": formData.comments, 
         };
     
-        // Create FormData object for submission
         const formDataToSubmit = new FormData();
         Object.entries(formMapping).forEach(([key, value]) => {
             formDataToSubmit.append(key, value);
