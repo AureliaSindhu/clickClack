@@ -1,4 +1,3 @@
-// ReceiptFeedbackForm.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -59,13 +58,12 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
     
         setIsSubmitting(true);
     
-        // Construct Google Forms URL and Map Data
         const googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLScHB2JEnqEvHDG5TApLWXHwc8xtRmIVC9oIYxmVuGsjzVI5qA/formResponse";
         const formMapping = {
-            "entry.339916220": formData.name,     // Name field ID
-            "entry.885419918": formData.email,    // Email field ID
-            "entry.1810681366": formData.rating,  // Rating field ID
-            "entry.1628403147": formData.comments, // Comments field ID
+            "entry.339916220": formData.name,     
+            "entry.885419918": formData.email,    
+            "entry.1810681366": formData.rating,  
+            "entry.1628403147": formData.comments, 
         };
     
         // Create FormData object for submission
@@ -75,14 +73,13 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
         });
     
         try {
-            // Submit the form using a POST request
             const response = await fetch(googleFormURL, {
                 method: "POST",
-                mode: "no-cors",  // Required for Google Forms
+                mode: "no-cors",  
                 body: formDataToSubmit,
             });
     
-            if (response.ok || response.status === 0) {  // Google Forms returns no response
+            if (response.ok || response.status === 0) { 
                 onSuccess();
                 setFormData({
                     name: "",
@@ -90,7 +87,7 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
                     rating: "5",
                     comments: "",
                 });
-                setIsSubmitted(true); // Update the state to indicate submission
+                setIsSubmitted(true); 
             } else {
                 throw new Error("Failed to submit feedback.");
             }
@@ -102,7 +99,6 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
         }
     };
 
-    // If submitted, show a thank you message instead of the form
     if (isSubmitted) {
         return (
             <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lshadow-lg overflow-hidden p-6 text-center">
@@ -111,7 +107,7 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
                     Your feedback has been submitted successfully.
                 </p>
                 <Button
-                    onClick={() => setIsSubmitted(false)} // Optionally allow users to submit another feedback
+                    onClick={() => setIsSubmitted(false)} 
                     className="mt-4 bg-black text-white hover:bg-gray-800"
                 >
                     Submit Another Feedback
