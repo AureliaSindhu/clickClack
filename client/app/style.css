@@ -83,3 +83,11 @@
     height: 100%;
     object-fit: contain; /* Use 'cover' if preferred */
 }
+
+.review-image.portrait {
+    transform: rotate(0deg);
+}
+
+.review-image.landscape {
+    transform: rotate(90deg);
+}

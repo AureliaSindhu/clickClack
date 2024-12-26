@@ -53,40 +53,16 @@ export default function CapturePage() {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
-                // Optionally handle image orientation
-                const img = new Image();
-                img.src = imageSrc;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-
-                    if (!ctx) {
-                        console.error("Failed to get canvas context");
-                        return;
-                    }
-
-                    if (orientation === 'portrait') {
-                        canvas.width = img.height;
-                        canvas.height = img.width;
-                        // ctx.rotate(-90 * Math.PI / 180);
-                        ctx.drawImage(img, -img.width, 0);
-                    } else {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-                    }
-
-                    const correctedImageSrc = canvas.toDataURL('image/jpeg');
-                    setPhotos((prevPhotos) => [...prevPhotos, correctedImageSrc]);
-                    console.log(`Captured photo ${photos.length + 1}`);
-                };
+                setPhotos((prevPhotos) => [...prevPhotos, imageSrc]);
+                console.log(`Captured photo ${photos.length + 1}`);
             } else {
                 console.error("Failed to capture screenshot");
             }
         } else {
             console.error("Webcam reference is not initialized");
         }
-    }, [photos.length, orientation]);
+    }, [photos.length]);
+    
 
     const startCapture = (mode: 'manual' | 'timed') => {
         console.log(`Starting capture in ${mode} mode.`);
@@ -137,11 +113,17 @@ export default function CapturePage() {
     }, [isCapturing, countdown, photos.length, captureMode, capturePhoto]);
 
     useEffect(() => {
-        if (photos.length === CAPTURE_COUNT) {
-            sessionStorage.setItem('photos', JSON.stringify(photos));
-            router.push('/review');
+        const storedPhotos = sessionStorage.getItem("photos");
+        if (storedPhotos) {
+            const parsedPhotos = JSON.parse(storedPhotos);
+            console.log(parsedPhotos);
+            setPhotos(parsedPhotos);
+        } else {
+            // If no photos are found, redirect back to the capture page
+            router.push("/capture");
         }
-    }, [photos.length, router, photos]);
+    }, [router]);
+    
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
