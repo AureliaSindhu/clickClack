@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Star, Printer } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +28,7 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
 
   const [errors, setErrors] = useState<Partial<FeedbackData>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // New state for submission status
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -80,16 +81,39 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
           rating: "5",
           comments: "",
         });
+        setIsSubmitted(true); // Update submission status
       } else {
         onError(result.message || "Failed to submit feedback.");
       }
-    } catch (error: any) {
-      console.error("Error submitting feedback:", error);
-      onError("An unexpected error occurred. Please try again.");
+    } catch (error: unknown) { // Changed from 'any' to 'unknown'
+      if (error instanceof Error) {
+        console.error("Error submitting feedback:", error);
+        onError(error.message);
+      } else {
+        console.error("An unexpected error occurred:", error);
+        onError("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lg shadow-lg overflow-hidden p-6 text-center">
+        <h2 className="text-2xl font-bold mb-2 font-mono">Thank You!</h2>
+        <p className="text-sm text-gray-500 font-mono">
+          Your feedback has been submitted successfully.
+        </p>
+        <Button
+          onClick={() => setIsSubmitted(false)} 
+          className="mt-4 bg-black text-white hover:bg-gray-800"
+        >
+          Submit Another Feedback
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden">
@@ -100,6 +124,7 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
             {new Date().toLocaleString()}
           </p>
         </div>
+
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div>
             <Input
@@ -108,7 +133,7 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
               placeholder="Name*"
               value={formData.name}
               onChange={handleChange}
-              className={`font-mono ${errors.name ? "border-red-500" : ""}`}
+              className={`font-mono p-2 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded`}
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
@@ -120,7 +145,7 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
               placeholder="Email*"
               value={formData.email}
               onChange={handleChange}
-              className={`font-mono ${errors.email ? "border-red-500" : ""}`}
+              className={`font-mono p-2 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded`}
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
@@ -146,7 +171,7 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
               value={formData.comments}
               onChange={handleChange}
               rows={3}
-              className={`font-mono ${errors.comments ? "border-red-500" : ""}`}
+              className={`font-mono p-2 border ${errors.comments ? "border-red-500" : "border-gray-300"} rounded`}
             />
             {errors.comments && <p className="text-red-500 text-xs mt-1">{errors.comments}</p>}
           </div>
@@ -154,10 +179,10 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-black text-white hover:bg-gray-800"
+            className="w-full bg-black text-white hover:bg-gray-800 flex items-center justify-center"
           >
             {isSubmitting ? (
-              "Printing..."
+              "Submitting..."
             ) : (
               <>
                 <Printer className="mr-2 h-4 w-4" /> Print Feedback
@@ -174,4 +199,3 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
     </div>
   );
 }
-
