@@ -71,7 +71,7 @@ export default function CapturePage() {
                         canvas.height = img.width;
 
                         // Rotate the canvas by 90 degrees clockwise
-                        ctx.rotate(90 * Math.PI / 180);
+                        // ctx.rotate(90 * Math.PI / 180);
 
                         // Draw the image on the rotated canvas
                         ctx.drawImage(img, 0, -img.height);
