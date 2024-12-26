@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
@@ -20,11 +20,6 @@ export default function CapturePage() {
     const [captureMode, setCaptureMode] = useState<'manual' | 'timed'>('manual');
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-    useEffect(() => {
-        // to use deviceType for responsive UI, implement it here.
-        // Currently unused, so this effect can be removed or retained based on future needs.
-    }, []);
 
     // Set video constraints to maintain a 9:16 aspect ratio
     const videoConstraints = {
@@ -110,6 +105,7 @@ export default function CapturePage() {
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
+
                 <div
                     className={`relative aspect-[9/16] h-[65vh] bg-black rounded-lg overflow-hidden mx-auto`}
                 >
@@ -139,6 +135,7 @@ export default function CapturePage() {
                         onClick={() => startCapture('manual')} 
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
+                        aria-label="Capture photo manually"
                     >
                         <Camera className="h-6 w-6 mx-auto" />
                     </Button>
@@ -146,18 +143,22 @@ export default function CapturePage() {
                         onClick={() => startCapture('timed')} 
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
+                        aria-label="Capture photo with timed mode"
                     >
                         <Clock className="h-6 w-6 mx-auto" />
                     </Button>
                 </div>
                 {isCapturing && captureMode === 'timed' && (
-                    <Button 
-                        onClick={cancelCapture} 
-                        variant="destructive" 
-                        className="w-full mx-auto bg-red-700 text-white hover:bg-red-900 rounded-full shadow-none"
-                    >             
-                        Cancel Capture
-                    </Button>
+                    <div className="w-full flex justify-center mt-4 px-2 md:px-0">
+                        <Button 
+                            onClick={cancelCapture} 
+                            variant="destructive" 
+                            className="w-full bg-red-700 text-white hover:bg-red-900 rounded-full shadow-none"
+                            aria-label="Cancel capture"
+                        >
+                            Cancel Capture
+                        </Button>
+                    </div>
                 )}
             </Card>
             <Footer />
