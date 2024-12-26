@@ -20,6 +20,7 @@ export default function CapturePage() {
     const [captureMode, setCaptureMode] = useState<'manual' | 'timed'>('manual');
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
         typeof window !== 'undefined' && window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
@@ -44,7 +45,6 @@ export default function CapturePage() {
     const videoConstraints = {
         facingMode: 'user',
         aspectRatio: orientation === 'portrait' ? 16 / 9 : 9 / 16,
-        // Alternatively, set width and height based on orientation
         width: orientation === 'portrait' ? 720 : undefined,
         height: orientation === 'portrait' ? undefined : 1280,
     };
@@ -53,7 +53,6 @@ export default function CapturePage() {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
-                // Optionally handle image orientation
                 const img = new Image();
                 img.src = imageSrc;
                 img.onload = () => {
@@ -62,29 +61,47 @@ export default function CapturePage() {
 
                     if (!ctx) {
                         console.error("Failed to get canvas context");
+                        setError("Failed to process the captured photo.");
                         return;
                     }
 
                     if (orientation === 'portrait') {
+                        // Swap width and height for portrait
                         canvas.width = img.height;
                         canvas.height = img.width;
-                        ctx.rotate(-90 * Math.PI / 180);
-                        ctx.drawImage(img, -img.width, 0);
+
+                        // Rotate the canvas by 90 degrees clockwise
+                        ctx.rotate(90 * Math.PI / 180);
+
+                        // Draw the image on the rotated canvas
+                        ctx.drawImage(img, 0, -img.height);
                     } else {
+                        // Landscape mode: no rotation needed
                         canvas.width = img.width;
                         canvas.height = img.height;
                         ctx.drawImage(img, 0, 0);
                     }
 
-                    const correctedImageSrc = canvas.toDataURL('image/jpeg');
-                    setPhotos((prevPhotos) => [...prevPhotos, correctedImageSrc]);
-                    console.log(`Captured photo ${photos.length + 1}`);
+                    try {
+                        const correctedImageSrc = canvas.toDataURL('image/jpeg');
+                        setPhotos((prevPhotos) => [...prevPhotos, correctedImageSrc]);
+                        console.log(`Captured photo ${photos.length + 1}`);
+                    } catch (err) {
+                        console.error("Error converting canvas to data URL", err);
+                        setError("Failed to process the captured photo.");
+                    }
+                };
+                img.onerror = () => {
+                    console.error("Failed to load the captured image");
+                    setError("Failed to process the captured photo.");
                 };
             } else {
                 console.error("Failed to capture screenshot");
+                setError("Failed to capture photo. Please try again.");
             }
         } else {
             console.error("Webcam reference is not initialized");
+            setError("Webcam is not available. Please check your device settings.");
         }
     }, [photos.length, orientation]);
 
@@ -169,6 +186,13 @@ export default function CapturePage() {
                         </div>
                     )}
                 </div>
+
+                {error && (
+                    <div className="error-message">
+                        <p>{error}</p>
+                        <button onClick={() => setError(null)}>Dismiss</button>
+                    </div>
+                )}
 
                 <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
