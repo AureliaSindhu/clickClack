@@ -21,27 +21,72 @@ export default function CapturePage() {
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Set video constraints to maintain a 9:16 aspect ratio
+    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
+        typeof window !== 'undefined' && window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
+    );
+
+    useEffect(() => {
+        const handleResize = () => {
+            setOrientation(
+                window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
+            );
+        };
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
+        };
+    }, []);
+
     const videoConstraints = {
         facingMode: 'user',
-        aspectRatio: 9 / 16,
-        // width: 720,
-        // height: 1280,
+        aspectRatio: orientation === 'portrait' ? 16 / 9 : 9 / 16,
+        // Alternatively, set width and height based on orientation
+        width: orientation === 'portrait' ? 720 : undefined,
+        height: orientation === 'portrait' ? undefined : 1280,
     };
 
     const capturePhoto = useCallback(() => {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
-                setPhotos((prevPhotos) => [...prevPhotos, imageSrc]);
-                console.log(`Captured photo ${photos.length + 1}`);
+                // Optionally handle image orientation
+                const img = new Image();
+                img.src = imageSrc;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    if (!ctx) {
+                        console.error("Failed to get canvas context");
+                        return;
+                    }
+
+                    if (orientation === 'portrait') {
+                        canvas.width = img.height;
+                        canvas.height = img.width;
+                        ctx.rotate(-90 * Math.PI / 180);
+                        ctx.drawImage(img, -img.width, 0);
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                    }
+
+                    const correctedImageSrc = canvas.toDataURL('image/jpeg');
+                    setPhotos((prevPhotos) => [...prevPhotos, correctedImageSrc]);
+                    console.log(`Captured photo ${photos.length + 1}`);
+                };
             } else {
                 console.error("Failed to capture screenshot");
             }
         } else {
             console.error("Webcam reference is not initialized");
         }
-    }, [photos.length]);
+    }, [photos.length, orientation]);
 
     const startCapture = (mode: 'manual' | 'timed') => {
         console.log(`Starting capture in ${mode} mode.`);
@@ -106,21 +151,15 @@ export default function CapturePage() {
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
 
-                <div
-                    className={`relative aspect-[9/16] h-[65vh] bg-black rounded-lg overflow-hidden mx-auto`}
-                >
-                    {/* Flex container to center the webcam feed */}
-                    <div className="flex items-center justify-center w-full h-full">
-                        <Webcam
-                            audio={false}
-                            ref={webcamRef}
-                            screenshotFormat="image/jpeg"
-                            className="w-full h-full object-contain"
-                            videoConstraints={videoConstraints}
-                            mirrored={false} 
-                        />
-                    </div>
-
+                <div className="webcam-container">
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        className="webcam-video"
+                        videoConstraints={videoConstraints}
+                        mirrored={false}
+                    />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
                             <span className="text-6xl font-bold mb-4">{countdown}</span>
@@ -130,6 +169,7 @@ export default function CapturePage() {
                         </div>
                     )}
                 </div>
+
                 <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
                         onClick={() => startCapture('manual')} 
