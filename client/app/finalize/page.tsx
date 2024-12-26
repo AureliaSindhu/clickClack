@@ -22,6 +22,7 @@ export default function FinalizePage() {
     const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false); 
     const [isFeedbackOpen, setIsFeedbackOpen] = useState<boolean>(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string>(""); 
+    const [finalImageURL, setFinalImageURL] = useState<string | null>(null); // New state for dataURL
 
     const finalRef = useRef<HTMLDivElement>(null);
 
@@ -79,109 +80,25 @@ export default function FinalizePage() {
                 });
 
                 const dataURL = canvas.toDataURL("image/png");
+                setFinalImageURL(dataURL); // Store dataURL in state
+                console.log("Final image generated and stored in state.");
             } catch (error) {
                 console.error("Error generating final image:", error);
             }
         }
     };
 
-    // Helper function to load images
-    const loadImage = (src: string): Promise<HTMLImageElement> => {
-        return new Promise((resolve, reject) => {
-            const img = document.createElement("img");
-            img.crossOrigin = "anonymous"; 
-            img.src = src;
-            img.onload = () => resolve(img);
-            img.onerror = (err) => reject(err);
-        });
-    };
+    // ... rest of your code remains unchanged
 
-    const drawImageCover = (
-        ctx: CanvasRenderingContext2D,
-        img: HTMLImageElement,
-        dx: number,
-        dy: number,
-        dWidth: number,
-        dHeight: number
-    ) => {
-        const imgAspect = img.width / img.height;
-        const targetAspect = dWidth / dHeight;
-
-        let sx: number, sy: number, sWidth: number, sHeight: number;
-
-        if (imgAspect > targetAspect) {
-            sHeight = img.height;
-            sWidth = sHeight * targetAspect;
-            sx = (img.width - sWidth) / 2;
-            sy = 0;
-        } else {
-            sWidth = img.width;
-            sHeight = sWidth / targetAspect;
-            sx = 0;
-            sy = (img.height - sHeight) / 2;
-        }
-
-        ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    };
-
-    // Function to handle download of the full-size image
-    const handleDownload = async () => {
-        if (!selectedFrame || photos.length === 0) {
-            alert("No frame or photos selected.");
-            return;
-        }
-
-        try {
-            const canvas = document.createElement("canvas");
-            canvas.width = ORIGINAL_WIDTH;
-            canvas.height = ORIGINAL_HEIGHT;
-            const ctx = canvas.getContext("2d");
-
-            if (!ctx) {
-                throw new Error("Canvas is not supported.");
-            }
-
-            // Fill the background with transparent 
-            ctx.fillStyle = "rgba(0,0,0,0)";
-            ctx.fillRect(0, 0, ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
-
-            // Load frame image
-            const frameImg = await loadImage(selectedFrame.src);
-
-            // Load and draw photos
-            const loadedPhotos = await Promise.all(
-                photos.slice(0, 4).map((photo) => loadImage(photo))
-            );
-
-            // Define positions based on original spacing
-            const photoPositions = [
-                { x: 65, y: 75 }, // Top-left photo
-                { x: 65 + 461 + 30, y: 75 }, // Top-right photo
-                { x: 65, y: 75 + 698 + 30 }, // Bottom-left photo
-                { x: 65 + 461 + 30, y: 75 + 698 + 30 }, // Bottom-right photo
-            ];
-
-            loadedPhotos.forEach((img, index) => {
-                const pos = photoPositions[index];
-                drawImageCover(ctx, img, pos.x, pos.y, 461, 698);
-            });
-
-            ctx.drawImage(frameImg, 0, 0, ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
-
-            const dataURL = canvas.toDataURL("image/png");
-
+    const handleDownload = () => {
+        if (finalImageURL) {
             const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = "final-image.png";
+            link.href = finalImageURL;
+            link.download = "final_image.png";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
             setDownloadSuccess(true);
-
-        } catch (error) {
-            console.error("Error generating full-size image:", error);
-            alert("Failed to generate the image. Please try again.");
         }
     };
 
@@ -283,6 +200,18 @@ export default function FinalizePage() {
                     />
                 )}
             </div>
+
+            {/* Optional: Display the final image preview if needed
+            {finalImageURL && (
+                <div className="mb-8">
+                    <h2 className="text-2xl mb-2">Preview:</h2>
+                    <img
+                        src={finalImageURL}
+                        alt="Final Image Preview"
+                        className="w-full max-w-md border rounded shadow"
+                    />
+                </div>
+            )} */}
 
             <div className="flex space-x-4 mb-8">
                 {/* Download Button */}
