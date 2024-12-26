@@ -18,7 +18,7 @@ export default function HomePage() {
             <div className="flex flex-col flex-grow items-center justify-center">
                 <Image src={logo} alt="ClickClack Logo" width={150} height={150} className="mb-5"/>
                 <h1 className="text-4xl font-bold mb-2 text-[var(--charcoal)] font-chillax">ClickClack</h1>
-                <p className="text-md text-[var(--slate)] mb-4">
+                <p className="text-md text-[var(--slate)] mb-4 text-center">
                     Capture fun and creative photos just like in a real photobooth!
                 </p>
                 <button
