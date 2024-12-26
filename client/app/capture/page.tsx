@@ -22,35 +22,31 @@ export default function CapturePage() {
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
+        typeof window !== 'undefined' && window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
+    );
 
     useEffect(() => {
-        const updateOrientation = () => {
-            if (window.innerWidth < window.innerHeight) {
-                setOrientation('portrait');
-            } else {
-                setOrientation('landscape');
-            }
+        const handleResize = () => {
+            setOrientation(
+                window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
+            );
         };
 
-        // Set initial orientation
-        updateOrientation();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
 
-        // Add event listeners
-        window.addEventListener('resize', updateOrientation);
-        window.addEventListener('orientationchange', updateOrientation);
-
-        // Cleanup
         return () => {
-            window.removeEventListener('resize', updateOrientation);
-            window.removeEventListener('orientationchange', updateOrientation);
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
         };
     }, []);
 
     const videoConstraints = {
         facingMode: 'user',
-        width: orientation === 'portrait' ? 720 : 1280,
-        height: orientation === 'portrait' ? 1280 : 720,
+        aspectRatio: orientation === 'portrait' ? 16 / 9 : 9 / 16,
+        width: orientation === 'portrait' ? 720 : undefined,
+        height: orientation === 'portrait' ? undefined : 1280,
     };
 
     const capturePhoto = useCallback(() => {
@@ -70,23 +66,20 @@ export default function CapturePage() {
                     }
 
                     if (orientation === 'portrait') {
-                        // Set canvas dimensions swapped for portrait
+                        // Swap width and height for portrait
                         canvas.width = img.height;
                         canvas.height = img.width;
 
-                        // Translate to the top-right corner after rotation
-                        ctx.translate(canvas.width, 0);
-
-                        // Rotate 90 degrees clockwise
+                        // Rotate the canvas by 90 degrees clockwise
                         ctx.rotate(90 * Math.PI / 180);
 
-                        // Draw the image onto the rotated canvas
-                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                        // Draw the image on the rotated canvas
+                        ctx.drawImage(img, 0, -img.height);
                     } else {
                         // Landscape mode: no rotation needed
                         canvas.width = img.width;
                         canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                        ctx.drawImage(img, 0, 0);
                     }
 
                     try {
@@ -197,7 +190,7 @@ export default function CapturePage() {
                 {error && (
                     <div className="error-message">
                         <p>{error}</p>
-                        <button className="dismiss-button" onClick={() => setError(null)}>Dismiss</button>
+                        <button onClick={() => setError(null)}>Dismiss</button>
                     </div>
                 )}
 
