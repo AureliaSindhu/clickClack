@@ -30,15 +30,10 @@ export default function CapturePage() {
     const videoConstraints = {
         facingMode: 'user',
         aspectRatio: 9 / 16,
-        // Optionally, set width and height if desired
         // width: 720,
         // height: 1280,
     };
 
-    /**
-     * capturePhoto Function
-     * Captures a photo from the webcam and updates the photos state.
-     */
     const capturePhoto = useCallback(() => {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
@@ -53,11 +48,6 @@ export default function CapturePage() {
         }
     }, [photos.length]);
 
-    /**
-     * startCapture Function
-     * Initiates the capture sequence based on the selected mode.
-     * @param mode - The capture mode: 'manual' or 'timed'
-     */
     const startCapture = (mode: 'manual' | 'timed') => {
         console.log(`Starting capture in ${mode} mode.`);
         if (isCapturing || photos.length >= CAPTURE_COUNT) return;
@@ -72,10 +62,6 @@ export default function CapturePage() {
         }
     };
 
-    /**
-     * cancelCapture Function
-     * Cancels the ongoing timed capture sequence.
-     */
     const cancelCapture = () => {
         if (countdownTimerRef.current) {
             clearTimeout(countdownTimerRef.current);
@@ -86,10 +72,6 @@ export default function CapturePage() {
         console.log("Timed capture canceled by the user.");
     };
 
-    /**
-     * useEffect for Timed Capture Countdown
-     * Handles the countdown and photo capturing in timed mode.
-     */
     useEffect(() => {
         if (captureMode === 'timed' && isCapturing) {
             if (countdown > 0) {
@@ -114,10 +96,6 @@ export default function CapturePage() {
         };
     }, [isCapturing, countdown, photos.length, captureMode, capturePhoto]);
 
-    /**
-     * useEffect for Redirecting After Capture Completion
-     * Redirects the user to the review page once the required number of photos are captured.
-     */
     useEffect(() => {
         if (photos.length === CAPTURE_COUNT) {
             sessionStorage.setItem('photos', JSON.stringify(photos));
@@ -127,7 +105,7 @@ export default function CapturePage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
-            <Card className="w-full max-w-md space-y-4">
+            <Card className="w-full max-w-md space-y-4 shadow-none">
                 <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
@@ -159,14 +137,14 @@ export default function CapturePage() {
                 <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
                         onClick={() => startCapture('manual')} 
-                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
+                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
                         <Camera className="h-6 w-6 mx-auto" />
                     </Button>
                     <Button 
                         onClick={() => startCapture('timed')} 
-                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full" 
+                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
                         disabled={isCapturing || photos.length === CAPTURE_COUNT}
                     >
                         <Clock className="h-6 w-6 mx-auto" />
@@ -176,8 +154,8 @@ export default function CapturePage() {
                     <Button 
                         onClick={cancelCapture} 
                         variant="destructive" 
-                        className="w-3/4 mx-auto"
-                    >
+                        className="w-full mx-auto bg-red-700 text-white hover:bg-red-900 rounded-full shadow-none"
+                    >             
                         Cancel Capture
                     </Button>
                 )}
