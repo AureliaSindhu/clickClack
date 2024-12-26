@@ -1,22 +1,16 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import Footer from '../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../style.css";
-import { isMobile } from 'react-device-detect'; 
 
 const CAPTURE_COUNT = 4;
 const INTERVAL_SECONDS = 5;
-
-const ProgressIndicator = ({ current, total }: { current: number; total: number }) => (
-  <Progress value={(current / total) * 100} className="w-full mb-4" />
-);
 
 export default function CapturePage() {
     const webcamRef = useRef<Webcam>(null);
@@ -27,14 +21,9 @@ export default function CapturePage() {
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const [deviceType, setDeviceType] = useState<'desktop' | 'mobile'>('desktop');
-
     useEffect(() => {
-        if (isMobile) {
-            setDeviceType('mobile');
-        } else {
-            setDeviceType('desktop');
-        }
+        // to use deviceType for responsive UI, implement it here.
+        // Currently unused, so this effect can be removed or retained based on future needs.
     }, []);
 
     // Set video constraints to maintain a 9:16 aspect ratio
@@ -46,7 +35,11 @@ export default function CapturePage() {
         // height: 1280,
     };
 
-    const capturePhoto = () => {
+    /**
+     * capturePhoto Function
+     * Captures a photo from the webcam and updates the photos state.
+     */
+    const capturePhoto = useCallback(() => {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
@@ -58,10 +51,11 @@ export default function CapturePage() {
         } else {
             console.error("Webcam reference is not initialized");
         }
-    };
+    }, [photos.length]);
 
     /**
-     * Function to initiate the capture sequence based on the mode.
+     * startCapture Function
+     * Initiates the capture sequence based on the selected mode.
      * @param mode - The capture mode: 'manual' or 'timed'
      */
     const startCapture = (mode: 'manual' | 'timed') => {
@@ -78,6 +72,10 @@ export default function CapturePage() {
         }
     };
 
+    /**
+     * cancelCapture Function
+     * Cancels the ongoing timed capture sequence.
+     */
     const cancelCapture = () => {
         if (countdownTimerRef.current) {
             clearTimeout(countdownTimerRef.current);
@@ -88,6 +86,10 @@ export default function CapturePage() {
         console.log("Timed capture canceled by the user.");
     };
 
+    /**
+     * useEffect for Timed Capture Countdown
+     * Handles the countdown and photo capturing in timed mode.
+     */
     useEffect(() => {
         if (captureMode === 'timed' && isCapturing) {
             if (countdown > 0) {
@@ -110,8 +112,12 @@ export default function CapturePage() {
                 countdownTimerRef.current = null;
             }
         };
-    }, [isCapturing, countdown, photos.length, captureMode]);
+    }, [isCapturing, countdown, photos.length, captureMode, capturePhoto]);
 
+    /**
+     * useEffect for Redirecting After Capture Completion
+     * Redirects the user to the review page once the required number of photos are captured.
+     */
     useEffect(() => {
         if (photos.length === CAPTURE_COUNT) {
             sessionStorage.setItem('photos', JSON.stringify(photos));
@@ -126,7 +132,6 @@ export default function CapturePage() {
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
-                {/* <ProgressIndicator current={photos.length} total={CAPTURE_COUNT} /> */}
                 <div
                     className={`relative aspect-[9/16] h-[65vh] bg-black rounded-lg overflow-hidden mx-auto`}
                 >
