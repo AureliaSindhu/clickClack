@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   assetPrefix: '/ClickClack',
   // Enable static HTML export
   output: 'export',
+  
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
