@@ -90,9 +90,14 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
             } else {
                 throw new Error("Failed to submit feedback.");
             }
-        } catch (error: any) {
-            console.error("Error submitting feedback:", error);
-            onError(error.message || "An unexpected error occurred. Please try again.");
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Error submitting feedback:", error);
+                onError(error.message);
+            } else {
+                console.error("An unexpected error occurred:", error);
+                onError("An unexpected error occurred. Please try again.");
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -100,7 +105,7 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
 
     if (isSubmitted) {
         return (
-            <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lshadow-lg overflow-hidden p-6 text-center">
+            <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lg shadow-lg overflow-hidden p-6 text-center">
                 <h2 className="text-2xl font-bold mb-2 font-mono">Thank You!</h2>
                 <p className="text-sm text-gray-500 font-mono">
                     Your feedback has been submitted successfully.
