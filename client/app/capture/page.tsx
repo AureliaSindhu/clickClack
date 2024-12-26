@@ -161,7 +161,7 @@ export default function CapturePage() {
                         mirrored={false}
                     />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-transparent bg-opacity-50 text-white">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
                             <span className="text-6xl font-bold mb-4">{countdown}</span>
                             <span className="text-xl">
                                 Photo {photos.length + 1} of {CAPTURE_COUNT}
