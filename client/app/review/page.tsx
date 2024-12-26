@@ -50,6 +50,7 @@ export default function ReviewPage() {
 
     const handleProceed = () => {
         router.push("/frame"); 
+    }
 
     return (
         <div className="min-h-screen flex flex-col bg-[var(--canvas)]">
