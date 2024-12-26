@@ -24,9 +24,8 @@ export default function ReviewPage() {
     // Handle retake all photos
     const handleRetakeAll = () => {
         // Clear all photos
-        const clearedPhotos = photos.map(() => "");
-        setPhotos(clearedPhotos);
-        sessionStorage.setItem("photos", JSON.stringify(clearedPhotos));
+        setPhotos([]);
+        sessionStorage.removeItem("photos");
         // Redirect back to the capture page
         router.push("/capture");
     };
@@ -44,16 +43,16 @@ export default function ReviewPage() {
                         <div key={index} className="flex flex-col items-center">
                             {photo ? (
                                 <img
-                                src={photo}
-                                alt={`Captured photo number ${index + 1}`}
-                                className="w-[138px] h-[209px] object-cover rounded-md mb-2"
-                                loading="lazy" // Enables lazy loading
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).src = "/fallback-image.png"; // Provide a fallback image path
-                                }}
-                            />
+                                    src={photo}
+                                    alt={`Captured photo number ${index + 1}`}
+                                    className="w-[138px] h-[209px] object-cover rounded-md mb-2"
+                                    loading="lazy" // Enables lazy loading
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = "/fallback-image.png"; // Provide a fallback image path
+                                    }}
+                                />
                             ) : (
-                                <div className="w-72 h-128 bg-gray-200 rounded-md flex items-center justify-center mb-2">
+                                <div className="w-[138px] h-[209px] bg-gray-200 rounded-md flex items-center justify-center mb-2">
                                     <p className="text-gray-500">Empty</p>
                                 </div>
                             )}
@@ -70,7 +69,7 @@ export default function ReviewPage() {
                     <button
                         onClick={handleProceed}
                         className="p-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-[#536659] transition flex items-center justify-center"
-                        disabled={photos.some((photo) => !photo)}
+                        disabled={photos.length === 0}
                     >
                         Continue <ChevronRight className="ml-2" />
                     </button>

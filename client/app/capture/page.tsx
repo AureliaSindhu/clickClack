@@ -44,7 +44,6 @@ export default function CapturePage() {
     const videoConstraints = {
         facingMode: 'user',
         aspectRatio: orientation === 'portrait' ? 16 / 9 : 9 / 16,
-        // Alternatively, set width and height based on orientation
         width: orientation === 'portrait' ? 720 : undefined,
         height: orientation === 'portrait' ? undefined : 1280,
     };
@@ -62,7 +61,15 @@ export default function CapturePage() {
             console.error("Webcam reference is not initialized");
         }
     }, [photos.length]);
-    
+
+    const finalizeCaptures = (finalPhotos: string[]) => {
+        if (finalPhotos.length >= CAPTURE_COUNT) {
+            // Store photos in sessionStorage
+            sessionStorage.setItem('photos', JSON.stringify(finalPhotos.slice(0, CAPTURE_COUNT)));
+            // Navigate to the ReviewPage
+            router.push('/review');
+        }
+    };
 
     const startCapture = (mode: 'manual' | 'timed') => {
         console.log(`Starting capture in ${mode} mode.`);
@@ -75,6 +82,9 @@ export default function CapturePage() {
             console.log(`Timed capture initiated with countdown ${INTERVAL_SECONDS} seconds.`);
         } else {
             capturePhoto();
+            if (photos.length + 1 >= CAPTURE_COUNT) {
+                finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
+            }
         }
     };
 
@@ -99,7 +109,7 @@ export default function CapturePage() {
                 if (photos.length + 1 < CAPTURE_COUNT) {
                     setCountdown(INTERVAL_SECONDS);
                 } else {
-                    setIsCapturing(false);
+                    finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
                 }
             }
         }
@@ -113,17 +123,9 @@ export default function CapturePage() {
     }, [isCapturing, countdown, photos.length, captureMode, capturePhoto]);
 
     useEffect(() => {
-        const storedPhotos = sessionStorage.getItem("photos");
-        if (storedPhotos) {
-            const parsedPhotos = JSON.parse(storedPhotos);
-            console.log(parsedPhotos);
-            setPhotos(parsedPhotos);
-        } else {
-            // If no photos are found, redirect back to the capture page
-            router.push("/capture");
-        }
-    }, [router]);
-    
+        // Clear existing photos when visiting the CapturePage
+        sessionStorage.removeItem('photos');
+    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
@@ -156,7 +158,7 @@ export default function CapturePage() {
                     <Button 
                         onClick={() => startCapture('manual')} 
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
-                        disabled={isCapturing || photos.length === CAPTURE_COUNT}
+                        disabled={isCapturing || photos.length >= CAPTURE_COUNT}
                         aria-label="Capture photo manually"
                     >
                         <Camera className="h-6 w-6 mx-auto" />
@@ -164,7 +166,7 @@ export default function CapturePage() {
                     <Button 
                         onClick={() => startCapture('timed')} 
                         className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
-                        disabled={isCapturing || photos.length === CAPTURE_COUNT}
+                        disabled={isCapturing || photos.length >= CAPTURE_COUNT}
                         aria-label="Capture photo with timed mode"
                     >
                         <Clock className="h-6 w-6 mx-auto" />
