@@ -31,11 +31,13 @@ jobs:
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
+            echo "lockfile=client/yarn.lock" >> $GITHUB_OUTPUT
             exit 0
           elif [ -f "${{ github.workspace }}/client/package-lock.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            echo "lockfile=client/package-lock.json" >> $GITHUB_OUTPUT
             exit 0
           else
             echo "Unable to determine package manager"
@@ -48,6 +50,7 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache-dependency-path: ${{ steps.detect-package-manager.outputs.lockfile }}
 
       # 4. Configure GitHub Pages for Next.js
       - name: Setup Pages
@@ -55,15 +58,15 @@ jobs:
         with:
           static_site_generator: next
 
-      # 5. Restore cache for Next.js
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            client/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('client/**/package-lock.json', 'client/**/yarn.lock') }}-${{ hashFiles('client/**/*.{js,jsx,ts,tsx}') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('client/**/package-lock.json', 'client/**/yarn.lock') }}-
+      # 5. Restore cache for Next.js (optional, as setup-node handles caching)
+      #- name: Restore cache
+      #  uses: actions/cache@v4
+      #  with:
+      #    path: |
+      #      client/.next/cache
+      #    key: ${{ runner.os }}-nextjs-${{ hashFiles('client/**/package-lock.json', 'client/**/yarn.lock') }}-${{ hashFiles('client/**/*.{js,jsx,ts,tsx}') }}
+      #    restore-keys: |
+      #      ${{ runner.os }}-nextjs-${{ hashFiles('client/**/package-lock.json', 'client/**/yarn.lock') }}-
 
       # 6. Install dependencies
       - name: Install dependencies
