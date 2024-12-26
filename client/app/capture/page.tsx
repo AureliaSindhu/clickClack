@@ -68,7 +68,7 @@ export default function CapturePage() {
                     if (orientation === 'portrait') {
                         canvas.width = img.height;
                         canvas.height = img.width;
-                        ctx.rotate(-90 * Math.PI / 180);
+                        // ctx.rotate(-90 * Math.PI / 180);
                         ctx.drawImage(img, -img.width, 0);
                     } else {
                         canvas.width = img.width;
