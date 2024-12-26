@@ -26,6 +26,10 @@ export default function ReviewPage() {
                 window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
             );
         };
+    
+        const handleProceed = () => {
+            router.push("/frame");
+        };
 
         window.addEventListener('resize', handleOrientationChange);
         window.addEventListener('orientationchange', handleOrientationChange);
