@@ -21,31 +21,10 @@ export default function CapturePage() {
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
-        typeof window !== 'undefined' && window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
-    );
-
-    useEffect(() => {
-        const handleResize = () => {
-            setOrientation(
-                window.innerWidth < window.innerHeight ? 'portrait' : 'landscape'
-            );
-        };
-
-        window.addEventListener('resize', handleResize);
-        window.addEventListener('orientationchange', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            window.removeEventListener('orientationchange', handleResize);
-        };
-    }, []);
-
     const videoConstraints = {
         facingMode: 'user',
-        aspectRatio: orientation === 'portrait' ? 16 / 9 : 9 / 16,
-        width: orientation === 'portrait' ? 720 : undefined,
-        height: orientation === 'portrait' ? undefined : 1280,
+        aspectRatio: 9 / 16,
+        height: 1280,
     };
 
     const capturePhoto = useCallback(() => {
@@ -142,7 +121,7 @@ export default function CapturePage() {
                         screenshotFormat="image/jpeg"
                         className="webcam-video"
                         videoConstraints={videoConstraints}
-                        mirrored={false}
+                        mirrored={true}  
                     />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
