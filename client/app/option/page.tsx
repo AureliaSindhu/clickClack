@@ -18,7 +18,7 @@ export default function Option() {
     };
 
     return(
-        <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)]">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-10">
             <h1 className="text-2xl font-chillax text-black mb-6">Choose Your Frame</h1>
 
             <div className="flex space-x-8">
@@ -31,14 +31,14 @@ export default function Option() {
                     <div className="absolute inset-0 bg-[var(--canvas-dark)] rounded-md transform transition-transform duration-300 group-hover:rotate-[-2deg] z-0"></div>
                     
                     {/* Canvas-Light Content */}
-                    <div className="relative flex flex-col items-center bg-[var(--canvas-light)] p-10 rounded-md z-10 h-full">
+                    <div className="relative flex flex-col items-center bg-[var(--canvas-light)] p-5 rounded-md z-10 h-full">
                     <Image 
                         src={twoByTwo} 
                         alt="2x2 Frame" 
                         height={200} 
                         className="mb-4 object-cover"
                     />
-                    <span className="text-xl font-medium font-chillax text-black">2x2 Frame</span>
+                    <span className="text-sm font-medium font-chillax text-black">2x2 Frame</span>
                     </div>
                 </div>
                 
@@ -50,14 +50,14 @@ export default function Option() {
                     <div className="absolute inset-0 bg-[var(--canvas-dark)] rounded-md transform transition-transform duration-300 group-hover:rotate-[-2deg] z-0"></div>
                     
                     {/* Canvas-Light Content */}
-                    <div className="relative flex flex-col items-center bg-[var(--canvas-light)] p-10 rounded-md z-10 h-full">
+                    <div className="relative flex flex-col items-center bg-[var(--canvas-light)] p-5 rounded-md z-10 h-full">
                     <Image 
                         src={oneByFour} 
                         alt="1x4 Frame" 
                         height={200} 
                         className="mb-4 object-cover"
                     />
-                    <span className="text-xl font-medium font-chillax text-black">1x4 Frame</span>
+                    <span className="text-sm font-medium font-chillax text-black">1x4 Frame</span>
                     </div>
                 </div>
             </div>
