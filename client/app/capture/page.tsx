@@ -22,9 +22,9 @@ export default function CapturePage() {
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const videoConstraints = {
+        width: 1080,
+        height: 1920,
         facingMode: 'user',
-        aspectRatio: 9 / 16,
-        height: 1280,
     };
 
     const capturePhoto = useCallback(() => {
@@ -118,10 +118,10 @@ export default function CapturePage() {
                     <Webcam
                         audio={false}
                         ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        className="webcam-video"
+                        screenshotFormat="image/png"
+                        screenshotQuality={1}
                         videoConstraints={videoConstraints}
-                        mirrored={true}  
+                        mirrored={true}
                     />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
