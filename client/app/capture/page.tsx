@@ -23,8 +23,8 @@ export default function CapturePage() {
 
     const videoConstraints = {
         facingMode: 'user',
-        aspectRatio: 9 / 16,
-        height: 1280,
+        width: 1280,
+        height: 1280 * (16 / 9),
     };
 
     const capturePhoto = useCallback(() => {
@@ -118,7 +118,7 @@ export default function CapturePage() {
                     <Webcam
                         audio={false}
                         ref={webcamRef}
-                        screenshotFormat="image/jpeg"
+                        screenshotFormat="image/png"
                         className="webcam-video"
                         videoConstraints={videoConstraints}
                         mirrored={true}  

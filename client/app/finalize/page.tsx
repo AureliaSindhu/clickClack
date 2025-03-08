@@ -76,7 +76,7 @@ export default function FinalizePage() {
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: "transparent",
-                    scale: 1,
+                    scale: window.devicePixelRatio || 2,
                 });
 
                 const dataURL = canvas.toDataURL("image/png");
