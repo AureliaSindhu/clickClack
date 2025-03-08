@@ -10,14 +10,14 @@
 ## Try It Out
 [**👉 Try Click Clack Now! 👈**](https://click-clack-seven.vercel.app/)
 
----
+<!-- ---
 
 ## Features
 
 - **Cost-Effective:** No more $8 photobooth fees.
 - **User-Friendly:** Intuitive interface to capture your best moments.
 - **Online & Accessible:** Use it anywhere, anytime.
-- **Instant Feedback:** Submit your thoughts and help us improve!
+- **Instant Feedback:** Submit your thoughts and help us improve! -->
 
 ---
 
