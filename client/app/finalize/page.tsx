@@ -213,33 +213,34 @@ export default function FinalizePage() {
                 </div>
             )} */}
 
-            <div className="flex space-x-4 mb-8">
-                {/* Download Button */}
-                <button
-                    onClick={handleDownload}
-                    className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition flex items-center"
-                >
-                    <ImageDown className="mr-2"/>
-                    Download 
-                </button>
-
-                {/* Feedback Button */}
-                <button
-                    onClick={handleFeedback}
-                    className="bg-yellow-600 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-700 transition flex items-center"
-                >
-                    <Sticker className="mr-2"/>
-                    Feedback
-                </button>
-
-                {/* Again Button */}
-                <button
-                    onClick={handleDoAnother}
-                    className="bg-gray-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-gray-700 transition flex items-center"
-                >
-                    <RefreshCcw className="mr-2"/>
-                    Again!
-                </button>
+            <div className="flex flex-col gap-4 w-full max-w-md">
+                {/* First row: Download and Again */}
+                <div className="flex space-x-4 justify-center">
+                    <button
+                        onClick={handleDownload}
+                        className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition flex items-center justify-center"
+                    >
+                        <ImageDown className="mr-2" />
+                        Download
+                    </button>
+                    <button
+                        onClick={handleDoAnother}
+                        className="bg-gray-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-gray-700 transition flex items-center justify-center"
+                    >
+                        <RefreshCcw className="mr-2" />
+                        Again!
+                    </button>
+                </div>
+                {/* Second row: Feedback */}
+                <div className="flex justify-center">
+                    <button
+                        onClick={handleFeedback}
+                        className="bg-yellow-600 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-700 transition flex items-center justify-center"
+                    >
+                        <Sticker className="mr-2" />
+                        Feedback
+                    </button>
+                </div>
             </div>
 
             {/* Success Popup */}
