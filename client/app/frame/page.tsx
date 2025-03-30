@@ -19,35 +19,28 @@ export default function FramePage() {
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
     const [isColorFrame, setIsColorFrame] = useState<boolean>(true);
 
-    // --- Original dimensions ---
+    // ori
     const ORIGINAL_WIDTH = 1080;
     const ORIGINAL_HEIGHT = 1920;
-    const SCALE_FACTOR = 0.3; // 30% of original size
 
-    // --- Frame dimensions (original) ---
-    const ORIGINAL_TOP_HEIGHT = 75;
-    const ORIGINAL_BOTTOM_HEIGHT = 421;
+    //preview
+    const SCALE_FACTOR = 0.3;
+    const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR);  // 324
+    const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR); // 576
 
-    // --- Scaled dimensions ---
-    const SCALED_TOP_HEIGHT = Math.round(ORIGINAL_TOP_HEIGHT * SCALE_FACTOR); // 75 * 0.3 = 22
-    const SCALED_BOTTOM_HEIGHT = Math.round(ORIGINAL_BOTTOM_HEIGHT * SCALE_FACTOR); // 421 * 0.3 = 127
-    const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR); // 1080 * 0.3 = 324
-    const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR); // 1920 * 0.3 = 576
+    // positioning
+    const SCALED_TOP_OFFSET = Math.round(75 * SCALE_FACTOR);    // ~22
+    const SCALED_LEFT_OFFSET = Math.round(65 * SCALE_FACTOR);   // ~19
+    const SCALED_PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR);  // ~138
+    const SCALED_PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR); // ~209
+    const SCALED_GAP = Math.round(28 * SCALE_FACTOR);           // ~9
 
-    // --- Photo grid dimensions ---
-    const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); // ~138
-    // Important: floor(698 * 0.3) = 209 to match the total height
-    const PHOTO_HEIGHT = Math.floor(698 * SCALE_FACTOR); // 698 * 0.3 = 209.4 => 209
-    const GAP_BETWEEN_PHOTOS = Math.round(28 * SCALE_FACTOR); // ~9
-    const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); // ~19
-
-    // Predefined color frames (image-based frames with solid borders)
     const colorFrames: readonly Frame[] = useMemo(
         () => [
         {
             id: "color1",
             type: "color",
-            src: "/color-frames/frame1.png",
+            src: "/color-frames/frame1-thumb.png",
             thumbnailSrc: "/color-frames/frame1-thumb.png",
             name: "Charcoal",
         },
@@ -104,7 +97,6 @@ export default function FramePage() {
         []
     );
 
-    // Predefined custom frames (images with transparent backgrounds)
     const customFrames: readonly Frame[] = useMemo(
         () => [
         {
@@ -162,17 +154,16 @@ export default function FramePage() {
         router.push("/capture");
         }
 
-        // Load the selected frame from sessionStorage
+        // load
         const storedSelectedFrame = sessionStorage.getItem("selectedFrame");
         if (storedSelectedFrame) {
         setSelectedFrame(JSON.parse(storedSelectedFrame));
         } else {
-        // Default to the first color frame if none is stored
+        // def first color frame
         setSelectedFrame(colorFrames[0]);
         sessionStorage.setItem("selectedFrame", JSON.stringify(colorFrames[0]));
         }
 
-        // Load whether user was on color or custom frames
         const storedFrameType = sessionStorage.getItem("isColorFrame");
         if (storedFrameType !== null) {
         setIsColorFrame(storedFrameType === "true");
@@ -211,61 +202,43 @@ export default function FramePage() {
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-10 text-black">
         <h1 className="text-2xl mb-6 font-chillax">Select a Frame for Your Photos</h1>
 
-        {/* Frame Canvas */}
+        {/* Frame Preview Container (scaled down) */}
         <div
-            className="flex flex-col relative mb-8"
+            className="relative mb-8"
             style={{
-            width: `${SCALED_FRAME_WIDTH}px`, // 324px
-            height: `${SCALED_FRAME_HEIGHT}px`, // 576px
-            backgroundColor: "transparent",
-            position: "relative",
+            width: `${SCALED_FRAME_WIDTH}px`,   // e.g. 324
+            height: `${SCALED_FRAME_HEIGHT}px`, // e.g. 576
             }}
         >
-            {/* Top Border (22px) */}
+            {/* Photo Grid: 4 photos absolutely positioned */}
             <div
-            className="w-full"
             style={{
-                height: `${SCALED_TOP_HEIGHT}px`, // 22px
-                backgroundColor: "transparent",
+                position: "absolute",
+                top: `${SCALED_TOP_OFFSET}px`,   // e.g. 22
+                left: `${SCALED_LEFT_OFFSET}px`, // e.g. 19
+                width: `${SCALED_PHOTO_WIDTH * 2 + SCALED_GAP}px`,   // ~285
+                height: `${SCALED_PHOTO_HEIGHT * 2 + SCALED_GAP}px`, // ~427
             }}
-            ></div>
-
-            {/* Photo Grid (427px total: 2 * 209 + 9 gap) */}
-            <div className="flex-grow flex justify-center items-center">
-            <div
-                className="grid"
-                style={{
-                width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, // 138*2 + 9 = 285
-                height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, // 209*2 + 9 = 427
-                marginLeft: `${LEFT_RIGHT_GAP}px`, // 19
-                marginRight: `${LEFT_RIGHT_GAP}px`, // 19
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gridTemplateRows: "repeat(2, 1fr)",
-                gap: `${GAP_BETWEEN_PHOTOS}px`, // 9
-                }}
             >
-                {photos.slice(0, 4).map((photo, index) => (
+            {photos.slice(0, 4).map((photo, index) => {
+                const row = Math.floor(index / 2);
+                const col = index % 2;
+                return (
                 <img
                     key={index}
                     src={photo}
                     alt={`Photo ${index + 1}`}
-                    className="object-cover"
+                    className="absolute object-cover"
                     style={{
-                    width: `${PHOTO_WIDTH}px`, // 138
-                    height: `${PHOTO_HEIGHT}px`, // 209
+                    top: row * (SCALED_PHOTO_HEIGHT + SCALED_GAP),
+                    left: col * (SCALED_PHOTO_WIDTH + SCALED_GAP),
+                    width: SCALED_PHOTO_WIDTH,
+                    height: SCALED_PHOTO_HEIGHT,
                     }}
                 />
-                ))}
+                );
+            })}
             </div>
-            </div>
-
-            {/* Bottom Border (127px) */}
-            <div
-            className="w-full"
-            style={{
-                height: `${SCALED_BOTTOM_HEIGHT}px`, // 127
-            }}
-            ></div>
 
             {/* Frame Overlay */}
             {selectedFrame && (
@@ -278,11 +251,9 @@ export default function FramePage() {
             )}
         </div>
 
-        {/* Frame Options */}
+        {/* Frame Type Selection */}
         <div className="w-full max-w-4xl">
             <h2 className="text-xl font-semibold font-chillax mb-4">Choose a Frame</h2>
-
-            {/* Frame Type Selection (Color vs Custom) */}
             <div className="flex space-x-8 mb-6 border-b-2 border-gray-200">
             <button
                 onClick={() => handleToggle("color")}
@@ -308,7 +279,7 @@ export default function FramePage() {
             </button>
             </div>
 
-            {/* Frame Selection Grid */}
+            {/* Frame Selection Thumbnails */}
             <div className="mb-6">
             {isColorFrame ? (
                 <div className="flex gap-4 overflow-x-auto flex-nowrap custom-scrollbar">
@@ -330,7 +301,6 @@ export default function FramePage() {
                         }
                     }}
                     >
-                    {/* Frame Thumbnail */}
                     <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
                         <img
                         src={frame.thumbnailSrc}
@@ -371,7 +341,6 @@ export default function FramePage() {
                         }
                         }}
                     >
-                        {/* Frame Thumbnail */}
                         <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
                         <img
                             src={frame.thumbnailSrc}
@@ -401,7 +370,6 @@ export default function FramePage() {
             </div>
         </div>
 
-        {/* Proceed Button */}
         <button
             onClick={handleProceed}
             className="mt-4 px-6 py-3 bg-[#536659] text-white rounded-lg shadow-lg hover:bg-[#356c47] transition disabled:bg-gray-400 disabled:cursor-not-allowed"
