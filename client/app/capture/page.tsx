@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Card } from '../../components/ui/card';
 import Footer from '../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../style.css";
@@ -107,8 +107,8 @@ export default function CapturePage() {
     }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
-            <Card className="w-full max-w-md space-y-4 shadow-none">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[--canvas] p-6">
+            <Card className="w-full max-w-md space-y-4 shadow-none bg-[--canvas]">
                 <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
