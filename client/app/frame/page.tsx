@@ -199,6 +199,7 @@ export default function FramePage() {
         {/* Frame Preview Container */}
         <div
             className="relative mb-8"
+            className="relative mb-8"
             style={{
             width: `${SCALED_FRAME_WIDTH}px`,
             height: `${SCALED_FRAME_HEIGHT}px`,
@@ -263,6 +264,7 @@ export default function FramePage() {
         </div>
 
         {/* Frame Type Selection */}
+        {/* Frame Type Selection */}
         <div className="w-full max-w-4xl">
             <h2 className="text-xl font-semibold font-chillax mb-4">Choose a Frame</h2>
             <div className="flex space-x-8 mb-6 border-b-2 border-gray-200">
@@ -290,6 +292,7 @@ export default function FramePage() {
             </button>
             </div>
 
+            {/* Frame Selection Thumbnails */}
             {/* Frame Selection Thumbnails */}
             <div className="mb-6">
             {isColorFrame ? (
