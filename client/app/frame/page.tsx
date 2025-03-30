@@ -41,7 +41,7 @@ export default function FramePage() {
         {
         id: "color1",
         type: "color",
-        src: "/color-frames/frame1.png", // Use full frame instead of thumbnail
+        src: "/color-frames/frame1.png", 
         thumbnailSrc: "/color-frames/frame1-thumb.png",
         name: "Charcoal",
         },
@@ -198,7 +198,6 @@ export default function FramePage() {
 
         {/* Frame Preview Container */}
         <div
-            className="relative mb-8"
             className="relative mb-8"
             style={{
             width: `${SCALED_FRAME_WIDTH}px`,
