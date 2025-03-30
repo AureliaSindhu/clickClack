@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import "../style.css";
+import PhotoThumbnail from "../../components/PhotoThumbnail"; // Adjust the path as necessary
 import Footer from "../../components/footer";
+import "../style.css";
 
 interface Frame {
     id: string;
@@ -19,142 +20,129 @@ export default function FramePage() {
     const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
     const [isColorFrame, setIsColorFrame] = useState<boolean>(true);
 
-    // --- Original dimensions ---
+    // Original dimensions
     const ORIGINAL_WIDTH = 1080;
     const ORIGINAL_HEIGHT = 1920;
-    const SCALE_FACTOR = 0.3; // 30% of original size
 
-    // --- Frame dimensions (original) ---
-    const ORIGINAL_TOP_HEIGHT = 75;
-    const ORIGINAL_BOTTOM_HEIGHT = 421;
+    // Preview scaling factor
+    const SCALE_FACTOR = 0.3;
+    const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR);
+    const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR);
 
-    // --- Scaled dimensions ---
-    const SCALED_TOP_HEIGHT = Math.round(ORIGINAL_TOP_HEIGHT * SCALE_FACTOR); // 75 * 0.3 = 22
-    const SCALED_BOTTOM_HEIGHT = Math.round(ORIGINAL_BOTTOM_HEIGHT * SCALE_FACTOR); // 421 * 0.3 = 127
-    const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_WIDTH * SCALE_FACTOR); // 1080 * 0.3 = 324
-    const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_HEIGHT * SCALE_FACTOR); // 1920 * 0.3 = 576
+    // Positioning for photo grid
+    const SCALED_TOP_OFFSET = Math.round(75 * SCALE_FACTOR);
+    const SCALED_LEFT_OFFSET = Math.round(65 * SCALE_FACTOR);
+    const SCALED_PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR);
+    const SCALED_PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR);
+    const SCALED_GAP = Math.round(28 * SCALE_FACTOR);
 
-    // --- Photo grid dimensions ---
-    const PHOTO_WIDTH = Math.round(461 * SCALE_FACTOR); // ~138
-    // Important: floor(698 * 0.3) = 209 to match the total height
-    const PHOTO_HEIGHT = Math.floor(698 * SCALE_FACTOR); // 698 * 0.3 = 209.4 => 209
-    const GAP_BETWEEN_PHOTOS = Math.round(28 * SCALE_FACTOR); // ~9
-    const LEFT_RIGHT_GAP = Math.round(65 * SCALE_FACTOR); // ~19
+    // Update the first color frame to use the full resolution image
+    const colorFrames: readonly Frame[] = useMemo(() => [
+        {
+        id: "color1",
+        type: "color",
+        src: "/color-frames/frame1.png", // Use full frame instead of thumbnail
+        thumbnailSrc: "/color-frames/frame1-thumb.png",
+        name: "Charcoal",
+        },
+        {
+        id: "color2",
+        type: "color",
+        src: "/color-frames/frame2.png",
+        thumbnailSrc: "/color-frames/frame2-thumb.png",
+        name: "Deep Purple",
+        },
+        {
+        id: "color3",
+        type: "color",
+        src: "/color-frames/frame3.png",
+        thumbnailSrc: "/color-frames/frame3-thumb.png",
+        name: "Slate",
+        },
+        {
+        id: "color4",
+        type: "color",
+        src: "/color-frames/frame4.png",
+        thumbnailSrc: "/color-frames/frame4-thumb.png",
+        name: "Purple Gray",
+        },
+        {
+        id: "color5",
+        type: "color",
+        src: "/color-frames/frame5.png",
+        thumbnailSrc: "/color-frames/frame5-thumb.png",
+        name: "Mountain",
+        },
+        {
+        id: "color6",
+        type: "color",
+        src: "/color-frames/frame6.png",
+        thumbnailSrc: "/color-frames/frame6-thumb.png",
+        name: "Beige",
+        },
+        {
+        id: "color7",
+        type: "color",
+        src: "/color-frames/frame7.png",
+        thumbnailSrc: "/color-frames/frame7-thumb.png",
+        name: "Alabaster",
+        },
+        {
+        id: "color8",
+        type: "color",
+        src: "/color-frames/frame8.png",
+        thumbnailSrc: "/color-frames/frame8-thumb.png",
+        name: "White",
+        },
+    ], []);
 
-    // Predefined color frames (image-based frames with solid borders)
-    const colorFrames: readonly Frame[] = useMemo(
-        () => [
+    const customFrames: readonly Frame[] = useMemo(() => [
         {
-            id: "color1",
-            type: "color",
-            src: "/color-frames/frame1.png",
-            thumbnailSrc: "/color-frames/frame1-thumb.png",
-            name: "Charcoal",
+        id: "custom1",
+        type: "custom",
+        src: "/custom-frames/cframe1.png",
+        thumbnailSrc: "/custom-frames/cframe1-thumb.png",
+        name: "Snow",
         },
         {
-            id: "color2",
-            type: "color",
-            src: "/color-frames/frame2.png",
-            thumbnailSrc: "/color-frames/frame2-thumb.png",
-            name: "Deep Purple",
+        id: "custom2",
+        type: "custom",
+        src: "/custom-frames/cframe2.png",
+        thumbnailSrc: "/custom-frames/cframe2-thumb.png",
+        name: "Pattern",
         },
         {
-            id: "color3",
-            type: "color",
-            src: "/color-frames/frame3.png",
-            thumbnailSrc: "/color-frames/frame3-thumb.png",
-            name: "Slate",
+        id: "custom3",
+        type: "custom",
+        src: "/custom-frames/cframe3.png",
+        thumbnailSrc: "/custom-frames/cframe3-thumb.png",
+        name: "Cookies",
         },
         {
-            id: "color4",
-            type: "color",
-            src: "/color-frames/frame4.png",
-            thumbnailSrc: "/color-frames/frame4-thumb.png",
-            name: "Purple Gray",
+        id: "custom4",
+        type: "custom",
+        src: "/custom-frames/cframe4.png",
+        thumbnailSrc: "/custom-frames/cframe4-thumb.png",
+        name: "Town",
         },
         {
-            id: "color5",
-            type: "color",
-            src: "/color-frames/frame5.png",
-            thumbnailSrc: "/color-frames/frame5-thumb.png",
-            name: "Mountain",
+        id: "custom5",
+        type: "custom",
+        src: "/custom-frames/cframe5.png",
+        thumbnailSrc: "/custom-frames/cframe5-thumb.png",
+        name: "Table",
         },
         {
-            id: "color6",
-            type: "color",
-            src: "/color-frames/frame6.png",
-            thumbnailSrc: "/color-frames/frame6-thumb.png",
-            name: "Beige",
+        id: "custom6",
+        type: "custom",
+        src: "/custom-frames/cframe6.png",
+        thumbnailSrc: "/custom-frames/cframe6-thumb.png",
+        name: "Tree",
         },
-        {
-            id: "color7",
-            type: "color",
-            src: "/color-frames/frame7.png",
-            thumbnailSrc: "/color-frames/frame7-thumb.png",
-            name: "Alabaster",
-        },
-        {
-            id: "color8",
-            type: "color",
-            src: "/color-frames/frame8.png",
-            thumbnailSrc: "/color-frames/frame8-thumb.png",
-            name: "White",
-        },
-        ],
-        []
-    );
-
-    // Predefined custom frames (images with transparent backgrounds)
-    const customFrames: readonly Frame[] = useMemo(
-        () => [
-        {
-            id: "custom1",
-            type: "custom",
-            src: "/custom-frames/cframe1.png",
-            thumbnailSrc: "/custom-frames/cframe1-thumb.png",
-            name: "Snow",
-        },
-        {
-            id: "custom2",
-            type: "custom",
-            src: "/custom-frames/cframe2.png",
-            thumbnailSrc: "/custom-frames/cframe2-thumb.png",
-            name: "Pattern",
-        },
-        {
-            id: "custom3",
-            type: "custom",
-            src: "/custom-frames/cframe3.png",
-            thumbnailSrc: "/custom-frames/cframe3-thumb.png",
-            name: "Cookies",
-        },
-        {
-            id: "custom4",
-            type: "custom",
-            src: "/custom-frames/cframe4.png",
-            thumbnailSrc: "/custom-frames/cframe4-thumb.png",
-            name: "Town",
-        },
-        {
-            id: "custom5",
-            type: "custom",
-            src: "/custom-frames/cframe5.png",
-            thumbnailSrc: "/custom-frames/cframe5-thumb.png",
-            name: "Table",
-        },
-        {
-            id: "custom6",
-            type: "custom",
-            src: "/custom-frames/cframe6.png",
-            thumbnailSrc: "/custom-frames/cframe6-thumb.png",
-            name: "Tree",
-        },
-        ],
-        []
-    );
+    ], []);
 
     useEffect(() => {
-        // Load photos from sessionStorage
+        // Load photos from sessionStorage; if not found, redirect to capture page.
         const storedPhotos = sessionStorage.getItem("photos");
         if (storedPhotos) {
         setPhotos(JSON.parse(storedPhotos));
@@ -162,17 +150,16 @@ export default function FramePage() {
         router.push("/capture");
         }
 
-        // Load the selected frame from sessionStorage
+        // Load selected frame from sessionStorage; if not found, default to the first color frame.
         const storedSelectedFrame = sessionStorage.getItem("selectedFrame");
         if (storedSelectedFrame) {
         setSelectedFrame(JSON.parse(storedSelectedFrame));
         } else {
-        // Default to the first color frame if none is stored
         setSelectedFrame(colorFrames[0]);
         sessionStorage.setItem("selectedFrame", JSON.stringify(colorFrames[0]));
         }
 
-        // Load whether user was on color or custom frames
+        // Load frame type from sessionStorage; if not found, default to color frames.
         const storedFrameType = sessionStorage.getItem("isColorFrame");
         if (storedFrameType !== null) {
         setIsColorFrame(storedFrameType === "true");
@@ -180,7 +167,7 @@ export default function FramePage() {
         setIsColorFrame(true);
         sessionStorage.setItem("isColorFrame", "true");
         }
-    }, [colorFrames, customFrames, router]);
+    }, [colorFrames, router]);
 
     const handleSelectFrame = (frame: Frame) => {
         setSelectedFrame(frame);
@@ -193,13 +180,11 @@ export default function FramePage() {
         sessionStorage.setItem("isColorFrame", isColor.toString());
 
         if (isColor) {
-        const defaultColorFrame = colorFrames[0];
-        setSelectedFrame(defaultColorFrame);
-        sessionStorage.setItem("selectedFrame", JSON.stringify(defaultColorFrame));
+        setSelectedFrame(colorFrames[0]);
+        sessionStorage.setItem("selectedFrame", JSON.stringify(colorFrames[0]));
         } else {
-        const defaultCustomFrame = customFrames[0];
-        setSelectedFrame(defaultCustomFrame);
-        sessionStorage.setItem("selectedFrame", JSON.stringify(defaultCustomFrame));
+        setSelectedFrame(customFrames[0]);
+        sessionStorage.setItem("selectedFrame", JSON.stringify(customFrames[0]));
         }
     };
 
@@ -211,61 +196,60 @@ export default function FramePage() {
         <div className="flex flex-col items-center justify-start min-h-screen bg-[var(--canvas)] p-10 text-black">
         <h1 className="text-2xl mb-6 font-chillax">Select a Frame for Your Photos</h1>
 
-        {/* Frame Canvas */}
+        {/* Frame Preview Container */}
         <div
-            className="flex flex-col relative mb-8"
+            className="relative mb-8"
             style={{
-            width: `${SCALED_FRAME_WIDTH}px`, // 324px
-            height: `${SCALED_FRAME_HEIGHT}px`, // 576px
-            backgroundColor: "transparent",
-            position: "relative",
+            width: `${SCALED_FRAME_WIDTH}px`,
+            height: `${SCALED_FRAME_HEIGHT}px`,
             }}
         >
-            {/* Top Border (22px) */}
+            {/* Photo Grid */}
             <div
-            className="w-full"
             style={{
-                height: `${SCALED_TOP_HEIGHT}px`, // 22px
-                backgroundColor: "transparent",
+                position: "absolute",
+                top: `${SCALED_TOP_OFFSET}px`,
+                left: `${SCALED_LEFT_OFFSET}px`,
+                width: `${SCALED_PHOTO_WIDTH * 2 + SCALED_GAP}px`,
+                height: `${SCALED_PHOTO_HEIGHT * 2 + SCALED_GAP}px`,
             }}
-            ></div>
-
-            {/* Photo Grid (427px total: 2 * 209 + 9 gap) */}
-            <div className="flex-grow flex justify-center items-center">
-            <div
-                className="grid"
-                style={{
-                width: `${PHOTO_WIDTH * 2 + GAP_BETWEEN_PHOTOS}px`, // 138*2 + 9 = 285
-                height: `${PHOTO_HEIGHT * 2 + GAP_BETWEEN_PHOTOS}px`, // 209*2 + 9 = 427
-                marginLeft: `${LEFT_RIGHT_GAP}px`, // 19
-                marginRight: `${LEFT_RIGHT_GAP}px`, // 19
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gridTemplateRows: "repeat(2, 1fr)",
-                gap: `${GAP_BETWEEN_PHOTOS}px`, // 9
-                }}
             >
-                {photos.slice(0, 4).map((photo, index) => (
-                <img
+            {[0, 1, 2, 3].map((index) => {
+                const photo = photos[index];
+                const row = Math.floor(index / 2);
+                const col = index % 2;
+                return (
+                <div
                     key={index}
-                    src={photo}
-                    alt={`Photo ${index + 1}`}
-                    className="object-cover"
                     style={{
-                    width: `${PHOTO_WIDTH}px`, // 138
-                    height: `${PHOTO_HEIGHT}px`, // 209
+                    position: "absolute",
+                    top: row * (SCALED_PHOTO_HEIGHT + SCALED_GAP),
+                    left: col * (SCALED_PHOTO_WIDTH + SCALED_GAP),
                     }}
-                />
-                ))}
+                >
+                    {photo ? (
+                    <PhotoThumbnail
+                        src={photo}
+                        alt={`Photo ${index + 1}`}
+                        width={SCALED_PHOTO_WIDTH}
+                        height={SCALED_PHOTO_HEIGHT}
+                        className="object-cover"
+                    />
+                    ) : (
+                    <div
+                        className="flex items-center justify-center bg-gray-200 text-gray-500 rounded"
+                        style={{
+                        width: SCALED_PHOTO_WIDTH,
+                        height: SCALED_PHOTO_HEIGHT,
+                        }}
+                    >
+                        No Photo
+                    </div>
+                    )}
+                </div>
+                );
+            })}
             </div>
-            </div>
-
-            {/* Bottom Border (127px) */}
-            <div
-            className="w-full"
-            style={{
-                height: `${SCALED_BOTTOM_HEIGHT}px`, // 127
-            }}
-            ></div>
 
             {/* Frame Overlay */}
             {selectedFrame && (
@@ -278,11 +262,9 @@ export default function FramePage() {
             )}
         </div>
 
-        {/* Frame Options */}
+        {/* Frame Type Selection */}
         <div className="w-full max-w-4xl">
             <h2 className="text-xl font-semibold font-chillax mb-4">Choose a Frame</h2>
-
-            {/* Frame Type Selection (Color vs Custom) */}
             <div className="flex space-x-8 mb-6 border-b-2 border-gray-200">
             <button
                 onClick={() => handleToggle("color")}
@@ -308,7 +290,7 @@ export default function FramePage() {
             </button>
             </div>
 
-            {/* Frame Selection Grid */}
+            {/* Frame Selection Thumbnails */}
             <div className="mb-6">
             {isColorFrame ? (
                 <div className="flex gap-4 overflow-x-auto flex-nowrap custom-scrollbar">
@@ -330,12 +312,14 @@ export default function FramePage() {
                         }
                     }}
                     >
-                    {/* Frame Thumbnail */}
                     <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
-                        <img
+                        <PhotoThumbnail
                         src={frame.thumbnailSrc}
                         alt={frame.name}
-                        className="w-full h-full object-cover"
+                        width="100%"
+                        height="100%"
+                        className="object-cover"
+                        fallbackSrc="/fallback-frame.png"
                         />
                     </div>
                     <p
@@ -371,15 +355,14 @@ export default function FramePage() {
                         }
                         }}
                     >
-                        {/* Frame Thumbnail */}
                         <div className="w-14 h-14 rounded-full overflow-hidden mb-2">
-                        <img
+                        <PhotoThumbnail
                             src={frame.thumbnailSrc}
                             alt={frame.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/fallback-frame.png";
-                            }}
+                            width="100%"
+                            height="100%"
+                            className="object-cover"
+                            fallbackSrc="/fallback-frame.png"
                         />
                         </div>
                         <p
@@ -401,7 +384,6 @@ export default function FramePage() {
             </div>
         </div>
 
-        {/* Proceed Button */}
         <button
             onClick={handleProceed}
             className="mt-4 px-6 py-3 bg-[#536659] text-white rounded-lg shadow-lg hover:bg-[#356c47] transition disabled:bg-gray-400 disabled:cursor-not-allowed"

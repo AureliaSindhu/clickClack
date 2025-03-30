@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Card } from '../../components/ui/card';
 import Footer from '../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../style.css";
@@ -22,9 +22,9 @@ export default function CapturePage() {
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const videoConstraints = {
-        width: 1080,
-        height: 1920,
         facingMode: 'user',
+        aspectRatio: 9 / 16,
+        height: 1280,
     };
 
     const capturePhoto = useCallback(() => {
@@ -107,8 +107,8 @@ export default function CapturePage() {
     }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)] p-6">
-            <Card className="w-full max-w-md space-y-4 shadow-none">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[--canvas] p-6">
+            <Card className="w-full max-w-md space-y-4 shadow-none bg-[--canvas]">
                 <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
@@ -118,10 +118,10 @@ export default function CapturePage() {
                     <Webcam
                         audio={false}
                         ref={webcamRef}
-                        screenshotFormat="image/png"
-                        screenshotQuality={1}
+                        screenshotFormat="image/jpeg"
+                        className="webcam-video"
                         videoConstraints={videoConstraints}
-                        mirrored={true}
+                        mirrored={true}  
                     />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
