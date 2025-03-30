@@ -1,6 +1,8 @@
 # [Click Clack](https://click-clack-seven.vercel.app/)
 
-> ### Save Cash, Snap Smiles — Your Personal Online Photobooth
+<!-- > ### Save Cash, Snap Smiles — Your Personal Online Photobooth -->
+
+![thumbnail](https://github.com/AureliaSindhu/ClickClack/blob/main/client/public/thumbnail.png)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
