@@ -16,7 +16,7 @@ export default function CapturePage() {
     const params = useParams();
     // const collageType = params.collageType || 'twoByTwo';
     // const config = collageConfigs[collageType] || collageConfigs.twoByTwo;
-    const collageType = Array.isArray(params.collageType) ? params.collageType[0] : params.collageType || 'twoByTwo';
+    const collageType = Array.isArray(params.collageType) ? params.collageType[0] : params.collageType || '';
     const config = collageConfigs[collageType as keyof typeof collageConfigs] || collageConfigs.twoByTwo;
 
     //config object

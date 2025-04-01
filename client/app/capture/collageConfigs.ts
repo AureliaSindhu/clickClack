@@ -12,7 +12,7 @@ export const collageConfigs = {
         captureCount: 4,
         videoConstraints: {
             facingMode: 'user',
-            aspectRatio: 9 / 16,
+            aspectRatio: 16 / 9,
             height: 1080,
         },
         containerClassName: 'webcam-container-oneByFour',
