@@ -2,21 +2,21 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Next.js PWA',
-        short_name: 'NextPWA',
-        description: 'A Progressive Web App built with Next.js',
+        name: 'ClickClack',
+        short_name: 'ClickClackPWA',
+        description: 'Your personal photobooth',
         start_url: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#000000',
+        background_color: '#EAE6E0',
+        theme_color: '#1C1C1C',
         icons: [
         {
-            src: '/icon-192x192.png',
+            src: '@/public/img/light-icon.png',
             sizes: '192x192',
             type: 'image/png',
         },
         {
-            src: '/icon-512x512.png',
+            src: '@/public/img/dark-icon.png',
             sizes: '512x512',
             type: 'image/png',
         },
