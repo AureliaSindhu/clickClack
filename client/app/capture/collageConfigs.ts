@@ -7,6 +7,7 @@ export const collageConfigs = {
             height: 1280,
         },
         containerClassName: 'webcam-container-twoByTwo',
+        reviewGridClass: 'grid-cols-2',
     },
     oneByFour: {
         captureCount: 4,
@@ -16,6 +17,7 @@ export const collageConfigs = {
             height: 1080,
         },
         containerClassName: 'webcam-container-oneByFour',
+        reviewGridClass: 'grid-cols-1',
     },
     specialEd: {
         captureCount: 1,
@@ -25,5 +27,6 @@ export const collageConfigs = {
             height: 487,
         },
         containerClassName: 'webcam-container-specialEd',
+        reviewGridClass: 'grid-cols-1',
     }
 }
