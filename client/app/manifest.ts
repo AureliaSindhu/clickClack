@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'Your personal photobooth',
         start_url: '/',
         display: 'standalone',
-        background_color: '#EAE6E0',
-        theme_color: '#1C1C1C',
+        // background_color: '#EAE6E0',
+        // theme_color: '#1C1C1C',
         icons: [
         {
             src: '/maskable-icon.png',
