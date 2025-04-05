@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Analytics } from '@vercel/analytics/next';
 import "./globals.css";
+import "./manifest.ts";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="/manifest.ts" />
         <link rel="apple-touch-icon" href="/light-icon.png" /> 
         <meta name="theme-color" content="#1C1C1C" />
       </head>
