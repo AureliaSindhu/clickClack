@@ -1,5 +1,7 @@
 export const Navbar = () => {
     return (
-        <h1> ClickClack </h1>
+        <nav className="absolute top-0 left-0 w-full text-center text-[#535366] z-20 p-4">
+            <p>ClickClack</p>
+        </nav>
     )
 }

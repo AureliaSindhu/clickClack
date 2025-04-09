@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logo from "../public/img/clickclackLogo.png";
+import "../app/style.css";
 
 export default function HomePage() {
     const router = useRouter();
