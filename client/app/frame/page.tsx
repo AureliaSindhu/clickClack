@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import PhotoThumbnail from "../../components/PhotoThumbnail"; // Adjust the path as necessary
-import Footer from "../../components/footer";
+import { Footer } from "../../components/footer";
 import "../style.css";
 
 interface Frame {

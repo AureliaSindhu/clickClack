@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import '../style.css';
 import { useState } from 'react';
 import { Camera, ImageIcon, Palette, Share2, X } from 'lucide-react';
-import Footer from "../../components/footer";
+import { Footer } from "../../components/footer";
 
 interface Notification {
     id: number;

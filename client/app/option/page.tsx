@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Modal from "../../components/modal";
 import "../style.css";
-import Footer from "../../components/footer";
+import { Footer } from "../../components/footer";
 import twoByTwo from "../../public/img/2by2(illust).png"
 import oneByFour from "../../public/img/1by4(illust).png"
 
