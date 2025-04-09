@@ -72,7 +72,7 @@ export default function GetStarted() {
                     </p>
                 </div>
             </div>
-            <Footer/>
+            <div className="absolute bottom-0 w-full"> <Footer /> </div>
         </div>
     );
 }
