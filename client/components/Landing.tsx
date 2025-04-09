@@ -8,7 +8,7 @@ export default function HomePage() {
     const router = useRouter();
 
     const getStarted = () => {
-        router.push("/option");
+        router.push("/getStarted");
     };
 
     return (
