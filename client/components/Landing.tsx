@@ -8,16 +8,14 @@ export default function HomePage() {
     const router = useRouter();
 
     const getStarted = () => {
-        router.push("/getStarted");
+        router.push("/option");
     };
 
     return (
         <div className="relative flex flex-col bg-[var(--canvas)] min-h-screen overflow-hidden">
-        {/* Decorative background elements using radial gradients */}
             <div className="absolute top-[-100px] right-[-100px] w-[300px] h-[300px] bg-gradient-radial from-[var(--canvas-dark)] to-transparent rounded-full opacity-20" />
             <div className="absolute bottom-[-100px] left-[-100px] w-[300px] h-[300px] bg-gradient-radial from-[var(--canvas-darker)] to-transparent rounded-full opacity-20" />
 
-            {/* Main content */}
             <div className="relative z-10 flex flex-col flex-grow items-center justify-center px-4">
                 <Image
                 src={logo}
