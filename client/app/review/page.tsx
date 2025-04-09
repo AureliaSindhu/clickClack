@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Footer from "../../components/footer";
+import { Footer } from "../../components/footer";
 import { RefreshCcw, ChevronRight } from "lucide-react";
 import PhotoThumbnail from "../../components/PhotoThumbnail";
 import { collageConfigs } from "../capture/collageConfigs";

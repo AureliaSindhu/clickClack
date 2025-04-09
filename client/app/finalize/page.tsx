@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 import '../style.css';
-import Footer from "../../components/footer";
+import { Footer } from "../../components/footer";
 import { PartyPopper, ImageDown, RefreshCcw, Sticker } from "lucide-react";
 import FeedbackForm from "../../components/FeedbackForm";
 
