@@ -30,7 +30,6 @@ export default function HomePage() {
                 </h1>
                 <p className="text-lg text-[var(--slate)] mb-6 text-center max-w-md">
                 Capture fun and creative photos just like in a real photobooth!
-                Unleash your inner artist.
                 </p>
                 <button
                 onClick={getStarted}
