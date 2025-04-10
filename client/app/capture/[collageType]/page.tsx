@@ -5,7 +5,7 @@ import Webcam from 'react-webcam';
 import { useRouter, useParams } from 'next/navigation'; 
 import { Button } from '../../../components/ui/button';
 import { Card } from '../../../components/ui/card';
-import Footer from '../../../components/footer';
+import { Footer } from '../../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../../style.css";
 
