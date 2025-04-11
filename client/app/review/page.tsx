@@ -16,13 +16,11 @@ export default function ReviewPage() {
     const [thumbnailDimensions, setThumbnailDimensions] = useState({ width: 138, height: 209 });
 
     useEffect(() => {
-        // Retrieve stored photos.
         const storedPhotos = sessionStorage.getItem("photos");
         if (!storedPhotos) {
-        // If no photos are stored, get the stored collage type (if any) and redirect to the capture page.
-        const storedCollageType = sessionStorage.getItem("collageType") || "";
-        router.push(`/capture/${storedCollageType}`);
-        return;
+            const storedCollageType = sessionStorage.getItem("collageType") || "";
+            router.push(`/capture/${storedCollageType}`);
+            return;
         }
 
         let parsedPhotos: string[] = [];
@@ -42,13 +40,11 @@ export default function ReviewPage() {
         return;
         }
 
-        // Get the configuration using the stored collage type.
         const config =
         collageConfigs[storedCollageType as keyof typeof collageConfigs] ||
         collageConfigs.twoByTwo;
         setGridClass(config.reviewGridClass || "grid-cols-2");
 
-        // Calculate thumbnail dimensions based on video constraints.
         const { videoConstraints } = config;
         if (videoConstraints && videoConstraints.height && videoConstraints.aspectRatio) {
         const computedWidth = videoConstraints.height * videoConstraints.aspectRatio;
@@ -61,14 +57,12 @@ export default function ReviewPage() {
         }
     }, [router]);
 
-    // Handler for retaking photos.
     const handleRetakeAll = useCallback(() => {
         sessionStorage.removeItem("photos");
-        sessionStorage.removeItem("collageType");
-        router.push("/capture");
+        const storedCollageType = sessionStorage.getItem("collageType") || "";
+        router.push(`/capture/${storedCollageType}`);
     }, [router]);
 
-    // Handler for proceeding to the frame page.
     const handleProceed = useCallback(() => {
         router.push("/frame");
     }, [router]);
