@@ -1,8 +1,9 @@
 export interface Frame { 
-    id: string; type: "color" | "custom"; 
+    id: string; 
+    type: "color" | "custom"; 
     src: string; 
-    thumbnailSrc: 
-    string; name: string; 
+    thumbnailSrc: string; 
+    name: string; 
 }
 
 export const colorFrames: Frame[] = [
@@ -23,4 +24,19 @@ export const customFrames: Frame[] = [
     { id: "custom4", type: "custom", src: "/custom-frames/cframe4.png", thumbnailSrc: "/custom-frames/cframe4-thumb.png", name: "Town" },
     { id: "custom5", type: "custom", src: "/custom-frames/cframe5.png", thumbnailSrc: "/custom-frames/cframe5-thumb.png", name: "Table" },
     { id: "custom6", type: "custom", src: "/custom-frames/cframe6.png", thumbnailSrc: "/custom-frames/cframe6-thumb.png", name: "Tree" },
+];
+
+export const oneByFourColorFrames: Frame[] = [
+    { id: "1x4-color1", type: "color", src: "/1x4/color1.png", thumbnailSrc: "/1x4/color1-thumb.png", name: "1x4 Color 1" },
+    { id: "1x4-color2", type: "color", src: "/1x4/color2.png", thumbnailSrc: "/1x4/color2-thumb.png", name: "1x4 Color 2" },
+];
+
+export const oneByFourCustomFrames: Frame[] = [
+    { id: "1x4-custom1", type: "custom", src: "/1x4/custom1.png", thumbnailSrc: "/1x4/custom1-thumb.png", name: "1x4 Custom 1" },
+    { id: "1x4-custom2", type: "custom", src: "/1x4/custom2.png", thumbnailSrc: "/1x4/custom2-thumb.png", name: "1x4 Custom 2" },
+];
+
+// Special Ed
+    export const specialEdColorFrames: Frame[] = [
+    { id: "special-color1", type: "color", src: "/special-ed/news1.png", thumbnailSrc: "/special-ed/news1-thumb.png", name: "Special Ed" },
 ];
