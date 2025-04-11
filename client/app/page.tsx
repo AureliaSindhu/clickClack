@@ -4,12 +4,10 @@ import { Footer } from "../components/footer"
 
 export default function Home() {
   return (
-    <div className="flex flex-col bg-[var(--canvas)] items-center justify-center min-h-screen">
+    <div className="flex flex-col item-center justify-center h-screen bg-[var(--canvas)]">
       <Navbar /> 
       <Landing />
-      <div className="absolute bottom-0 w-full">
-        <Footer /> 
-      </div>
+      <Footer /> 
     </div>
   );
 }
