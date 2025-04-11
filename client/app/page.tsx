@@ -7,9 +7,7 @@ export default function Home() {
     <div className="flex flex-col item-center justify-center h-screen bg-[var(--canvas)]">
       <Navbar /> 
       <Landing />
-      <div className="absolute bottom-0 w-full">
-        <Footer /> 
-      </div>
+      <Footer /> 
     </div>
   );
 }
