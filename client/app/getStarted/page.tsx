@@ -7,7 +7,7 @@ import { Footer } from "../../components/footer";
 
 export default function GetStarted() { 
     return (
-        <div className="min-h-screen bg-[var(--canvas)] flex flex-col">
+        <div className="flex flex-col item-center justify-center h-screen">
             <NavPages />
             <Notifs />
             <div className="absolute bottom-0 w-full"> <Footer /> </div>
