@@ -115,23 +115,23 @@ export default function CapturePage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[--canvas] p-6">
-            <Card className="w-full max-w-md space-y-4 shadow-none bg-[--canvas]">
+            <Card className="w-full max-w-sm space-y-4 shadow-none bg-[--canvas]">
                 <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
 
-                <div className="webcam-container">
+                <div className="overflow-hidden h-[65vh] w-full relative">
                     <Webcam
                         audio={false}
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
-                        className="webcam-video"
+                        className="rounded-2xl w-full h-full object-cover"
                         videoConstraints={videoConstraints}
                         mirrored={true}  
                     />
                     {captureMode === 'timed' && isCapturing && countdown > 0 && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white rounded-3xl p-4">
                             <span className="text-6xl font-bold mb-4">{countdown}</span>
                             <span className="text-xl">
                                 Photo {photos.length + 1} of {CAPTURE_COUNT}
