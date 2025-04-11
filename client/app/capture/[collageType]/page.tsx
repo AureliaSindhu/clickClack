@@ -8,21 +8,43 @@ import { Card } from '../../../components/ui/card';
 import { Footer } from '../../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../../style.css";
+import { collageConfigs } from '../collageConfigs';
 
-import { collageConfigs } from '../collageConfigs'; 
+const mapCollageType = (type: string): keyof typeof collageConfigs => {
+    switch (type.toLowerCase()) {
+        case 'special-ed':
+        case 'specialed':
+            return 'specialEd';
+        case 'onebyfour':
+        case 'one-by-four':
+            return 'oneByFour';
+        case 'twobytwo':
+        case 'two-by-two':
+            return 'twoByTwo';
+        default:
+            return type as keyof typeof collageConfigs;
+    }
+};
 
 export default function CapturePage() {
-    // read params
     const params = useParams();
-    const collageType = Array.isArray(params.collageType)
+    const rawCollageType = Array.isArray(params.collageType)
         ? params.collageType[0]
         : params.collageType || '';
-    const config = collageConfigs[collageType as keyof typeof collageConfigs] || collageConfigs.twoByTwo;
+    const effectiveCollageType = rawCollageType ? mapCollageType(rawCollageType) : 'twoByTwo';
+    const config = collageConfigs[effectiveCollageType] || collageConfigs.twoByTwo;
 
-    // Config object values
     const CAPTURE_COUNT = config.captureCount;  
     const videoConstraints = config.videoConstraints; 
     const containerClass = config.containerClassName; 
+
+    const webcamClassName = effectiveCollageType === 'twoByTwo'
+        ? "rounded-2xl object-cover w-auto h-full ml-auto mr-auto"
+        : "rounded-2xl object-cover w-full h-auto ml-auto mr-auto";
+
+    const containerClasses = effectiveCollageType === 'twoByTwo'
+        ? `overflow-hidden h-[65vh] w-full relative ${containerClass}`
+        : `overflow-hidden h-[65vh] w-full relative flex items-center justify-center ${containerClass}`;
 
     const webcamRef = useRef<Webcam>(null);
     const [photos, setPhotos] = useState<string[]>([]);
@@ -36,7 +58,6 @@ export default function CapturePage() {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             if (imageSrc) {
-                // Use updater callback so it doesn't depend on stale photos
                 setPhotos((prevPhotos) => {
                     const newPhotos = [...prevPhotos, imageSrc];
                     console.log(`Captured photo ${newPhotos.length}`);
@@ -116,13 +137,12 @@ export default function CapturePage() {
                 <p className="text-center text-muted-foreground">
                     {photos.length}/{CAPTURE_COUNT} photos captured
                 </p>
-
-                <div className={`webcam-container ${containerClass}`}>
+                <div className={containerClasses}>
                     <Webcam
                         audio={false}
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
-                        className="webcam-video"
+                        className={webcamClassName}
                         videoConstraints={videoConstraints}
                         mirrored={true}
                     />
@@ -135,7 +155,6 @@ export default function CapturePage() {
                         </div>
                     )}
                 </div>
-
                 <div className="flex justify-center space-x-4 w-1/2 mx-auto">
                     <Button 
                         onClick={() => startCapture('manual')} 
