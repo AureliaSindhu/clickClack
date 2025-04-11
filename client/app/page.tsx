@@ -4,7 +4,7 @@ import { Footer } from "../components/footer"
 
 export default function Home() {
   return (
-    <div>
+    <div className="flex flex-col item-center justify-center h-screen bg-[var(--canvas)]">
       <Navbar /> 
       <Landing />
       <div className="absolute bottom-0 w-full">

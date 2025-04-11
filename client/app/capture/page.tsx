@@ -27,20 +27,6 @@ export default function CapturePage() {
         height: 1280,
     };
 
-    const capturePhoto = useCallback(() => {
-        if (webcamRef.current) {
-            const imageSrc = webcamRef.current.getScreenshot();
-            if (imageSrc) {
-                setPhotos((prevPhotos) => [...prevPhotos, imageSrc]);
-                console.log(`Captured photo ${photos.length + 1}`);
-            } else {
-                console.error("Failed to capture screenshot");
-            }
-        } else {
-            console.error("Webcam reference is not initialized");
-        }
-    }, [photos.length]);
-
     const finalizeCaptures = (finalPhotos: string[]) => {
         if (finalPhotos.length >= CAPTURE_COUNT) {
             // Store photos in sessionStorage
@@ -49,6 +35,27 @@ export default function CapturePage() {
             router.push('/review');
         }
     };
+
+    const capturePhoto = useCallback(() => {
+        if (webcamRef.current) {
+            const imageSrc = webcamRef.current.getScreenshot();
+            if (imageSrc) {
+                setPhotos((prevPhotos) => { 
+                    const newPhotos = [...prevPhotos, imageSrc];
+                    if (newPhotos.length >= CAPTURE_COUNT) {
+                        finalizeCaptures(newPhotos);
+                        setIsCapturing(false);
+                    }
+                    return newPhotos;
+                }); 
+                console.log(`Captured photo ${photos.length + 1}`);
+            } else {
+                console.error("Failed to capture screenshot");
+            }
+        } else {
+            console.error("Webcam reference is not initialized");
+        }
+    }, [webcamRef, finalizeCaptures]);
 
     const startCapture = (mode: 'manual' | 'timed') => {
         console.log(`Starting capture in ${mode} mode.`);

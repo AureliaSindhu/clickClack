@@ -9,7 +9,7 @@ export default function Option() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)]">
             <NavPages />
             <OptionComponent />
-            <div className="absolute bottom-0 w-full"> <Footer /> </div>
+            <Footer />
         </div>
     );
 }
