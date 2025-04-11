@@ -27,14 +27,14 @@ export default function CapturePage() {
         height: 1280,
     };
 
-    const finalizeCaptures = (finalPhotos: string[]) => {
+    const finalizeCaptures = useCallback((finalPhotos: string[]) => {
         if (finalPhotos.length >= CAPTURE_COUNT) {
             // Store photos in sessionStorage
             sessionStorage.setItem('photos', JSON.stringify(finalPhotos.slice(0, CAPTURE_COUNT)));
             // Navigate to the ReviewPage
             router.push('/review');
         }
-    };
+    }, [router]);
 
     const capturePhoto = useCallback(() => {
         if (webcamRef.current) {
@@ -42,13 +42,13 @@ export default function CapturePage() {
             if (imageSrc) {
                 setPhotos((prevPhotos) => { 
                     const newPhotos = [...prevPhotos, imageSrc];
+                    console.log(`Captured photo ${photos.length + 1}`);
                     if (newPhotos.length >= CAPTURE_COUNT) {
                         finalizeCaptures(newPhotos);
                         setIsCapturing(false);
                     }
                     return newPhotos;
                 }); 
-                console.log(`Captured photo ${photos.length + 1}`);
             } else {
                 console.error("Failed to capture screenshot");
             }

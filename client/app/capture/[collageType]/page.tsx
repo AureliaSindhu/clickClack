@@ -12,14 +12,14 @@ import "../../style.css";
 import { collageConfigs } from '../collageConfigs'; 
 
 export default function CapturePage() {
-    //read params
+    // read params
     const params = useParams();
-    // const collageType = params.collageType || 'twoByTwo';
-    // const config = collageConfigs[collageType] || collageConfigs.twoByTwo;
-    const collageType = Array.isArray(params.collageType) ? params.collageType[0] : params.collageType || '';
+    const collageType = Array.isArray(params.collageType)
+        ? params.collageType[0]
+        : params.collageType || '';
     const config = collageConfigs[collageType as keyof typeof collageConfigs] || collageConfigs.twoByTwo;
 
-    //config object
+    // Config object values
     const CAPTURE_COUNT = config.captureCount;  
     const videoConstraints = config.videoConstraints; 
     const containerClass = config.containerClassName; 
@@ -34,44 +34,48 @@ export default function CapturePage() {
 
     const capturePhoto = useCallback(() => {
         if (webcamRef.current) {
-        const imageSrc = webcamRef.current.getScreenshot();
-        if (imageSrc) {
-            setPhotos((prevPhotos) => [...prevPhotos, imageSrc]);
-            console.log(`Captured photo ${photos.length + 1}`);
+            const imageSrc = webcamRef.current.getScreenshot();
+            if (imageSrc) {
+                // Use updater callback so it doesn't depend on stale photos
+                setPhotos((prevPhotos) => {
+                    const newPhotos = [...prevPhotos, imageSrc];
+                    console.log(`Captured photo ${newPhotos.length}`);
+                    return newPhotos;
+                });
+            } else {
+                console.error("Failed to capture screenshot");
+            }
         } else {
-            console.error("Failed to capture screenshot");
+            console.error("Webcam reference is not initialized");
         }
-        } else {
-        console.error("Webcam reference is not initialized");
-        }
-    }, [photos.length]);
+    }, []);
 
-    const finalizeCaptures = (finalPhotos: string[]) => {
+    const finalizeCaptures = useCallback((finalPhotos: string[]) => {
         if (finalPhotos.length >= CAPTURE_COUNT) {
-        sessionStorage.setItem('photos', JSON.stringify(finalPhotos.slice(0, CAPTURE_COUNT)));
-        router.push('/review');
+            sessionStorage.setItem('photos', JSON.stringify(finalPhotos.slice(0, CAPTURE_COUNT)));
+            router.push('/review');
         }
-    };
+    }, [CAPTURE_COUNT, router]);
 
     const startCapture = (mode: 'manual' | 'timed') => {
         if (isCapturing || photos.length >= CAPTURE_COUNT) return;
         setCaptureMode(mode);
 
         if (mode === 'timed') {
-        setIsCapturing(true);
-        setCountdown(5);
+            setIsCapturing(true);
+            setCountdown(5);
         } else {
-        capturePhoto();
-        if (photos.length + 1 >= CAPTURE_COUNT) {
-            finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
-        }
+            capturePhoto();
+            if (photos.length + 1 >= CAPTURE_COUNT) {
+                finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
+            }
         }
     };
 
     const cancelCapture = () => {
         if (countdownTimerRef.current) {
-        clearTimeout(countdownTimerRef.current);
-        countdownTimerRef.current = null;
+            clearTimeout(countdownTimerRef.current);
+            countdownTimerRef.current = null;
         }
         setIsCapturing(false);
         setCountdown(0);
@@ -79,27 +83,27 @@ export default function CapturePage() {
 
     useEffect(() => {
         if (captureMode === 'timed' && isCapturing) {
-        if (countdown > 0) {
-            countdownTimerRef.current = setTimeout(() => {
-            setCountdown((prev) => prev - 1);
-            }, 1000);
-        } else {
-            capturePhoto();
-            if (photos.length + 1 < CAPTURE_COUNT) {
-            setCountdown(5);
+            if (countdown > 0) {
+                countdownTimerRef.current = setTimeout(() => {
+                    setCountdown((prev) => prev - 1);
+                }, 1000);
             } else {
-            finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
+                capturePhoto();
+                if (photos.length + 1 < CAPTURE_COUNT) {
+                    setCountdown(5);
+                } else {
+                    finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
+                }
             }
-        }
         }
 
         return () => {
-        if (countdownTimerRef.current) {
-            clearTimeout(countdownTimerRef.current);
-            countdownTimerRef.current = null;
-        }
+            if (countdownTimerRef.current) {
+                clearTimeout(countdownTimerRef.current);
+                countdownTimerRef.current = null;
+            }
         };
-    }, [isCapturing, countdown, photos.length, captureMode, capturePhoto]);
+    }, [isCapturing, countdown, photos, captureMode, capturePhoto, finalizeCaptures, CAPTURE_COUNT]);
 
     useEffect(() => {
         sessionStorage.removeItem('photos');
@@ -107,63 +111,63 @@ export default function CapturePage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[--canvas] p-6">
-        <Card className="w-full max-w-md space-y-4 shadow-none bg-[--canvas]">
-            <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
-            <p className="text-center text-muted-foreground">
-            {photos.length}/{CAPTURE_COUNT} photos captured
-            </p>
+            <Card className="w-full max-w-md space-y-4 shadow-none bg-[--canvas]">
+                <h1 className="text-2xl font-chillax text-center">Capture Your Photos</h1>
+                <p className="text-center text-muted-foreground">
+                    {photos.length}/{CAPTURE_COUNT} photos captured
+                </p>
 
-            <div className={`webcam-container ${containerClass}`}>
-            <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                className="webcam-video"
-                videoConstraints={videoConstraints}
-                mirrored={true}
-            />
-            {captureMode === 'timed' && isCapturing && countdown > 0 && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
-                <span className="text-6xl font-bold mb-4">{countdown}</span>
-                <span className="text-xl">
-                    Photo {photos.length + 1} of {CAPTURE_COUNT}
-                </span>
+                <div className={`webcam-container ${containerClass}`}>
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        className="webcam-video"
+                        videoConstraints={videoConstraints}
+                        mirrored={true}
+                    />
+                    {captureMode === 'timed' && isCapturing && countdown > 0 && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
+                            <span className="text-6xl font-bold mb-4">{countdown}</span>
+                            <span className="text-xl">
+                                Photo {photos.length + 1} of {CAPTURE_COUNT}
+                            </span>
+                        </div>
+                    )}
                 </div>
-            )}
-            </div>
 
-            <div className="flex justify-center space-x-4 w-1/2 mx-auto">
-            <Button 
-                onClick={() => startCapture('manual')} 
-                className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
-                disabled={isCapturing || photos.length >= CAPTURE_COUNT}
-                aria-label="Capture photo manually"
-            >
-                <Camera className="h-6 w-6 mx-auto" />
-            </Button>
-            <Button 
-                onClick={() => startCapture('timed')} 
-                className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
-                disabled={isCapturing || photos.length >= CAPTURE_COUNT}
-                aria-label="Capture photo with timed mode"
-            >
-                <Clock className="h-6 w-6 mx-auto" />
-            </Button>
-            </div>
-            {isCapturing && captureMode === 'timed' && (
-            <div className="w-full flex justify-center mt-4 px-2 md:px-0">
-                <Button 
-                onClick={cancelCapture} 
-                variant="destructive" 
-                className="w-full bg-red-700 text-white hover:bg-red-900 rounded-full shadow-none"
-                aria-label="Cancel capture"
-                >
-                Cancel Capture
-                </Button>
-            </div>
-            )}
-        </Card>
-        <Footer />
+                <div className="flex justify-center space-x-4 w-1/2 mx-auto">
+                    <Button 
+                        onClick={() => startCapture('manual')} 
+                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
+                        disabled={isCapturing || photos.length >= CAPTURE_COUNT}
+                        aria-label="Capture photo manually"
+                    >
+                        <Camera className="h-6 w-6 mx-auto" />
+                    </Button>
+                    <Button 
+                        onClick={() => startCapture('timed')} 
+                        className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
+                        disabled={isCapturing || photos.length >= CAPTURE_COUNT}
+                        aria-label="Capture photo with timed mode"
+                    >
+                        <Clock className="h-6 w-6 mx-auto" />
+                    </Button>
+                </div>
+                {isCapturing && captureMode === 'timed' && (
+                    <div className="w-full flex justify-center mt-4 px-2 md:px-0">
+                        <Button 
+                            onClick={cancelCapture} 
+                            variant="destructive" 
+                            className="w-full bg-red-700 text-white hover:bg-red-900 rounded-full shadow-none"
+                            aria-label="Cancel capture"
+                        >
+                            Cancel Capture
+                        </Button>
+                    </div>
+                )}
+            </Card>
+            <Footer />
         </div>
     );
 }

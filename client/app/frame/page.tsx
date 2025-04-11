@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PhotoThumbnail from "../../components/PhotoThumbnail"; 
 import { Footer } from "../../components/footer";
