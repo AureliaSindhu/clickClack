@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { NavPages } from "../../components/navPages";
 import { Footer } from "../../components/footer";
 import { RefreshCcw, ChevronRight } from "lucide-react";
 import PhotoThumbnail from "../../components/PhotoThumbnail";
@@ -34,10 +35,10 @@ export default function ReviewPage() {
         const { videoConstraints } = config;
         const computedWidth = videoConstraints.height * videoConstraints.aspectRatio;
         const computedHeight = videoConstraints.height;
-        const scaleFactor = 0.1;
+        const scaleFactor = 0.2;
         setThumbnailDimensions({
-        width: computedWidth * scaleFactor,
-        height: computedHeight * scaleFactor,
+            width: computedWidth * scaleFactor,
+            height: computedHeight * scaleFactor,
         });
     }, [router]);
 
@@ -54,6 +55,7 @@ export default function ReviewPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-[var(--canvas)]">
+        <NavPages />
         <div className="flex-grow flex flex-col items-center justify-center p-10">
             <h1 className="text-2xl mb-6 text-black font-chillax">Review Your Photos</h1>
             <div className={`grid ${gridClass} gap-4`}>

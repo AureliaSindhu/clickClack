@@ -6,7 +6,7 @@ import { Footer } from "../../components/footer";
 
 export default function Option() {
     return(
-        <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--canvas)]">
+        <div className="flex flex-col items-center justify-between min-h-screen bg-[var(--canvas)]">
             <NavPages />
             <OptionComponent />
             <Footer />

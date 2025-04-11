@@ -2,17 +2,10 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import PhotoThumbnail from "../../components/PhotoThumbnail"; // Adjust the path as necessary
+import PhotoThumbnail from "../../components/PhotoThumbnail"; 
 import { Footer } from "../../components/footer";
 import "../style.css";
-
-interface Frame {
-    id: string;
-    type: "color" | "custom";
-    src: string;
-    thumbnailSrc: string;
-    name: string;
-}
+import { colorFrames, customFrames, Frame } from "./data/framesData";
 
 export default function FramePage() {
     const router = useRouter();
@@ -36,136 +29,31 @@ export default function FramePage() {
     const SCALED_PHOTO_HEIGHT = Math.round(698 * SCALE_FACTOR);
     const SCALED_GAP = Math.round(28 * SCALE_FACTOR);
 
-    // Update the first color frame to use the full resolution image
-    const colorFrames: readonly Frame[] = useMemo(() => [
-        {
-        id: "color1",
-        type: "color",
-        src: "/color-frames/frame1.png", 
-        thumbnailSrc: "/color-frames/frame1-thumb.png",
-        name: "Charcoal",
-        },
-        {
-        id: "color2",
-        type: "color",
-        src: "/color-frames/frame2.png",
-        thumbnailSrc: "/color-frames/frame2-thumb.png",
-        name: "Deep Purple",
-        },
-        {
-        id: "color3",
-        type: "color",
-        src: "/color-frames/frame3.png",
-        thumbnailSrc: "/color-frames/frame3-thumb.png",
-        name: "Slate",
-        },
-        {
-        id: "color4",
-        type: "color",
-        src: "/color-frames/frame4.png",
-        thumbnailSrc: "/color-frames/frame4-thumb.png",
-        name: "Purple Gray",
-        },
-        {
-        id: "color5",
-        type: "color",
-        src: "/color-frames/frame5.png",
-        thumbnailSrc: "/color-frames/frame5-thumb.png",
-        name: "Mountain",
-        },
-        {
-        id: "color6",
-        type: "color",
-        src: "/color-frames/frame6.png",
-        thumbnailSrc: "/color-frames/frame6-thumb.png",
-        name: "Beige",
-        },
-        {
-        id: "color7",
-        type: "color",
-        src: "/color-frames/frame7.png",
-        thumbnailSrc: "/color-frames/frame7-thumb.png",
-        name: "Alabaster",
-        },
-        {
-        id: "color8",
-        type: "color",
-        src: "/color-frames/frame8.png",
-        thumbnailSrc: "/color-frames/frame8-thumb.png",
-        name: "White",
-        },
-    ], []);
-
-    const customFrames: readonly Frame[] = useMemo(() => [
-        {
-        id: "custom1",
-        type: "custom",
-        src: "/custom-frames/cframe1.png",
-        thumbnailSrc: "/custom-frames/cframe1-thumb.png",
-        name: "Snow",
-        },
-        {
-        id: "custom2",
-        type: "custom",
-        src: "/custom-frames/cframe2.png",
-        thumbnailSrc: "/custom-frames/cframe2-thumb.png",
-        name: "Pattern",
-        },
-        {
-        id: "custom3",
-        type: "custom",
-        src: "/custom-frames/cframe3.png",
-        thumbnailSrc: "/custom-frames/cframe3-thumb.png",
-        name: "Cookies",
-        },
-        {
-        id: "custom4",
-        type: "custom",
-        src: "/custom-frames/cframe4.png",
-        thumbnailSrc: "/custom-frames/cframe4-thumb.png",
-        name: "Town",
-        },
-        {
-        id: "custom5",
-        type: "custom",
-        src: "/custom-frames/cframe5.png",
-        thumbnailSrc: "/custom-frames/cframe5-thumb.png",
-        name: "Table",
-        },
-        {
-        id: "custom6",
-        type: "custom",
-        src: "/custom-frames/cframe6.png",
-        thumbnailSrc: "/custom-frames/cframe6-thumb.png",
-        name: "Tree",
-        },
-    ], []);
-
     useEffect(() => {
         // Load photos from sessionStorage; if not found, redirect to capture page.
         const storedPhotos = sessionStorage.getItem("photos");
         if (storedPhotos) {
-        setPhotos(JSON.parse(storedPhotos));
+            setPhotos(JSON.parse(storedPhotos));
         } else {
-        router.push("/capture");
+            router.push("/capture");
         }
 
         // Load selected frame from sessionStorage; if not found, default to the first color frame.
         const storedSelectedFrame = sessionStorage.getItem("selectedFrame");
         if (storedSelectedFrame) {
-        setSelectedFrame(JSON.parse(storedSelectedFrame));
+            setSelectedFrame(JSON.parse(storedSelectedFrame));
         } else {
-        setSelectedFrame(colorFrames[0]);
-        sessionStorage.setItem("selectedFrame", JSON.stringify(colorFrames[0]));
+            setSelectedFrame(colorFrames[0]);
+            sessionStorage.setItem("selectedFrame", JSON.stringify(colorFrames[0]));
         }
 
         // Load frame type from sessionStorage; if not found, default to color frames.
         const storedFrameType = sessionStorage.getItem("isColorFrame");
         if (storedFrameType !== null) {
-        setIsColorFrame(storedFrameType === "true");
+            setIsColorFrame(storedFrameType === "true");
         } else {
-        setIsColorFrame(true);
-        sessionStorage.setItem("isColorFrame", "true");
+            setIsColorFrame(true);
+            sessionStorage.setItem("isColorFrame", "true");
         }
     }, [colorFrames, router]);
 
@@ -263,7 +151,6 @@ export default function FramePage() {
         </div>
 
         {/* Frame Type Selection */}
-        {/* Frame Type Selection */}
         <div className="w-full max-w-4xl">
             <h2 className="text-xl font-semibold font-chillax mb-4">Choose a Frame</h2>
             <div className="flex space-x-8 mb-6 border-b-2 border-gray-200">
@@ -291,7 +178,6 @@ export default function FramePage() {
             </button>
             </div>
 
-            {/* Frame Selection Thumbnails */}
             {/* Frame Selection Thumbnails */}
             <div className="mb-6">
             {isColorFrame ? (

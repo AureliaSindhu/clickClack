@@ -17,7 +17,7 @@ export default function Option() {
     };
 
     return(
-        <div className="flex flex-col">
+        <div className="flex flex-col item-center justify-center mt-auto mb-auto">
             <h1 className="text-center text-2xl font-chillax text-black mb-6">Choose Your Frame</h1>
 
             <div className="flex space-x-8">

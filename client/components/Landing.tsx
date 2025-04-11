@@ -13,7 +13,7 @@ export default function HomePage() {
     };
 
     return (
-        <div className="relative flex flex-col bg-[var(--canvas)] min-h-screen overflow-hidden">
+        <div className="relative flex flex-col items-center justify-center h-[90vh]">
             {/* <div className="absolute top-[-100px] right-[-100px] w-[300px] h-[300px] bg-gradient-radial from-[var(--canvas-dark)] to-transparent rounded-full opacity-20" />
             <div className="absolute bottom-[-100px] left-[-100px] w-[300px] h-[300px] bg-gradient-radial from-[var(--canvas-darker)] to-transparent rounded-full opacity-20" /> */}
 
