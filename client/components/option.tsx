@@ -18,7 +18,8 @@ export default function Option() {
     };
 
     const handleOneByFourClick = () => {
-        router.push('/capture/oneByFour');
+        // router.push('/capture/oneByFour');
+        setShowModal(true);
     };
 
     const handleSpecialEdClick = () => {
