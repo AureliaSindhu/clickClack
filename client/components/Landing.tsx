@@ -42,7 +42,7 @@ export default function HomePage() {
 
                 <button 
                     onClick={collaborate}
-                    className="flex inline-flex mt-2 px-8 py-3 bg-[var(--charcoal)] text-white rounded-lg shadow-lg hover:bg-[var(--canvas-dark)] transition duration-300 transform hover:scale-105 focus:outline-none"
+                    className="flex inline-flex mt-2 px-8 py-3 bg-[var(--slate)] text-white rounded-lg shadow-lg hover:bg-[var(--canvas-darker)] transition duration-300 transform hover:scale-105 focus:outline-none"
                 >
                     <Handshake className = "mr-2" /> Collaborate 
                 </button>
