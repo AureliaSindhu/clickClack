@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logo from "../public/img/clickclackLogo.png";
 import "../app/style.css";
-import { Handshake } from "lucide-react";
+import { Handshake, TriangleAlert } from "lucide-react";
 
 export default function HomePage() {
     const router = useRouter();
@@ -33,18 +33,25 @@ export default function HomePage() {
                 <p className="text-lg text-[var(--slate)] mb-6 text-center max-w-md">
                     Capture fun and creative photos just like in a real photobooth!
                 </p>
+
+                <div className="mb-4 text-center">
+                    <p className="mb-1 font-semibold text-yellow-600">Special Edission has been released!</p>
+                    <p className="flex inline-flex text-sm text-red-800 bg-red-300/20 p-2 rounded-md">
+                        <TriangleAlert className="mr-2" /> Please use from desktop because mobile is still in progress.
+                    </p>
+                </div>
+
                 <button
                     onClick={getStarted}
                     className="px-8 py-3 bg-[var(--charcoal)] text-white rounded-lg shadow-lg hover:bg-[var(--canvas-dark)] transition duration-300 transform hover:scale-105 focus:outline-none"
                 >
                     Get Started
                 </button>
-
                 <button 
                     onClick={collaborate}
                     className="flex inline-flex mt-2 px-8 py-3 bg-[var(--slate)] text-white rounded-lg shadow-lg hover:bg-[var(--canvas-darker)] transition duration-300 transform hover:scale-105 focus:outline-none"
                 >
-                    <Handshake className = "mr-2" /> Collaborate 
+                    <Handshake className="mr-2" /> Collaborate 
                 </button>
             </div>
         </div>
