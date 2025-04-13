@@ -2,27 +2,51 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
-import { useRouter, useParams } from 'next/navigation'; 
+import { useRouter, useParams } from 'next/navigation';
 import { Button } from '../../../components/ui/button';
 import { Card } from '../../../components/ui/card';
 import { Footer } from '../../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../../style.css";
+import { collageConfigs } from '../collageConfigs';
 
-import { collageConfigs } from '../collageConfigs'; 
+const mapCollageType = (type: string): keyof typeof collageConfigs => {
+    switch (type.toLowerCase()) {
+        case 'special-ed':
+        case 'specialed':
+        return 'specialEd';
+        case 'onebyfour':
+        case 'one-by-four':
+        return 'oneByFour';
+        case 'twobytwo':
+        case 'two-by-two':
+        return 'twoByTwo';
+        default:
+        return type as keyof typeof collageConfigs;
+    }
+};
 
 export default function CapturePage() {
-    //read params
     const params = useParams();
-    // const collageType = params.collageType || 'twoByTwo';
-    // const config = collageConfigs[collageType] || collageConfigs.twoByTwo;
-    const collageType = Array.isArray(params.collageType) ? params.collageType[0] : params.collageType || '';
-    const config = collageConfigs[collageType as keyof typeof collageConfigs] || collageConfigs.twoByTwo;
+    const rawCollageType = Array.isArray(params.collageType)
+        ? params.collageType[0]
+        : params.collageType || '';
+    const effectiveCollageType = rawCollageType ? mapCollageType(rawCollageType) : 'twoByTwo';
+    const config = collageConfigs[effectiveCollageType] || collageConfigs.twoByTwo;
 
-    //config object
-    const CAPTURE_COUNT = config.captureCount;  
-    const videoConstraints = config.videoConstraints; 
-    const containerClass = config.containerClassName; 
+    const CAPTURE_COUNT = config.captureCount;
+    const videoConstraints = config.videoConstraints;
+    const containerClass = config.containerClassName;
+
+    const webcamClassName =
+        effectiveCollageType === 'twoByTwo'
+        ? "rounded-2xl object-cover w-auto h-full ml-auto mr-auto"
+        : "rounded-2xl object-cover w-full h-auto ml-auto mr-auto";
+
+    const containerClasses =
+        effectiveCollageType === 'twoByTwo'
+        ? `overflow-hidden h-[65vh] w-full relative ${containerClass}`
+        : `overflow-hidden h-[65vh] w-full relative flex items-center justify-center ${containerClass}`;
 
     const webcamRef = useRef<Webcam>(null);
     const [photos, setPhotos] = useState<string[]>([]);
@@ -36,22 +60,30 @@ export default function CapturePage() {
         if (webcamRef.current) {
         const imageSrc = webcamRef.current.getScreenshot();
         if (imageSrc) {
-            setPhotos((prevPhotos) => [...prevPhotos, imageSrc]);
-            console.log(`Captured photo ${photos.length + 1}`);
+            setPhotos((prevPhotos) => {
+            const newPhotos = [...prevPhotos, imageSrc];
+            console.log(`Captured photo ${newPhotos.length}`);
+            return newPhotos;
+            });
         } else {
             console.error("Failed to capture screenshot");
         }
         } else {
         console.error("Webcam reference is not initialized");
         }
-    }, [photos.length]);
+    }, []);
 
-    const finalizeCaptures = (finalPhotos: string[]) => {
+    // Finalize captures and store both photos and the collage type
+    const finalizeCaptures = useCallback(
+        (finalPhotos: string[]) => {
         if (finalPhotos.length >= CAPTURE_COUNT) {
-        sessionStorage.setItem('photos', JSON.stringify(finalPhotos.slice(0, CAPTURE_COUNT)));
-        router.push('/review');
+            sessionStorage.setItem('photos', JSON.stringify(finalPhotos.slice(0, CAPTURE_COUNT)));
+            sessionStorage.setItem('collageType', effectiveCollageType);
+            router.push('/review');
         }
-    };
+        },
+        [CAPTURE_COUNT, router, effectiveCollageType]
+    );
 
     const startCapture = (mode: 'manual' | 'timed') => {
         if (isCapturing || photos.length >= CAPTURE_COUNT) return;
@@ -99,8 +131,9 @@ export default function CapturePage() {
             countdownTimerRef.current = null;
         }
         };
-    }, [isCapturing, countdown, photos.length, captureMode, capturePhoto]);
+    }, [isCapturing, countdown, photos, captureMode, capturePhoto, finalizeCaptures, CAPTURE_COUNT]);
 
+    // Clear previous photos on mount if needed.
     useEffect(() => {
         sessionStorage.removeItem('photos');
     }, []);
@@ -112,13 +145,12 @@ export default function CapturePage() {
             <p className="text-center text-muted-foreground">
             {photos.length}/{CAPTURE_COUNT} photos captured
             </p>
-
-            <div className={`webcam-container ${containerClass}`}>
+            <div className={containerClasses}>
             <Webcam
                 audio={false}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
-                className="webcam-video"
+                className={webcamClassName}
                 videoConstraints={videoConstraints}
                 mirrored={true}
             />
@@ -131,19 +163,18 @@ export default function CapturePage() {
                 </div>
             )}
             </div>
-
             <div className="flex justify-center space-x-4 w-1/2 mx-auto">
-            <Button 
-                onClick={() => startCapture('manual')} 
-                className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
+            <Button
+                onClick={() => startCapture('manual')}
+                className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none"
                 disabled={isCapturing || photos.length >= CAPTURE_COUNT}
                 aria-label="Capture photo manually"
             >
                 <Camera className="h-6 w-6 mx-auto" />
             </Button>
-            <Button 
-                onClick={() => startCapture('timed')} 
-                className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none" 
+            <Button
+                onClick={() => startCapture('timed')}
+                className="flex-1 bg-[var(--charcoal)] text-primary-foreground hover:bg-primary/90 rounded-full shadow-none"
                 disabled={isCapturing || photos.length >= CAPTURE_COUNT}
                 aria-label="Capture photo with timed mode"
             >
@@ -152,9 +183,9 @@ export default function CapturePage() {
             </div>
             {isCapturing && captureMode === 'timed' && (
             <div className="w-full flex justify-center mt-4 px-2 md:px-0">
-                <Button 
-                onClick={cancelCapture} 
-                variant="destructive" 
+                <Button
+                onClick={cancelCapture}
+                variant="destructive"
                 className="w-full bg-red-700 text-white hover:bg-red-900 rounded-full shadow-none"
                 aria-label="Cancel capture"
                 >
