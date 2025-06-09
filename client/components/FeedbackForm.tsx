@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { Star, Printer } from 'lucide-react';
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { Button } from "../components/ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea"; 
+import { Button } from "./ui/button";
 
 interface FeedbackData {
     name: string;
@@ -18,7 +18,7 @@ interface FeedbackFormProps {
     onError: (message: string) => void;
 }
 
-export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackFormProps) {
+const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }) => {
     const [formData, setFormData] = useState<FeedbackData>({
         name: "",
         email: "",
@@ -28,7 +28,7 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
 
     const [errors, setErrors] = useState<Partial<FeedbackData>>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // New state for submission status
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -39,15 +39,12 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
 
     const validate = (): Partial<FeedbackData> => {
         const newErrors: Partial<FeedbackData> = {};
-
         if (!formData.name.trim()) newErrors.name = "Name is required.";
-        if (!formData.email.trim()) {
-        newErrors.email = "Email is required.";
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
-        newErrors.email = "Invalid email address.";
+        if (!formData.email.trim()) newErrors.email = "Email is required.";
+        else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
+            newErrors.email = "Invalid email address.";
         }
         if (!formData.comments.trim()) newErrors.comments = "Comments are required.";
-
         return newErrors;
     };
 
@@ -55,147 +52,168 @@ export default function ReceiptFeedbackForm({ onSuccess, onError }: FeedbackForm
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return;
+            setErrors(validationErrors);
+            return;
         }
-
-        setErrors({});
+    
         setIsSubmitting(true);
-
-        try {
-        const response = await fetch("/api/feedback", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
+    
+        const googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLScHB2JEnqEvHDG5TApLWXHwc8xtRmIVC9oIYxmVuGsjzVI5qA/formResponse";
+        const formMapping = {
+            "entry.339916220": formData.name,     
+            "entry.885419918": formData.email,    
+            "entry.1810681366": formData.rating,  
+            "entry.1628403147": formData.comments, 
+        };
+    
+        const formDataToSubmit = new FormData();
+        Object.entries(formMapping).forEach(([key, value]) => {
+            formDataToSubmit.append(key, value);
         });
-
-        const result = await response.json();
-
-        if (response.ok && result.status === "success") {
-            onSuccess();
-            setFormData({
-            name: "",
-            email: "",
-            rating: "5",
-            comments: "",
+    
+        try {
+            const response = await fetch(googleFormURL, {
+                method: "POST",
+                mode: "no-cors",  
+                body: formDataToSubmit,
             });
-            setIsSubmitted(true); // Update submission status
-        } else {
-            onError(result.message || "Failed to submit feedback.");
-        }
-        } catch (error: unknown) { // Changed from 'any' to 'unknown'
-        if (error instanceof Error) {
-            console.error("Error submitting feedback:", error);
-            onError(error.message);
-        } else {
-            console.error("An unexpected error occurred:", error);
-            onError("An unexpected error occurred. Please try again.");
-        }
+    
+            if (response.ok || response.status === 0) { 
+                onSuccess();
+                setFormData({
+                    name: "",
+                    email: "",
+                    rating: "5",
+                    comments: "",
+                });
+                setIsSubmitted(true); 
+            } else {
+                throw new Error("Failed to submit feedback.");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Error submitting feedback:", error);
+                onError(error.message);
+            } else {
+                console.error("An unexpected error occurred:", error);
+                onError("An unexpected error occurred. Please try again.");
+            }
         } finally {
-        setIsSubmitting(false);
+            setIsSubmitting(false);
         }
     };
 
     if (isSubmitted) {
         return (
-        <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lg shadow-lg overflow-hidden p-6 text-center">
-            <h2 className="text-2xl font-bold mb-2 font-mono">Thank You!</h2>
-            <p className="text-sm text-gray-500 font-mono">
-            Your feedback has been submitted successfully.
-            </p>
-            <Button
-            onClick={() => setIsSubmitted(false)} 
-            className="mt-4 bg-black text-white hover:bg-gray-800"
-            >
-            Submit Another Feedback
-            </Button>
-        </div>
+            <div className="max-w-md mx-auto bg-[#EAE6E0] rounded-lg shadow-lg overflow-hidden p-6 text-center">
+                <h2 className="text-2xl font-bold mb-2 font-mono">Thank You!</h2>
+                <p className="text-sm text-gray-500 font-mono">
+                    Your feedback has been submitted successfully.
+                </p>
+                <Button
+                    onClick={() => setIsSubmitted(false)} 
+                    className="mt-4 bg-black text-white hover:bg-gray-800"
+                >
+                    Submit Another Feedback
+                </Button>
+            </div>
         );
     }
 
     return (
-        <div className="max-w-md mx-auto bg-white shadow-lg overflow-hidden">
-        <div className="p-6 bg-[#FFFDF7] border-t-8 border-dashed border-gray-300">
-            <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-2 font-mono">FEEDBACK RECEIPT</h2>
-            <p className="text-sm text-gray-500 font-mono">
-                {new Date().toLocaleString()}
-            </p>
-            </div>
-
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
-            <div>
-                <Input
-                type="text"
-                name="name"
-                placeholder="Name*"
-                value={formData.name}
-                onChange={handleChange}
-                className={`font-mono p-2 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded`}
-                />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-            </div>
-
-            <div>
-                <Input
-                type="email"
-                name="email"
-                placeholder="Email*"
-                value={formData.email}
-                onChange={handleChange}
-                className={`font-mono p-2 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded`}
-                />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            </div>
-
-            <div>
-                <div className="flex justify-center space-x-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                    key={star}
-                    className={`w-6 h-6 cursor-pointer ${
-                        parseInt(formData.rating) >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                    }`}
-                    onClick={() => setFormData({ ...formData, rating: star.toString() })}
-                    />
-                ))}
+        <div className="max-w-md mx-auto shadow-lg overflow-hidden">
+            <div className="p-6 bg-[#EAE6E0] border-t-8 border-dashed border-gray-800">
+                <div className="text-center mb-6">
+                    <h2 className="text-2xl font-bold mb-2 font-chillax">FEEDBACK RECEIPT</h2>
+                    <p className="text-sm text-gray-500 font-mono">
+                        {new Date().toLocaleString()}
+                    </p>
                 </div>
+
+                <form onSubmit={handleSubmit} noValidate className="space-y-4">
+                    <div>
+                        <Input
+                            type="text"
+                            name="name"
+                            placeholder="Name*"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className={`font-mono p-2 ${errors.name ? "border-red-500" : ""}`}
+                        />
+                        {errors.name && (
+                            <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <Input
+                            type="email"
+                            name="email"
+                            placeholder="Email*"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={`font-mono p-2 ${errors.email ? "border-red-500" : ""}`}
+                        />
+                        {errors.email && (
+                            <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <div className="flex justify-center space-x-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                    key={star}
+                                    className={`w-6 h-6 cursor-pointer ${
+                                        parseInt(formData.rating) >= star
+                                            ? "text-yellow-500 fill-yellow-500"
+                                            : "text-gray-400"
+                                    }`}
+                                    onClick={() =>
+                                        setFormData({ ...formData, rating: star.toString() })
+                                    }
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <Textarea
+                            name="comments"
+                            placeholder="Comments or Request*"
+                            value={formData.comments}
+                            onChange={handleChange}
+                            rows={3}
+                            className={`font-mono p-2 ${errors.comments ? "border-red-500" : ""}`}
+                        />
+                        {errors.comments && (
+                            <p className="text-red-500 text-xs mt-1">{errors.comments}</p>
+                        )}
+                    </div>
+
+                    <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full bg-black text-white hover:bg-gray-800 flex items-center justify-center"
+                    >
+                        {isSubmitting ? (
+                            "Submitting..."
+                        ) : (
+                            <>
+                                Submit Feedback <Printer className="ml-2 h-4 w-4" />
+                            </>
+                        )}
+                    </Button>
+                </form>
             </div>
 
-            <div>
-                <Textarea
-                name="comments"
-                placeholder="Comments / Request*"
-                value={formData.comments}
-                onChange={handleChange}
-                rows={3}
-                className={`font-mono p-2 border ${errors.comments ? "border-red-500" : "border-gray-300"} rounded`}
-                />
-                {errors.comments && <p className="text-red-500 text-xs mt-1">{errors.comments}</p>}
+            <div className="bg-[#FFFDF7] p-4 border-t border-dashed border-gray-300">
+                <p className="text-center text-xs font-mono text-gray-500">
+                    Thank you for your feedback!
+                </p>
             </div>
-
-            <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-black text-white hover:bg-gray-800 flex items-center justify-center"
-            >
-                {isSubmitting ? (
-                "Submitting..."
-                ) : (
-                <>
-                    <Printer className="mr-2 h-4 w-4" /> Print Feedback
-                </>
-                )}
-            </Button>
-            </form>
-        </div>
-        <div className="bg-[#FFFDF7] p-4 border-t border-dashed border-gray-300">
-            <p className="text-center text-xs font-mono text-gray-500">
-            Thank you for your feedback!
-            </p>
-        </div>
         </div>
     );
-}
+};
+
+export default ReceiptFeedbackForm;
