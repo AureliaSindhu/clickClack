@@ -9,22 +9,7 @@ import { Footer } from '../../../components/footer';
 import { Camera, Clock } from 'lucide-react';
 import "../../style.css";
 import { collageConfigs } from '../collageConfigs';
-
-const mapCollageType = (type: string): keyof typeof collageConfigs => {
-    switch (type.toLowerCase()) {
-        case 'special-ed':
-        case 'specialed':
-        return 'specialEd';
-        case 'onebyfour':
-        case 'one-by-four':
-        return 'oneByFour';
-        case 'twobytwo':
-        case 'two-by-two':
-        return 'twoByTwo';
-        default:
-        return type as keyof typeof collageConfigs;
-    }
-};
+import { mapCollageType } from '../mapCollageType';
 
 export default function CapturePage() {
     const params = useParams();
@@ -56,23 +41,6 @@ export default function CapturePage() {
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const capturePhoto = useCallback(() => {
-        if (webcamRef.current) {
-        const imageSrc = webcamRef.current.getScreenshot();
-        if (imageSrc) {
-            setPhotos((prevPhotos) => {
-            const newPhotos = [...prevPhotos, imageSrc];
-            console.log(`Captured photo ${newPhotos.length}`);
-            return newPhotos;
-            });
-        } else {
-            console.error("Failed to capture screenshot");
-        }
-        } else {
-        console.error("Webcam reference is not initialized");
-        }
-    }, []);
-
     // Finalize captures and store both photos and the collage type
     const finalizeCaptures = useCallback(
         (finalPhotos: string[]) => {
@@ -85,6 +53,28 @@ export default function CapturePage() {
         [CAPTURE_COUNT, router, effectiveCollageType]
     );
 
+    // Captures a single screenshot and, once CAPTURE_COUNT is reached, finalizes
+    // using that same photo array (avoids taking a second, redundant screenshot).
+    const capturePhoto = useCallback(() => {
+        if (webcamRef.current) {
+        const imageSrc = webcamRef.current.getScreenshot();
+        if (imageSrc) {
+            setPhotos((prevPhotos) => {
+            const newPhotos = [...prevPhotos, imageSrc];
+            if (newPhotos.length >= CAPTURE_COUNT) {
+                finalizeCaptures(newPhotos);
+                setIsCapturing(false);
+            }
+            return newPhotos;
+            });
+        } else {
+            console.error("Failed to capture screenshot");
+        }
+        } else {
+        console.error("Webcam reference is not initialized");
+        }
+    }, [CAPTURE_COUNT, finalizeCaptures]);
+
     const startCapture = (mode: 'manual' | 'timed') => {
         if (isCapturing || photos.length >= CAPTURE_COUNT) return;
         setCaptureMode(mode);
@@ -94,9 +84,6 @@ export default function CapturePage() {
         setCountdown(5);
         } else {
         capturePhoto();
-        if (photos.length + 1 >= CAPTURE_COUNT) {
-            finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
-        }
         }
     };
 
@@ -119,8 +106,6 @@ export default function CapturePage() {
             capturePhoto();
             if (photos.length + 1 < CAPTURE_COUNT) {
             setCountdown(5);
-            } else {
-            finalizeCaptures([...photos, webcamRef.current?.getScreenshot() || '']);
             }
         }
         }
@@ -131,7 +116,7 @@ export default function CapturePage() {
             countdownTimerRef.current = null;
         }
         };
-    }, [isCapturing, countdown, photos, captureMode, capturePhoto, finalizeCaptures, CAPTURE_COUNT]);
+    }, [isCapturing, countdown, photos.length, captureMode, capturePhoto, CAPTURE_COUNT]);
 
     // Clear previous photos on mount if needed.
     useEffect(() => {

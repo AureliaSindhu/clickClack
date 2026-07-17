@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"console.log\\(require\\('next/package.json'\\).version\\)\")",
+      "Bash(npx next *)",
+      "Bash(npm install *)",
+      "Bash(npx vitest *)",
+      "Bash(cp \"app/capture/[collageType]/page.tsx\" /tmp/page.tsx.fixed)",
+      "Bash(cp \"app/capture/[collageType]/page.tsx\" /private/tmp/claude-501/-Users-aacode-Desktop-Github-Personal-ClickClack/880e9792-09bf-4734-b29d-008f17d7973f/scratchpad/page.tsx.fixed)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

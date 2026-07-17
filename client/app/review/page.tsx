@@ -17,9 +17,10 @@ export default function ReviewPage() {
 
     useEffect(() => {
         const storedPhotos = sessionStorage.getItem("photos");
-        if (!storedPhotos) {
-            const storedCollageType = sessionStorage.getItem("collageType") || "";
-            router.push(`/capture/${storedCollageType}`);
+        const storedCollageType = sessionStorage.getItem("collageType");
+
+        if (!storedPhotos || !storedCollageType) {
+            router.push(storedCollageType ? `/capture/${storedCollageType}` : "/option");
             return;
         }
 
@@ -29,16 +30,10 @@ export default function ReviewPage() {
         } catch (error) {
         console.error("Error parsing photos from sessionStorage:", error);
         sessionStorage.removeItem("photos");
-        router.push("/capture");
+        router.push("/option");
         return;
         }
         setPhotos(parsedPhotos);
-
-        const storedCollageType = sessionStorage.getItem("collageType");
-        if (!storedCollageType) {
-        router.push("/capture");
-        return;
-        }
 
         const config =
         collageConfigs[storedCollageType as keyof typeof collageConfigs] ||

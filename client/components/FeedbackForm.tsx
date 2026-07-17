@@ -34,7 +34,9 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        // Clear only the field being edited to avoid stale error text.
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
     };
 
     const validate = (): Partial<FeedbackData> => {
@@ -55,6 +57,7 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
             setErrors(validationErrors);
             return;
         }
+        setErrors({});
     
         setIsSubmitting(true);
     
@@ -72,24 +75,21 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
         });
     
         try {
-            const response = await fetch(googleFormURL, {
+            await fetch(googleFormURL, {
                 method: "POST",
                 mode: "no-cors",  
                 body: formDataToSubmit,
             });
-    
-            if (response.ok || response.status === 0) { 
-                onSuccess();
-                setFormData({
-                    name: "",
-                    email: "",
-                    rating: "5",
-                    comments: "",
-                });
-                setIsSubmitted(true); 
-            } else {
-                throw new Error("Failed to submit feedback.");
-            }
+
+            // no-cors responses are opaque, so treat a resolved fetch as success.
+            onSuccess();
+            setFormData({
+                name: "",
+                email: "",
+                rating: "5",
+                comments: "",
+            });
+            setIsSubmitted(true);
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Error submitting feedback:", error);
@@ -162,17 +162,22 @@ const ReceiptFeedbackForm: React.FC<FeedbackFormProps> = ({ onSuccess, onError }
                     <div>
                         <div className="flex justify-center space-x-2">
                             {[1, 2, 3, 4, 5].map((star) => (
-                                <Star
+                                <button
                                     key={star}
-                                    className={`w-6 h-6 cursor-pointer ${
-                                        parseInt(formData.rating) >= star
-                                            ? "text-yellow-500 fill-yellow-500"
-                                            : "text-gray-400"
-                                    }`}
+                                    type="button"
+                                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                                     onClick={() =>
-                                        setFormData({ ...formData, rating: star.toString() })
+                                        setFormData((prev) => ({ ...prev, rating: star.toString() }))
                                     }
-                                />
+                                >
+                                    <Star
+                                        className={`w-6 h-6 cursor-pointer ${
+                                            Number.parseInt(formData.rating, 10) >= star
+                                                ? "text-yellow-500 fill-yellow-500"
+                                                : "text-gray-400"
+                                        }`}
+                                    />
+                                </button>
                             ))}
                         </div>
                     </div>

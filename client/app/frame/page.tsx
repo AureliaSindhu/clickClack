@@ -101,10 +101,16 @@ export default function FramePage() {
     // 5. Load photos from session storage. 
     useEffect(() => {
         const storedPhotos = sessionStorage.getItem("photos");
-        if (storedPhotos) {
-        setPhotos(JSON.parse(storedPhotos));
-        } else {
+        if (!storedPhotos) {
         // redirect with collage type
+        router.push(`/capture/${collageType}`);
+        return;
+        }
+        try {
+        setPhotos(JSON.parse(storedPhotos));
+        } catch (error) {
+        console.error("Error parsing photos from sessionStorage:", error);
+        sessionStorage.removeItem("photos");
         router.push(`/capture/${collageType}`);
         }
     }, [router, collageType]);

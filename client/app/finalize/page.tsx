@@ -78,6 +78,7 @@ export default function FinalizePage() {
     const [isFeedbackOpen, setIsFeedbackOpen] = useState<boolean>(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string>("");
     const [finalImageURL, setFinalImageURL] = useState<string | null>(null);
+    const [isGeneratingImage, setIsGeneratingImage] = useState<boolean>(true);
 
     const finalRef = useRef<HTMLDivElement>(null);
 
@@ -94,19 +95,27 @@ export default function FinalizePage() {
 
     useEffect(() => {
         const storedPhotos = sessionStorage.getItem("photos");
-        if (storedPhotos) {
-        setPhotos(JSON.parse(storedPhotos));
-        } else {
-        router.push("/capture");
+        if (!storedPhotos) {
+        router.push(`/capture/${collageType}`);
+        return;
         }
 
         const storedSelectedFrame = sessionStorage.getItem("selectedFrame");
-        if (storedSelectedFrame) {
-        setSelectedFrame(JSON.parse(storedSelectedFrame));
-        } else {
+        if (!storedSelectedFrame) {
         router.push("/frame");
+        return;
         }
-    }, [router]);
+
+        try {
+        setPhotos(JSON.parse(storedPhotos));
+        setSelectedFrame(JSON.parse(storedSelectedFrame));
+        } catch (error) {
+        console.error("Error parsing session data:", error);
+        sessionStorage.removeItem("photos");
+        sessionStorage.removeItem("selectedFrame");
+        router.push("/option");
+        }
+    }, [router, collageType]);
 
     const config = COLLAGE_CONFIGS[collageType];
 
@@ -138,6 +147,7 @@ export default function FinalizePage() {
 
     const generateFinalImage = async () => {
         if (!finalRef.current) return;
+        setIsGeneratingImage(true);
         try {
         const canvas = await html2canvas(finalRef.current, {
             useCORS: true,
@@ -146,9 +156,10 @@ export default function FinalizePage() {
             scale: window.devicePixelRatio || 2,
         });
         setFinalImageURL(canvas.toDataURL("image/png"));
-        console.log("Final image generated.");
         } catch (error) {
         console.error("Error generating final image:", error);
+        } finally {
+        setIsGeneratingImage(false);
         }
     };
 
@@ -335,10 +346,11 @@ export default function FinalizePage() {
             <div className="flex space-x-4 justify-center">
             <button
                 onClick={handleDownload}
-                className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition flex items-center justify-center"
+                disabled={isGeneratingImage || !finalImageURL}
+                className="bg-[#536659] text-white py-2 px-4 rounded-lg shadow-lg hover:bg-[#356c47] transition flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
                 <ImageDown className="mr-2" />
-                Download
+                {isGeneratingImage ? "Preparing..." : "Download"}
             </button>
             <button
                 onClick={handleDoAnother}
