@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PhotoThumbnail from "../../components/PhotoThumbnail";
 import { Footer } from "../../components/footer";
@@ -45,6 +45,28 @@ export default function FramePage() {
 
     const SCALED_FRAME_WIDTH = Math.round(ORIGINAL_FRAME_WIDTH * effectiveScaleFactor);
     const SCALED_FRAME_HEIGHT = Math.round(ORIGINAL_FRAME_HEIGHT * effectiveScaleFactor);
+
+    // Shrinks the preview to fit narrow (mobile) viewports without touching the
+    // pixel-based layout math above, which assumes SCALED_FRAME_WIDTH/HEIGHT.
+    const previewWrapperRef = useRef<HTMLDivElement>(null);
+    const [displayScale, setDisplayScale] = useState(1);
+
+    useEffect(() => {
+        const el = previewWrapperRef.current;
+        if (!el) return;
+
+        const updateScale = () => {
+        const availableWidth = el.clientWidth;
+        if (availableWidth > 0) {
+            setDisplayScale(Math.min(1, availableWidth / SCALED_FRAME_WIDTH));
+        }
+        };
+
+        updateScale();
+        const observer = new ResizeObserver(updateScale);
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [SCALED_FRAME_WIDTH]);
 
     // 3. Layout config 
     const PREVIEW_CONFIG = {
@@ -222,10 +244,17 @@ export default function FramePage() {
 
         {/* Frame Preview Container */}
         <div
-            className="relative mb-8"
+            ref={previewWrapperRef}
+            className="w-full max-w-[420px] flex justify-center mb-8"
+            style={{ height: `${SCALED_FRAME_HEIGHT * displayScale}px` }}
+        >
+        <div
+            className="relative"
             style={{
             width: `${SCALED_FRAME_WIDTH}px`,
             height: `${SCALED_FRAME_HEIGHT}px`,
+            transform: `scale(${displayScale})`,
+            transformOrigin: "top left",
             }}
         >
             {/* Photo Grid Container */}
@@ -358,6 +387,7 @@ export default function FramePage() {
                 }}
             />
             )}
+        </div>
         </div>
 
         {/* Frame Type & Thumbnail Selection */}

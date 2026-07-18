@@ -6,7 +6,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { Button } from '../../../components/ui/button';
 import { Card } from '../../../components/ui/card';
 import { Footer } from '../../../components/footer';
-import { Camera, Clock } from 'lucide-react';
+import { Camera, Clock, SwitchCamera } from 'lucide-react';
 import "../../style.css";
 import { collageConfigs } from '../collageConfigs';
 import { mapCollageType } from '../mapCollageType';
@@ -38,8 +38,13 @@ export default function CapturePage() {
     const [countdown, setCountdown] = useState<number>(0);
     const [isCapturing, setIsCapturing] = useState<boolean>(false);
     const [captureMode, setCaptureMode] = useState<'manual' | 'timed'>('manual');
+    const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
     const router = useRouter();
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    const toggleFacingMode = () => {
+        setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
+    };
 
     // Finalize captures and store both photos and the collage type
     const finalizeCaptures = useCallback(
@@ -136,9 +141,17 @@ export default function CapturePage() {
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
                 className={webcamClassName}
-                videoConstraints={videoConstraints}
-                mirrored={true}
+                videoConstraints={{ ...videoConstraints, facingMode }}
+                mirrored={facingMode === 'user'}
             />
+            <Button
+                onClick={toggleFacingMode}
+                className="absolute top-3 right-3 z-10 h-10 w-10 p-0 rounded-full bg-black/50 hover:bg-black/70 text-white shadow-none"
+                disabled={isCapturing}
+                aria-label="Switch camera"
+            >
+                <SwitchCamera className="h-5 w-5 mx-auto" />
+            </Button>
             {captureMode === 'timed' && isCapturing && countdown > 0 && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
                 <span className="text-6xl font-bold mb-4">{countdown}</span>

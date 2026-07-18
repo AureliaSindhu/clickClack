@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
+import { isMobile } from "react-device-detect";
 import "../style.css";
 import { Footer } from "../../components/footer";
 import { PartyPopper, ImageDown, RefreshCcw, Sticker } from "lucide-react";
@@ -253,7 +254,7 @@ export default function FinalizePage() {
         }
     }
 
-    const handleDownload = () => {
+    const downloadViaAnchor = () => {
         if (!finalImageURL) return;
         const link = document.createElement("a");
         link.href = finalImageURL;
@@ -262,6 +263,29 @@ export default function FinalizePage() {
         link.click();
         document.body.removeChild(link);
         setDownloadSuccess(true);
+    };
+
+    const handleDownload = async () => {
+        if (!finalImageURL) return;
+
+        if (isMobile && navigator.share) {
+            try {
+                const response = await fetch(finalImageURL);
+                const blob = await response.blob();
+                const file = new File([blob], "final_image.png", { type: "image/png" });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: "ClickClack Photo" });
+                    setDownloadSuccess(true);
+                    return;
+                }
+            } catch (error) {
+                if ((error as DOMException).name === "AbortError") return;
+                console.error("Error sharing image:", error);
+            }
+        }
+
+        downloadViaAnchor();
     };
 
     const closePopup = () => {

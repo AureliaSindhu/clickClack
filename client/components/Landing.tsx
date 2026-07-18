@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logo from "../public/img/clickclackLogo.png";
 import "../app/style.css";
-import { Handshake, TriangleAlert } from "lucide-react";
+import { Handshake } from "lucide-react";
 
 export default function HomePage() {
     const router = useRouter();
@@ -36,9 +36,6 @@ export default function HomePage() {
 
                 <div className="mb-4 text-center">
                     <p className="mb-1 font-semibold text-yellow-600">Special Edition has been released!</p>
-                    <p className="flex inline-flex text-sm text-red-800 bg-red-300/20 p-2 rounded-md">
-                        <TriangleAlert className="mr-2" /> Please use from desktop because mobile is still in progress.
-                    </p>
                 </div>
 
                 <button
